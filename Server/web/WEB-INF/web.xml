@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app>
+  
+  <servlet>
+    <servlet-name>AndroidCtrl</servlet-name>
+    <servlet-class>covoit.android.Controller</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AndroidCtrl</servlet-name>
+    <url-pattern>/android/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>AdminCtrl</servlet-name>
+    <servlet-class>covoit.admin.Controller</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminCtrl</servlet-name>
+    <url-pattern>/admin/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
