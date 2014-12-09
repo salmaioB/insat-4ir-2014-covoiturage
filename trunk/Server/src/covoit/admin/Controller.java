@@ -1,6 +1,6 @@
 /******************************************************************************/
 /* server/src/covoit/admin/controller.java                         2014-12-08 */
-/* Covoiturage Sopra - INSA                                      Félix Poisot */
+/* Covoiturage Sopra - INSA Toulouse                             Félix Poisot */
 /******************************************************************************/
 package covoit.admin;
 
