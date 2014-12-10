@@ -7,28 +7,66 @@
 
 # testé sous Python 3.4.1
 
-from urllib.request import *
+from http.client import *
 
-host = "http://localhost/"
+host = "felix-host.ddns.net"
+
+# Notre SessionID
+cookie = None
 
 
-
-def mkReq(command, payload):
+def mkReq(conn, command, payload):
    """command: url à taper sur le serveur.
       payload: données JSON à mettre dans le POST."""
-   # encode(): utf-8 semble être l'encodage par défaut
-   return Request(host+"android/"+command, payload.encode(),
-                  {"Content-Type":"application/json"}, method="POST")
+   global cookie
 
+   pl = None
+   headers = {}
+   if cookie:
+      headers = {cookie[0]:cookie[1]}
+   if payload:
+      # encode(): utf-8 semble être l'encodage par défaut
+      pl = payload.encode()
+      headers["Content-Type"] = "application/json"
+   
+   conn.request("POST", "/android/"+command, pl, headers) 
+   return conn.getresponse()
+   
+   
+def parse_cookie(resp):
+   """Extrait le header à renvoyer à chaque nouvelle requête"""
+   global cookie
+   
+   for hd in resp.getheaders():
+      if hd[0] == "Set-Cookie":
+         cookie = ("cookie", hd[1].split(";")[0])
 
+   
+   
 if __name__ == "__main__":
 
-   if not host.endswith("/"):
-      host += "/"
-
+   conn = HTTPSConnection(host)
+      
    print("login...")
-   req = mkReq("login", '{"name":"whatsthepassword","pasword":"password"}')
-   resp = urlopen(req)
-   print(resp)
-   print(resp.getheaders())
+   resp = mkReq(conn, "login", '{"name":"whatsthepassword","password":"password"}')
+   parse_cookie(resp)
+   print(resp.read())
+   print("Got cookie: " + str(cookie))
+ 
+   print("detailsAccount...")
+   resp = mkReq(conn, "detailsAccount", '{"name":"someAccount"}')
+   print(resp.read())
+ 
+#   print("forgottenPsswd...")
+#   req = mkReq("forgottenPsswd", '{"name":"name@some-mail.com"}')
+#   resp = urlopen(req)
+   
+   print("logout...")
+   resp = mkReq(conn, "logout", '{}')
+   resp.read()
+   print("done !")
+   
+   
+   
+   
    
