@@ -9,7 +9,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.json.*;
 
-/** Point d'arrivée des requêtes qur /android/[whatever] */
+/** Point d'arrivée des requêtes sur /android/[whatever] */
 public class Controller extends HttpServlet
 {
 
@@ -27,18 +27,51 @@ public class Controller extends HttpServlet
       return (name != null) ? (name) : ("");
    }
 
+   /** Envoie une réponse en texte brut (pour la mise au point). */
+   private static void write(HttpServletResponse resp, int code, String message)
+   {
+      try {
+         resp.setStatus(code);
+         resp.setContentType("text/plain");
+         resp.getOutputStream().print(message);
+      } catch (IOException e) {
+         // pas grand chose à faire...
+      }
+   }
+   
+   private static void write(HttpServletResponse resp, int code, JsonStructure data)
+   {
+      try {
+         resp.setStatus(code);
+         resp.setContentType("application/json");
+         JsonWriter w = Json.createWriter(resp.getOutputStream());
+         w.write(data);
+      } catch (IOException e) {
+         // pas grand chose à faire...
+      }
+   }
+   
+   /** Renvoie l'attribut du nom donné, si il existe et que c'est bien un String. */
+   private static String getString(JsonObject o, String name)
+   {
+      JsonString jss = o.getJsonString(name);
+      if (jss == null)
+         return null;
+      return jss.getString();
+   }  
+   
 /* COMMANDES ******************************************************************/
 
-   /**  */
+   /** Ouvre une session HTTP (par cookie) si le login est bon. */
    private static void doLogin(HttpServletRequest req, HttpServletResponse resp,
-                               JsonObject reqBody) throws ServletException
+                               JsonObject reqBody)
    {
-      if (reqBody.getJsonString("name") == null
-            || reqBody.getJsonString("password") == null)
-         throw new ServletException("Malformed login command");
-       
-      String user = reqBody.getJsonString("name").getString();
-      String pwd = reqBody.getJsonString("password").getString();
+      String user = getString(reqBody, "name");
+      String pwd =  getString(reqBody, "password");
+   
+      if (user == null || pwd == null) {
+         write(resp, 400, "Malformed login command: "+reqBody);
+      }
    
       // TODO vérifier avec la BDD
       if (user.equals("whatsthepassword") && pwd.equals("password")) 
@@ -47,27 +80,33 @@ public class Controller extends HttpServlet
          
          // L'ancien SessID est invalidé. Protège de qqch mais je sais plus quoi.
          req.changeSessionId(); 
+         resp.setStatus(200); // le nouveau cookie va redescendre, pas besoin de corps.
       } 
       else {
          req.getSession().invalidate();
-         resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+         write(resp, 400, "Invalid login/password");
       }
+   }
+   
+   private static void doDetailsAccount(HttpServletRequest req, 
+                                   HttpServletResponse resp, JsonObject reqBody)
+   {
+      String name = getString(reqBody, "name");
+      
+      if (name == null) {
+         write(resp, 400, "Malformed detailsAccount command: "+reqBody);
+      }
+      
+      JsonObject pl = Json.createObjectBuilder()
+                        .add("format", "à définir")
+                      .build();
+      write(resp, 200, pl);
    }
 
 /* DISPATCH *******************************************************************/
 
-   /** Réponds aux requêtes GET : detailsAccount, listRoutes, detailsRoute, 
-    *  detailsPlace. */
-   public void doGet(HttpServletRequest req, HttpServletResponse resp) 
-                                                         throws ServletException
-   {
-      throw new ServletException("not implemented!");
-   }
-
-   /** Réponds aux requêtes POST : Login, logout, forgottenPsswd, createAccount,
-    *  userDeleteAccount, updateAccount. */
+   @Override
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-                                                         throws ServletException
    {
       String cmd = req.getRequestURI().substring("/android/".length());
       String user = getUsername(req);
@@ -75,15 +114,25 @@ public class Controller extends HttpServlet
       try {
          reqBody = Json.createReader(req.getInputStream()).readObject();
       } 
-      catch (IOException e) {
-         throw new ServletException("Cannot decode JSON");
+      catch (IOException | JsonException e) {
+         write(resp, 400, "Cannot decode Json");
+         return;
       }
       
+      // commandes ne nécessaitant pas d'être connecté.
       if (cmd.equals("login")) {
          doLogin(req, resp, reqBody);
       }
+      else if (user.length() != 0)
+      {  // connexion requise
+         if (cmd.equals("detailsAccount")) {
+            doDetailsAccount(req, resp, reqBody);
+         }
+         else
+            write(resp, 400, "Commande non supportée: "+cmd);
+      }
       else
-         throw new ServletException("Unsupported command: "+cmd);
+         write(resp, 400, "Authentification requise, ou commande non supportée");
    }
    
 
