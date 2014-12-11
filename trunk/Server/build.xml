@@ -162,6 +162,9 @@
 
 -->
 
+
+  <property name="javax.json.jar" value="${basedir}/lib/javax.json.jar"/>
+
 <!-- Dummy external dependency -->
 <!--
   <property name="foo.jar"
@@ -186,9 +189,10 @@
 
     <!-- Include all JAR files that will be included in /WEB-INF/lib -->
     <!-- *** CUSTOMIZE HERE AS REQUIRED BY YOUR APPLICATION *** -->
-<!--
-    <pathelement location="${foo.jar}"/>
--->
+
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+    </fileset>
 
     <!-- Include all elements that Tomcat exposes to applications -->
     <fileset dir="${catalina.home}/bin">
@@ -305,7 +309,10 @@
     <copy  todir="${build.home}/WEB-INF/classes">
       <fileset dir="${src.home}" excludes="**/*.java"/>
     </copy>
-
+    <copy  todir="${build.home}/WEB-INF/lib">
+      <fileset dir="${basedir}/lib" />
+    </copy>
+    
   </target>
 
 
