@@ -9,7 +9,8 @@
 
 from http.client import *
 
-host = "felix-host.ddns.net"
+#host = "felix-host.ddns.net"
+host = "localhost:8443"
 
 # Notre SessionID
 cookie = None
