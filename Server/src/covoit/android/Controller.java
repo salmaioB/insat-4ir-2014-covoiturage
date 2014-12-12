@@ -98,7 +98,8 @@ public class Controller extends HttpServlet
       }
       
       JsonObject pl = Json.createObjectBuilder()
-                        .add("format", "à définir")
+                        .add("name", "user@some-mail.com")
+						.add("driver", "false")
                       .build();
       write(resp, 200, pl);
    }
@@ -123,6 +124,10 @@ public class Controller extends HttpServlet
       if (cmd.equals("login")) {
          doLogin(req, resp, reqBody);
       }
+	  else if (cmd.equals("logout")) {
+		req.getSession().invalidate();
+		resp.setStatus(200);
+	  }
       else if (user.length() != 0)
       {  // connexion requise
          if (cmd.equals("detailsAccount")) {
