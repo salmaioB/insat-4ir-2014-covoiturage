@@ -15,6 +15,19 @@ CREATE DATABASE IF NOT EXISTS `covoitsopra` /*!40100 DEFAULT CHARACTER SET utf8 
 USE `covoitsopra`;
 
 
+-- Export de la structure de table covoitsopra. admin
+CREATE TABLE IF NOT EXISTS `admin` (
+  `IdAdmin` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `LastName` varchar(50) NOT NULL,
+  `FirstName` varchar(50) NOT NULL,
+  `Login` varchar(50) NOT NULL,
+  `Password` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdAdmin`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- L'exportation de données n'été pas sélectionné.
+
+
 -- Export de la structure de table covoitsopra. city
 CREATE TABLE IF NOT EXISTS `city` (
   `IdCity` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -40,16 +53,10 @@ CREATE TABLE IF NOT EXISTS `place` (
 -- Export de la structure de table covoitsopra. route
 CREATE TABLE IF NOT EXISTS `route` (
   `IdUser` int(10) unsigned NOT NULL,
-  `IdCity` int(10) unsigned NOT NULL,
-  `IdPlace` int(10) unsigned NOT NULL,
-  `Hour` time NOT NULL,
   `Day` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
-  PRIMARY KEY (`IdUser`,`IdCity`,`IdPlace`),
-  KEY `FK_route_city` (`IdCity`),
-  KEY `FK_route_place` (`IdPlace`),
-  KEY `IdUser` (`IdUser`),
-  CONSTRAINT `FK_route_city` FOREIGN KEY (`IdCity`) REFERENCES `city` (`IdCity`),
-  CONSTRAINT `FK_route_place` FOREIGN KEY (`IdPlace`) REFERENCES `place` (`IdPlace`),
+  `GoHour` time DEFAULT NULL,
+  `ReturnHour` time DEFAULT NULL,
+  PRIMARY KEY (`IdUser`,`Day`),
   CONSTRAINT `FK_route_user` FOREIGN KEY (`IdUser`) REFERENCES `user` (`IdUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
