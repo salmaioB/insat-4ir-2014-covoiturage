@@ -8,6 +8,7 @@ import covoit.*;
 import covoit.lib.BCrypt;
 import java.io.*;
 import java.sql.*;
+import java.security.InvalidParameterException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.json.*;
@@ -64,7 +65,7 @@ public class Controller extends HttpServlet
    }
    
    /** Renvoie l'attribut du nom donné, si il existe et que c'est bien un booléen */
-   private static boolean getString(JsonObject o, String name)
+   private static boolean getBool(JsonObject o, String name)
    {
       try {
          return o.getBoolean(name);
@@ -104,8 +105,8 @@ public class Controller extends HttpServlet
             loggedIn = false;
          }
          JsonObject pl = Json.createObjectBuilder()
-                           .add("status", (loggedIn) ? ("OK") : ("INCORRECT_CRED"),
-                         build();
+                           .add("status", (loggedIn) ? ("OK") : ("INCORRECT_CRED"))
+                         .build();
          write(resp, 200, pl);
       } catch (InvalidParameterException e) {
          write(resp, 400, "Malformed login command: "+reqBody);
@@ -113,47 +114,66 @@ public class Controller extends HttpServlet
       
    }
    
+   /** Ajoute un compte en BDD */
    private static void doCreateAccount(HttpServletRequest req, 
                                    HttpServletResponse resp, JsonObject reqBody)
    {
       try {
-         String username = getString(reqBody, "name");
-         String pwd =  getString(reqBody, "password");
-         String firstName = getString(reqBody, "firstName");
-         String lastName = getString(reqBody, "lastName");
-         boolean driver = getBool(reqBody, "driver");
+         String  username  = getString(reqBody, "name"     );
+         String  pwd       = getString(reqBody, "password" );
+         String  firstName = getString(reqBody, "firstName");
+         String  lastName  = getString(reqBody, "lastName" );
+         boolean driver    = getBool(  reqBody, "driver"   );
          
+         String status;
+        
          String hash = BCrypt.hashpw(pwd, BCrypt.gensalt());
          
-         // TODO: détecter "nom déjà pris"
-         
          try {
-            User.create(username, hash);
-         } catch (SQLException e) {
-            write(resp, 500, e.toString());
+            User.create(username, hash, firstName, lastName, driver);
+            status = "OK";
+         } 
+         catch (SQLException e) {
+            //write(resp, 500, e.toString());
+            //peut être à cause d'autre chose, mais ce sera souvent ça.
+            status = "INVALID_NAME";
          }
          
-         JsonObject pl = Json.createObjectBuilder().build();
+         JsonObject pl = Json.createObjectBuilder()
+                           .add("status", status)
+                         .build();
          write(resp, 200, pl);
-      } catch (InvalidParameterException e) {
+      } 
+      catch (InvalidParameterException e) {
          write(resp, 400, "Malformed createAccount command: "+reqBody);
       }
    }
    
+   /** Renvoie les détails / infos persos du compte spécifié. */
    private static void doDetailsAccount(HttpServletRequest req, 
                                    HttpServletResponse resp, JsonObject reqBody)
    {
-      String name = getString(reqBody, "name");
-      
-      if (name == null) {
-         write(resp, 400, "Malformed detailsAccount command: "+reqBody);
+      try {
+         String name = getString(reqBody, "name");         
+         
+         User u = null;
+         try { u = User.load(name); }
+         catch (SQLException e) {
+            write(resp, 500, e.toString());
+         }
+         
+         JsonObjectBuilder pl = Json.createObjectBuilder();
+         if (u != null) {
+            pl.add("name", name)
+              .add("firstName", u.getFirstName())
+              .add("lastName", u.getLastName())
+              .add("driver", u.isDriver());
+         }  
+         write(resp, 200, pl.build());
       }
-      
-      JsonObject pl = Json.createObjectBuilder()
-                        .add("name", "user@some-mail.com")
-						      .add("driver", "false")
-                      .build();
-      write(resp, 200, pl);
+      catch (InvalidParameterException e) {
+         write(resp, 400, "Malformed createAccount command: "+reqBody);
+      }
    }
 
 /* DISPATCH *******************************************************************/

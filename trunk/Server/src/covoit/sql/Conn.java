@@ -9,43 +9,21 @@ import java.sql.*;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
-/** Connection pool planqué à l'intérieur. Plus qu'à soumettre des requêtes, et
- *  obtenir les ResultSets. */
+/** Connection pool déjà configuré. */
 public class Conn
 {
-   /** ! Penser à appeler close sur le ResultSet ! 
-    *  ! Si il y a des paramètres, NE PAS CONCATENER LES CHAINES ! Utiliser une 
-    *  des surchages protégées contre les injections. */
-   public static ResultSet query(String query) throws SQLException
+   /** Comment faire vos requêtes: NE PAS CONCATENER LES CHAINES !
+    *  Mettre des '?' à la place des paramètres. Sur l'objet retourné, utiliser
+    *  setString(x,z) pour passer vos paramètres d'une façon protégée contre les
+    *  Injections.
+    *  Utilisez execute() ou executeQuery() en fonction du type de requête.
+    *  Pensez à appeler close(), sur l'objet, et ses ResultSets si vous en avez. 
+    */
+   public static PreparedStatement prepare(String sql) throws SQLException
    {
       Connection con = _sPool.getConnection();
-      Statement st = con.createStatement();
-      st.closeOnCompletion(); // auto-closed when ResultSet is closed.
-      return st.executeQuery(query);
-   }
-   
-   /** Les '?' seront remplacés par les paramètres supplémentaires de la 
-    *  méthode, de façon protégée contre les injections. 
-    *  ! Penser à appeler close() sur le ResulSet ! */
-   public static ResultSet query(String query, String p1) throws SQLException
-   {
-      Connection con = _sPool.getConnection();
-      PreparedStatement st = con.prepareStatement(query);
-      st.setString(1, p1);
-      st.closeOnCompletion(); // auto-closed when ResultSet is closed.
-      return st.executeQuery();
-   }
-   
-      /** Les '?' seront remplacés par les paramètres supplémentaires de la 
-    *  méthode, de façon protégée contre les injections. */
-   public static void execute(String query, String p1, String p2) throws SQLException
-   {
-      Connection con = _sPool.getConnection();
-      PreparedStatement st = con.prepareStatement(query);
-      st.setString(1, p1);
-      st.setString(2, p2);
-      st.execute();
-      st.close();
+      PreparedStatement st = con.prepareStatement(sql);
+      return st;
    }
    
 /******************************************************************************/
@@ -57,7 +35,7 @@ public class Conn
          p.setDriverClassName("com.mysql.jdbc.Driver");
          p.setUsername("tomcat");
          p.setPassword("G3167u5i");
-         p.setJmxEnabled(false); // késako ?
+         p.setJmxEnabled(false); // only useful for named objects.
          p.setValidationQuery("SELECT 1");
          p.setTestWhileIdle(false);
          p.setTestOnBorrow(true);

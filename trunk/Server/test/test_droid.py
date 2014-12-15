@@ -58,13 +58,13 @@ if __name__ == "__main__":
     
       
    print("login...")
-   resp = mkReq(conn, "login", '{"name":"whatsthepassword","password":"password"}')
+   resp = mkReq(conn, "login", '{"name":"testuser@testmb.net","password":"password"}')
    parse_cookie(resp)
    print(resp.read())
    print("Got cookie: " + str(cookie))
  
    print("detailsAccount...")
-   resp = mkReq(conn, "detailsAccount", '{"name":"someAccount"}')
+   resp = mkReq(conn, "detailsAccount", '{"name":"testuser@testmb.net"}')
    print(resp.read())
  
 #   print("forgottenPsswd...")
