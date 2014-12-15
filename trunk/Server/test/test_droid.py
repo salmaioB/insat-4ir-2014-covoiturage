@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 ################################################################################
 # server/test/test_droid.py                                         2014-12-09 #
 # Covoiturage Sopra - INSA Toulouse                               Félix Poisot #
@@ -9,8 +11,8 @@
 
 from http.client import *
 
-#host = "felix-host.ddns.net"
-host = "localhost:8443"
+host = "felix-host.ddns.net"
+#host = "localhost:8443"
 
 # Notre SessionID
 cookie = None
