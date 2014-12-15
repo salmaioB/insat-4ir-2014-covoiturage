@@ -21,20 +21,21 @@ public class Network {
 		_queue = Volley.newRequestQueue(MyApplication.getAppContext());
 	}
 
-	public void sendRequest(String url) {
+	public void sendGetRequest(int method, String url) {
 		// Request a string response from the provided URL.
-		StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+		StringRequest stringRequest = new StringRequest(method, url,
 				new Response.Listener<String>() {
 					@Override
 					public void onResponse(String response) {
 						// Display the first 500 characters of the response string.
 						//mTextView.setText("Response is: " + response.substring(0, 500));
 					}
-				}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				//mTextView.setText("That didn't work!");
-			}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						//mTextView.setText("That didn't work!");
+					}
 		});
 		// Add the request to the RequestQueue.
 		_queue.add(stringRequest);
