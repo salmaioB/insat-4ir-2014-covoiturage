@@ -133,8 +133,10 @@ Commandes:
          Renvoie les attributs du compte spécifié.
       Réponse:
       - Si le compte existe:
-         - "name"   : même qu'en entrée
-         - "driver" : Booléen. Voir CDC pour signification.
+         - "name"       : même qu'en entrée
+         - "firstName"  : Prénom
+         - "lastName"   : Nom de famille
+         - "driver"     : Booléen. Voir CDC pour signification.
       - Sinon: {}
       
       
