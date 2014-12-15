@@ -1,11 +1,13 @@
 package tda2.insa.com.be_covoiturage;
 
-//import Volley.*;
+import com.android.volley.*;
+import com.android.volley.toolbox.*;
 /**
  * Created by remi on 15/12/14.
  */
-public enum Network {
-	Instance
+public class Network {
+	private com.android.volley.RequestQueue _queue;
+	private static Network _instance;
 
 	public String getHost() {
 		return "felix-host.ddns.net";
@@ -15,23 +17,26 @@ public enum Network {
 		return 443;
 	}
 
-	/*RequestQueue queue = Volley.newRequestQueue(this);
-	String url ="http://www.google.com";
+	private Network() {
+		_queue = Volley.newRequestQueue(MyApplication.getAppContext());
+	}
 
-	// Request a string response from the provided URL.
-	StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-			new Response.Listener() {
-				@Override
-				public void onResponse(String response) {
-					// Display the first 500 characters of the response string.
-					mTextView.setText("Response is: "+ response.substring(0,500));
-				}
-			}, new Response.ErrorListener() {
-		@Override
-		public void onErrorResponse(VolleyError error) {
-			mTextView.setText("That didn't work!");
-		}
-	});
-// Add the request to the RequestQueue.
-	queue.add(stringRequest);*/
+	public void sendRequest(String url) {
+		// Request a string response from the provided URL.
+		StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+						// Display the first 500 characters of the response string.
+						//mTextView.setText("Response is: " + response.substring(0, 500));
+					}
+				}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				//mTextView.setText("That didn't work!");
+			}
+		});
+		// Add the request to the RequestQueue.
+		_queue.add(stringRequest);
+	}
 }
