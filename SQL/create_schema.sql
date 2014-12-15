@@ -11,7 +11,7 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Export de la structure de la base pour covoitsopra
-CREATE DATABASE IF NOT EXISTS `covoitsopra` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE `covoitsopra` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `covoitsopra`;
 
 
@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `FirstName` varchar(50) NOT NULL,
   `Password` varchar(50) NOT NULL,
   `Driver` enum('Y','N') NOT NULL,
-  `IdCity` int(10) unsigned NOT NULL,
-  `IdPlace` int(10) unsigned NOT NULL,
+  `IdCity` int(10) unsigned,
+  `IdPlace` int(10) unsigned,
   PRIMARY KEY (`IdUser`),
   KEY `FK_user_city` (`IdCity`),
   KEY `FK_user_place` (`IdPlace`),

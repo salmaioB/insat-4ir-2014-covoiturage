@@ -4,7 +4,10 @@
 /******************************************************************************/
 package covoit.android;
 
+import covoit.*;
+import covoit.lib.BCrypt;
 import java.io.*;
+import java.sql.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.json.*;
@@ -56,8 +59,18 @@ public class Controller extends HttpServlet
    {
       JsonString jss = o.getJsonString(name);
       if (jss == null)
-         return null;
+         throw new InvalidParameterException("Not present");
       return jss.getString();
+   }
+   
+   /** Renvoie l'attribut du nom donné, si il existe et que c'est bien un booléen */
+   private static boolean getString(JsonObject o, String name)
+   {
+      try {
+         return o.getBoolean(name);
+      } catch (Throwable e) {
+         throw new InvalidParameterException("Not present");
+      }
    }  
    
 /* COMMANDES ******************************************************************/
@@ -66,25 +79,64 @@ public class Controller extends HttpServlet
    private static void doLogin(HttpServletRequest req, HttpServletResponse resp,
                                JsonObject reqBody)
    {
-      String user = getString(reqBody, "name");
-      String pwd =  getString(reqBody, "password");
-   
-      if (user == null || pwd == null) {
+      try {
+         String username = getString(reqBody, "name");
+         String pwd =  getString(reqBody, "password");
+      
+         User user = null;
+         try {
+            user = User.load(username);
+         } catch (SQLException e) {
+            write(resp, 500, e.toString());
+            return;
+         }
+         
+         boolean loggedIn;
+         if (user != null && BCrypt.checkpw(pwd, user.getPassword()))
+         {
+            req.getSession().setAttribute("username", username);
+            loggedIn = true;
+            // L'ancien SessID est invalidé. Protège de qqch mais je sais plus quoi.
+            req.changeSessionId(); 
+         } 
+         else {
+            req.getSession().invalidate();
+            loggedIn = false;
+         }
+         JsonObject pl = Json.createObjectBuilder()
+                           .add("status", (loggedIn) ? ("OK") : ("INVALID_PASSWORD"),
+                         build();
+         write(resp, 200, pl);
+      } catch (InvalidParameterException e) {
          write(resp, 400, "Malformed login command: "+reqBody);
       }
+      
+   }
    
-      // TODO vérifier avec la BDD
-      if (user.equals("whatsthepassword") && pwd.equals("password")) 
-      {
-         req.getSession().setAttribute("username", user);
+   private static void doCreateAccount(HttpServletRequest req, 
+                                   HttpServletResponse resp, JsonObject reqBody)
+   {
+      try {
+         String username = getString(reqBody, "name");
+         String pwd =  getString(reqBody, "password");
+         String firstName = getString(reqBody, "firstName");
+         String lastName = getString(reqBody, "lastName");
+         boolean driver = getBool(reqBody, "driver");
          
-         // L'ancien SessID est invalidé. Protège de qqch mais je sais plus quoi.
-         req.changeSessionId(); 
-         resp.setStatus(200); // le nouveau cookie va redescendre, pas besoin de corps.
-      } 
-      else {
-         req.getSession().invalidate();
-         write(resp, 400, "Invalid login/password");
+         String hash = BCrypt.hashpw(pwd, BCrypt.gensalt());
+         
+         // TODO: détecter "nom déjà pris"
+         
+         try {
+            User.create(username, hash);
+         } catch (SQLException e) {
+            write(resp, 500, e.toString());
+         }
+         
+         JsonObject pl = Json.createObjectBuilder().build();
+         write(resp, 200, pl);
+      } catch (InvalidParameterException e) {
+         write(resp, 400, "Malformed createAccount command: "+reqBody);
       }
    }
    
@@ -99,7 +151,7 @@ public class Controller extends HttpServlet
       
       JsonObject pl = Json.createObjectBuilder()
                         .add("name", "user@some-mail.com")
-						.add("driver", "false")
+						      .add("driver", "false")
                       .build();
       write(resp, 200, pl);
    }
@@ -124,10 +176,13 @@ public class Controller extends HttpServlet
       if (cmd.equals("login")) {
          doLogin(req, resp, reqBody);
       }
-	  else if (cmd.equals("logout")) {
-		req.getSession().invalidate();
-		resp.setStatus(200);
-	  }
+      else if (cmd.equals("logout")) {
+         req.getSession().invalidate();
+         resp.setStatus(200);
+      }
+      else if (cmd.equals("createAccount")) {
+         doCreateAccount(req, resp, reqBody);
+      }
       else if (user.length() != 0)
       {  // connexion requise
          if (cmd.equals("detailsAccount")) {

@@ -134,11 +134,9 @@
   <property name="catalina.home" value="${env.CATALINA_HOME}"/>
   <property name="dist.home"     value="${basedir}/dist"/>
   <property name="docs.home"     value="${basedir}/docs"/>
-  <property name="manager.url"   value="http://localhost/manager/text"/>
   <!-- Felix+ Logs à rentrer dans votre build.properties vous-même. Le contenu
        du SVN est public, les gars. -->
-  <!-- manager.username, manager.password -->
-  <property name="manager.url"   value="http://localhost/manager/text"/>
+  <!-- manager.url, manager.username, manager.password -->
   <property name="src.home"      value="${basedir}/src"/>
   <property name="web.home"      value="${basedir}/web"/>
 
@@ -333,14 +331,15 @@
 
 -->
 
-  <target name="dist" depends="compile,javadoc"
+  <target name="dist" depends="compile"
    description="Create binary distribution">
 
-    <!-- Copy documentation subdirectories -->
+    <!-- Copy documentation subdirectories
     <mkdir   dir="${dist.home}/docs"/>
     <copy    todir="${dist.home}/docs">
       <fileset dir="${docs.home}"/>
     </copy>
+    -->
 
     <!-- Create application JAR file -->
     <jar jarfile="${dist.home}/${app.name}-${app.version}.war"
