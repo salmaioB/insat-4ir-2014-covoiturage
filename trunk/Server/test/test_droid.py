@@ -48,7 +48,7 @@ def parse_cookie(resp):
    
 if __name__ == "__main__":
 
-   conn = HTTPSConnection(host)
+   conn = HTTPConnection(host)
       
    print("login...")
    resp = mkReq(conn, "login", '{"name":"whatsthepassword","password":"password"}')
