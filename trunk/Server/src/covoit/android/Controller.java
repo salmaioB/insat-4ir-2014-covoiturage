@@ -104,7 +104,7 @@ public class Controller extends HttpServlet
             loggedIn = false;
          }
          JsonObject pl = Json.createObjectBuilder()
-                           .add("status", (loggedIn) ? ("OK") : ("INVALID_PASSWORD"),
+                           .add("status", (loggedIn) ? ("OK") : ("INCORRECT_CRED"),
                          build();
          write(resp, 200, pl);
       } catch (InvalidParameterException e) {
@@ -178,7 +178,8 @@ public class Controller extends HttpServlet
       }
       else if (cmd.equals("logout")) {
          req.getSession().invalidate();
-         resp.setStatus(200);
+         JsonObject pl = Json.createObjectBuilder().build();
+         write(resp, 200, pl);
       }
       else if (cmd.equals("createAccount")) {
          doCreateAccount(req, resp, reqBody);

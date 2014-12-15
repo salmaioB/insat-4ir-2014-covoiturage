@@ -1,0 +1,141 @@
+/******************************************************************************/
+/* server/docs/android - messages.txt                              2014-12-15 */
+/* Covoiturage Sopra - INSA Toulouse                             Félix Poisot */
+/******************************************************************************/
+
+Introduction:
+
+   Ce document présente les commandes reconnues par le serveur applicatif, et le
+   format des réponses générées.
+   Il définit la communication avec le client Android.
+
+   
+URLs:
+
+   Le client invoque les addresses HTTP suivantes, avec le verbe POST.
+   
+   Le corps de requête doit être un object JSON (type MIME 'application/json'),
+   de format dépendant de la requête. 
+   Même si la requête ne requiers pas de paramètres, un object vide '{}' doit 
+   être envoyé.
+   
+   La requête peut donner lieu à:
+      - Erreur HTTP 400 si l'URL de la commande n'est pas reconnue, si le
+        client n'est pas authentifié et invoque une commande nécessitant une
+        authentification, ou si le paramètre ne correspond pas aux attentes
+        particulières de la commande invoquée.
+        Le corps de la réponse (MIME 'text/plain:charset=UTF-8') est un message
+        aidant à la mise au point.
+      - Erreur HTTP 500 pour les erreurs de déroulement de la commande invoquée.
+        Le corps de la réponse (MIME 'text/plain;charset=UTF-8') est un message
+        aidant à la mise au point.
+      - Code HTTP 200 si la commande a pu être exécutée dans un cas nominal.
+        Le corps de la réponse (MIME 'application/json') est un objet dont le
+        format dépends de la requête invoquée.
+        Même si aucune information n'est retournée, un object vide '{}' est 
+        envoyé.
+   
+   Les commandes sont les suivantes:
+   Ne nécessitant pas d'authentification:
+   - /android/login
+   - /android/logout
+   - /android/createAccount
+   
+   Nécessitant une authentification
+   - /android/detailsAccount
+
+   
+Authentification:
+
+   Un cookie SessionID est utlisé. La réussite de la commande 'Login' cause
+   l'émission ('Set-Cookie: JSESSIONID=xxx') d'un identifiant unique à durée
+   de validité limitée.
+   Le client renvoie ('Cookie: JSESSIONID=xxx') cet identifiant pour assurer le
+   serveur qu'il s'agit de la même personne, et donc que la commande 'Login' a
+   déjà été exécutée avec réussite.
+   Lors de l'exécution des commandes nécessitant une authentification, le 
+   serveur connaitra également l'identité que l'utilisateur a présenté lors du
+   Login.
+   
+   Un individu écoutant la communication pourra très facilement usurper 
+   l'identité d'un utilisateur, en réexécutant la commande Login avec les mêmes
+   paramètres, ou en renvoyant le même cookie pendant sa période de validité,
+   sur une autre connexion. L'utilisation de SSL est donc préférable.
+   
+   
+   
+Commandes:
+
+   Dans la suite de cette liste, les éléments listés sont les membres de 
+   l'objet Json transféré.
+   exemple:
+      Paramètres:
+      -  "p1"  : <explication>
+      -  "p2"  : Entier. <explication>
+      Effet: <explication>
+      Réponse:
+      -  "r1"  : Booléen. <explication>
+   Pourra donner lieu au transfert suivant:
+   requête:
+      POST /android/exemple HTTP/1.1
+      <en-têtes ici>
+      
+      {"p1":"UneValeur","p2":41}
+   réponse:
+      HTTP/1.1 200 OK
+      <en-têtes ici>
+      
+      {"r1":true}
+   
+   
+   
+   /****** Ne nécessitant pas d'authentification ******/
+
+ - login:
+      Paramètres:
+      - "name": Identifiant du compte (Adresse e-mail)
+      - "password": le mot de passe, en clair.
+      Effet:
+         Si les infos sont bonnnes, la session acquiert le status 'Authentifié'.
+         Dans tous les cas, le JSESSIONID va changer, et l'ancienne session 
+         sera considérée fermée.
+      Réponse:
+      - "status": "OK" si les infos correspondent à un compte connu, 
+                  "INCORRECT_CRED" sinon.
+        
+ - logout:
+      Paramètres: {}
+      Effet:
+         La session n'est plus 'Authentifié'.
+      Réponse: {}
+      
+ - createAccount:
+      Paramètres:
+      - "name"      : Identifiant du nouveau compte
+      - "password"  : Mot de passe (en clair) permettant les connexions futures
+      - "firstName" : Prénom du possesseur du compte
+      - "lastName"  : Nom de famille du posesseur du compte
+      - "driver"    : Booléen. Voir CDC pour signification.
+      Effet:
+         Le compte est ajouté, et est prêt à être complété lors de requêtes
+         futures.
+      Réponse:
+      - "status": "OK" si tout va bien, "INVALID_NAME" si le compte n'a pas pû 
+                  être créé.
+                  
+         
+   /****** Nécessaitant une authentification ******/
+         
+ - detailsAccount:
+      Paramètres: 
+      - "name": Identifiant du compte dont on veut consulter les détails
+      Effets:
+         Renvoie les attributs du compte spécifié.
+      Réponse:
+      - Si le compte existe:
+         - "name"   : même qu'en entrée
+         - "driver" : Booléen. Voir CDC pour signification.
+      - Sinon: {}
+      
+      
+      
