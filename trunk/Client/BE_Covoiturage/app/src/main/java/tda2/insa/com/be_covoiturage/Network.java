@@ -94,12 +94,12 @@ public class Network {
 		allowAllSSL();
 		Log.w("Sending request to " + url, body.toString());
 		// Request a string response from the provided URL.
-		JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.POST, url, body,
+		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body,
 				listener,
 				errorListener);
-		// Add the request to the RequestQueue.
 
-		_queue.add(stringRequest);
+		// Add the request to the RequestQueue.
+		_queue.add(request);
 	}
 
 	private static TrustManager[] trustManagers;

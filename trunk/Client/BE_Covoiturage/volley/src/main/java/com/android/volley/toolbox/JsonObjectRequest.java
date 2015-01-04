@@ -63,9 +63,12 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
     @Override
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
-            String jsonString =
-                new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            return Response.success(new JSONObject(jsonString),
+            String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+	        JSONObject json = new JSONObject();
+	        json.put("data", new JSONObject(jsonString));
+	        json.put("headers", new JSONObject(response.headers));
+            return Response.success(json,
                     HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
