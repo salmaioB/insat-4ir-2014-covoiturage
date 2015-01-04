@@ -136,6 +136,7 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 							LoginActivity.this.wrongCredentials();
 							return;
 						}
+						
 						String cookie = response.getJSONObject("headers").getString("Set-Cookie");
 						cookie = cookie.substring(0, cookie.indexOf(';'));
 						Log.w("Got cookie", cookie);
