@@ -2,59 +2,31 @@ package tda2.insa.com.be_covoiturage;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.*;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.android.volley.*;
 
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>*/ {
-
-	/**
-	 * A dummy authentication store containing known user names and passwords.
-	 * TODO: remove after connecting to a real authentication system.
-	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[]{
-			"foo@example.com:hello", "bar@example.com:world"
-	};
-	/**
-	 * Keep track of the login task to ensure we can cancel it if requested.
-	 */
-	//private UserLoginTask mAuthTask = null;
-
+public class LoginActivity extends Activity {
 	// UI references.
-	private AutoCompleteTextView _emailView;
+	private EditText _emailView;
 	private EditText _passwordView;
 	private View _progressView;
 	private View _loginFormView;
@@ -64,11 +36,11 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
-		// Set up the login form.
-		_emailView = (AutoCompleteTextView) findViewById(R.id.email);
-		populateAutoComplete();
+		// On initialise les variables se référant aux éléments de l'UI
+		_emailView = (EditText)findViewById(R.id.email);
+		_passwordView = (EditText)findViewById(R.id.password);
 
-		_passwordView = (EditText) findViewById(R.id.password);
+		// Association de la validation du formulaire à la fonction attemptLogin()
 		_passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -80,8 +52,9 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 			}
 		});
 
-		Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-		mEmailSignInButton.setOnClickListener(new OnClickListener() {
+		// Association du clic sur le bouton valider à la fonction attemptLogin()
+		Button emailSignInButton = (Button)findViewById(R.id.email_sign_in_button);
+		emailSignInButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				attemptLogin();
@@ -96,93 +69,98 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 		_passwordView.setText("password");
 	}
 
-	private void populateAutoComplete() {
-		//getLoaderManager().initLoader(0, null, this);
-	}
-
-
 	/**
-	 * Attempts to sign in or register the account specified by the login form.
-	 * If there are form errors (invalid email, missing fields, etc.), the
-	 * errors are presented and no actual login attempt is made.
+	 * Vérifie si les identifiants fournis par l'utilisateur sont valides (adresse email valide et mot de passe pas vide),
+	 * et si c'est le cas envoie la demande d'authentification au serveur. Récupère le cookie de connexion et affiche le profil si réussi,
+	 * ou affiche une éventuelle erreur.
 	 */
 	public void attemptLogin() {
-		// Reset errors.
 		_emailView.setError(null);
 		_passwordView.setError(null);
 
-		// Store values at the time of the login attempt.
 		String email = _emailView.getText().toString();
 		String password = _passwordView.getText().toString();
 
-		View focusView = null;
-
-		((TextView)findViewById(R.id.error)).setText("");
-
-		// Show a progress spinner
-		showProgress(true);
-
-		try {
-			JSONObject obj = new JSONObject();
-			obj.put("name", email);
-			obj.put("password", password);
-
-			Network.getInstance().sendPostRequest("http://" + Network.getHost() + "/android/login", obj, new Response.Listener<JSONObject>() {
-				@Override
-				public void onResponse(JSONObject response) {
-					try {
-						JSONObject data = response.getJSONObject("data");
-						if(!data.getString("status").equals("OK")) {
-							LoginActivity.this.wrongCredentials();
-							return;
-						}
-						
-						String cookie = response.getJSONObject("headers").getString("Set-Cookie");
-						cookie = cookie.substring(0, cookie.indexOf(';'));
-						Log.w("Got cookie", cookie);
-						LoginActivity.this.loginSuccess();
-					}
-					catch(Exception e) {
-						LoginActivity.this.loginFailure(e.getMessage());
-					}
-				}
-			},
-			new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error) {
-					LoginActivity.this.loginFailure(error.toString());
-				}
-			});
+		// Vérification des identifiants
+		if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+			_emailView.setError(getString(R.string.error_invalid_email));
+			_emailView.requestFocus();
 		}
-		// Si le JSONObject.put a échoué, que faire à part pleurer ?
-		catch(JSONException e) {
+		else if(password.isEmpty()) {
+			_passwordView.setError(getString(R.string.error_field_required));
+			_passwordView.requestFocus();
+		}
+		else {
+			// On envoie les infos au serveur
+			this.showProgress(true);
 
+			try {
+				JSONObject obj = new JSONObject();
+				obj.put("name", email);
+				obj.put("password", password);
+
+				Network.getInstance().sendPostRequest("http://" + Network.getHost() + "/android/login", obj, new Response.Listener<JSONObject>() {
+							@Override
+							public void onResponse(JSONObject response) {
+								try {
+									JSONObject data = response.getJSONObject("data");
+									if (!data.getString("status").equals("OK")) {
+										LoginActivity.this.wrongCredentials();
+										return;
+									}
+
+									String cookie = response.getJSONObject("headers").getString("Set-Cookie");
+									cookie = cookie.substring(0, cookie.indexOf(';'));
+									Log.w("Got cookie", cookie);
+									LoginActivity.this.loginSuccess();
+								} catch (Exception e) {
+									LoginActivity.this.loginError(e.getMessage());
+								}
+							}
+						},
+						new Response.ErrorListener() {
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								LoginActivity.this.loginError(error.toString());
+							}
+						});
+			}
+			// Si le JSONObject.put a échoué, que faire à part pleurer ?
+			catch (JSONException e) { }
 		}
 	}
 
+	/**
+	 * Affiche le profil de l'utilisateur.
+	 */
 	public void loginSuccess() {
 		Intent intent = new Intent(this, Settings.class);
 		startActivity(intent);
 		this.showProgress(false);
 	}
 
+	/**
+	 * Affiche à l'utilisateur que le mot de passe est invalide.
+	 */
 	public void wrongCredentials() {
 		this.showProgress(false);
 		_passwordView.setError("Identifiants invalides");
 	}
 
-	public void loginFailure(String message) {
+	/**
+	 * Une erreur inatendue est survenue, on l'affiche à l'utilisateur.
+	 * @param message Le message d'erreur
+	 */
+	public void loginError(String message) {
 		MyApplication.presentError(this, "Une erreur inattendue est survenue :" + message);
 		this.showProgress(false);
 	}
 
 	/**
-	 * Shows the progress UI and hides the login form.
+	 * Affiche ou masque un indicateur de progression en fonction de la valeur du paramètre.
+	 * @param show Si true, alors affiche la progression, sinon elle est masquée et l'interface réapparait
 	 */
 	public void showProgress(final boolean show) {
-		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations. If available, use these APIs to fade-in
-		// the progress spinner.
 		int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
 		_loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);

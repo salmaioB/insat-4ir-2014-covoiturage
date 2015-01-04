@@ -31,14 +31,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <AutoCompleteTextView
-                android:id="@+id/email"
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:singleLine="true"/>
+                android:ems="10"
+                android:id="@+id/email"
+                android:hint="@string/prompt_email"/>
 
             <EditText
                 android:id="@+id/password"
@@ -61,12 +60,18 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold"/>
 
-            <TextView
+            <Space
+                android:layout_width="200dp"
+                android:layout_height="160dp"
+                />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Large Text"
-                android:id="@+id/error"/>
+                android:text="New Button"
+                android:id="@+id/button2"
+                android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
     </ScrollView>
