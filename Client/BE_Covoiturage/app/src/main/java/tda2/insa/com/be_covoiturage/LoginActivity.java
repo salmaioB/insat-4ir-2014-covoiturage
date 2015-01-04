@@ -1,7 +1,5 @@
 package tda2.insa.com.be_covoiturage;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 
@@ -11,7 +9,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,17 +21,17 @@ import com.android.volley.*;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity {
-	// UI references.
+public class LoginActivity extends ProgressActivity {
+	public final static int LOGIN_EMAIL = 0;
+	public final static String LOGIN_EMAIL_IDENTIFIER = "LOGIN_EMAIL";
+
 	private EditText _emailView;
 	private EditText _passwordView;
-	private View _progressView;
-	private View _loginFormView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
+		this.setContentView(R.layout.activity_login);
 
 		// On initialise les variables se référant aux éléments de l'UI
 		_emailView = (EditText)findViewById(R.id.email);
@@ -53,16 +50,22 @@ public class LoginActivity extends Activity {
 		});
 
 		// Association du clic sur le bouton valider à la fonction attemptLogin()
-		Button emailSignInButton = (Button)findViewById(R.id.email_sign_in_button);
-		emailSignInButton.setOnClickListener(new OnClickListener() {
+		Button signInButton = (Button)findViewById(R.id.sign_in_button);
+		signInButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				attemptLogin();
 			}
 		});
 
-		_loginFormView = findViewById(R.id.login_form);
-		_progressView = findViewById(R.id.login_progress);
+		// Association du clic sur le bouton créer compte à la fonction createAccount()
+		Button createAccountButton = (Button)findViewById(R.id.create_account_button);
+		createAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				createAccount();
+			}
+		});
 
 		// TODO: supprimer ça pour le déploiement :D
 		_emailView.setText("testuser@testmb.net");
@@ -70,11 +73,21 @@ public class LoginActivity extends Activity {
 	}
 
 	/**
+	 * Appelé quand on appuie sur le bouton de création de compte.
+	 * Demande à l'utilisateur de remplir le formulaire, et si la démarche parvient à son terme,
+	 * l'utilisateut revient ici et n'a plus qu'à rentrer son nouveau mot de passe et se connecter.
+	 */
+	private void createAccount() {
+		Intent intent = new Intent(this, CreateAccountActivity.class);
+		this.startActivityForResult(intent, LOGIN_EMAIL);
+	}
+
+	/**
 	 * Vérifie si les identifiants fournis par l'utilisateur sont valides (adresse email valide et mot de passe pas vide),
 	 * et si c'est le cas envoie la demande d'authentification au serveur. Récupère le cookie de connexion et affiche le profil si réussi,
 	 * ou affiche une éventuelle erreur.
 	 */
-	public void attemptLogin() {
+	private void attemptLogin() {
 		_emailView.setError(null);
 		_passwordView.setError(null);
 
@@ -133,7 +146,7 @@ public class LoginActivity extends Activity {
 	/**
 	 * Affiche le profil de l'utilisateur.
 	 */
-	public void loginSuccess() {
+	private void loginSuccess() {
 		Intent intent = new Intent(this, Settings.class);
 		startActivity(intent);
 		this.showProgress(false);
@@ -142,7 +155,7 @@ public class LoginActivity extends Activity {
 	/**
 	 * Affiche à l'utilisateur que le mot de passe est invalide.
 	 */
-	public void wrongCredentials() {
+	private void wrongCredentials() {
 		this.showProgress(false);
 		_passwordView.setError("Identifiants invalides");
 	}
@@ -151,35 +164,26 @@ public class LoginActivity extends Activity {
 	 * Une erreur inatendue est survenue, on l'affiche à l'utilisateur.
 	 * @param message Le message d'erreur
 	 */
-	public void loginError(String message) {
+	private void loginError(String message) {
 		MyApplication.presentError(this, "Une erreur inattendue est survenue :" + message);
 		this.showProgress(false);
 	}
 
-	/**
-	 * Affiche ou masque un indicateur de progression en fonction de la valeur du paramètre.
-	 * @param show Si true, alors affiche la progression, sinon elle est masquée et l'interface réapparait
-	 */
-	public void showProgress(final boolean show) {
-		int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-		_loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-		_loginFormView.animate().setDuration(shortAnimTime).alpha(
-				show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				_loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode) {
+			case(LOGIN_EMAIL) : {
+				if(resultCode == Activity.RESULT_OK) {
+					String text = data.getStringExtra(LOGIN_EMAIL_IDENTIFIER);
+					_emailView.setError(null);
+					_passwordView.setError(null);
+					_passwordView.requestFocus();
+					_emailView.setText(text);
+				}
+				break;
 			}
-		});
-
-		_progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-		_progressView.animate().setDuration(shortAnimTime).alpha(
-				show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				_progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-			}
-		});
+		}
 	}
 
 	/*@Override

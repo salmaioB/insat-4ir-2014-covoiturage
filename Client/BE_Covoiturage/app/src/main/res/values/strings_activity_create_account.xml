@@ -1,0 +1,19 @@
+<resources>
+    <!-- Strings related to login -->
+    <string name="title">Veuillez entrer les informations associées à votre compte :</string>
+
+    <string name="email_prompt">Entrez votre adresse email :</string>
+    <string name="email_hint">Email</string>
+
+    <string name="password_hint">Mot de passe</string>
+    <string name="password_prompt">Choisissez un mot de passe :</string>
+    <string name="password_confirm_prompt">Confirmez votre mot de passe :</string>
+
+    <string name="name_prompt">Entrez votre prénom et votre nom :</string>
+    <string name="first_name_hint">Prénom</string>
+    <string name="last_name_hint">Nom</string>
+    <string name="create_account_button">Créer le compte</string>
+    <string name="error_create_account_unknown">Le compte n\'a pu être créé pour une raison inconnue. Veuillez réessayer plus tard.</string>
+    <string name="pass_too_short">Mot de passe trop court, veuillez en choisir un plus long</string>
+    <string name="passwords_differ">Les mots de passe ne sont pas identiques</string>
+</resources>

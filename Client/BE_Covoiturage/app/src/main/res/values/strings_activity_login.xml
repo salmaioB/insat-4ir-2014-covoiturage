@@ -7,7 +7,4 @@
     <string name="action_sign_in_short">Se connecter</string>
 
     <string name="action_create_account">Créer un compte</string>
-
-    <string name="error_invalid_email">Veuillez rentrer une adresse email valide</string>
-    <string name="error_field_required">Ce champ est requis</string>
 </resources>
