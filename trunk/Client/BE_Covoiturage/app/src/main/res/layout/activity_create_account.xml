@@ -1,17 +1,123 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="tda2.insa.com.be_covoiturage.CreateAccountActivity">
+                tools:context="tda2.insa.com.be_covoiturage.CreateAccountActivity"
+                android:id="@+id/create_account_layout">
 
     <TextView
-        android:text="@string/hello_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/test"/>
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/title"
+        android:textAlignment="gravity"
+        android:singleLine="false"/>
 
-</RelativeLayout>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/email_prompt"
+        android:id="@+id/textView3"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/email"
+        android:hint="@string/email_hint"/>
+
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="30px"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password_prompt"
+        android:id="@+id/textView4"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/password"
+        android:hint="@string/password_hint"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password_confirm_prompt"
+        android:id="@+id/textView5"/>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/confirm_password"
+        android:hint="@string/password_hint"
+        />
+
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="60px"
+        android:id="@+id/space1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name_prompt"
+        android:id="@+id/textView2"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/first_name"
+            android:layout_weight="0.5"
+            android:hint="@string/first_name_hint"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/last_name"
+            android:layout_weight="0.5"
+            android:hint="@string/last_name_hint"/>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="200px"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_account_button"
+        android:id="@+id/button_create_account"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

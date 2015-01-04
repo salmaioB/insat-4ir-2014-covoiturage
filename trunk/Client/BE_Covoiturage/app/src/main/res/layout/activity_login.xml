@@ -11,13 +11,6 @@
               tools:context=".LoginActivity">
 
     <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
 
     <ScrollView
         android:id="@+id/login_form"
@@ -52,7 +45,7 @@
                 android:singleLine="true"/>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,11 +59,11 @@
                 />
 
             <Button
-                style="?android:attr/buttonStyleSmall"
+                style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button2"
+                android:text="@string/action_create_account"
+                android:id="@+id/create_account_button"
                 android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
