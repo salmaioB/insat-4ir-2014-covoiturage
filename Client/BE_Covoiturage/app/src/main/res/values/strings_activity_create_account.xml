@@ -16,4 +16,5 @@
     <string name="error_create_account_unknown">Le compte n\'a pu être créé pour une raison inconnue. Veuillez réessayer plus tard.</string>
     <string name="pass_too_short">Mot de passe trop court, veuillez en choisir un plus long</string>
     <string name="passwords_differ">Les mots de passe ne sont pas identiques</string>
+    <string name="driver">Je suis conducteur</string>
 </resources>

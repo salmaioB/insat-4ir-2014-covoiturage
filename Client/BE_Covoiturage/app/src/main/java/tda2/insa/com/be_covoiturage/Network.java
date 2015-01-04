@@ -17,6 +17,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by remi on 15/12/14.
@@ -26,15 +28,24 @@ public class Network {
 	private static Network _instance;
 
 	public static String getHost() {
-		return "felix-host.ddns.net:80";
+		return "felix-host.ddns.net:" + getPort();
 	}
 
 	public static int getPort() {
-		return 443;
+		return 80;
+	}
+
+	public static String getHostAndProtocol() {
+		return "http://" + getHost();
+	}
+
+	public static String pathToRequest(String request) {
+		return Network.getHostAndProtocol() + "/android/" + request;
 	}
 
 	private Network() {
 		_queue = Volley.newRequestQueue(MyApplication.getAppContext());
+		this.allowAllSSL();
 	}
 
 	public static Network getInstance() {
@@ -42,26 +53,6 @@ public class Network {
 			_instance = new Network();
 		}
 		return _instance;
-	}
-
-	public void sendGetRequest(String url) {
-		// Request a string response from the provided URL.
-		StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-				new Response.Listener<String>() {
-					@Override
-					public void onResponse(String response) {
-						// Display the first 500 characters of the response string.
-						//mTextView.setText("Response is: " + response.substring(0, 500));
-					}
-				},
-				new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						//mTextView.setText("That didn't work!");
-					}
-		});
-		// Add the request to the RequestQueue.
-		_queue.add(stringRequest);
 	}
 
 	public static Response.Listener<JSONObject> getDefaultListener() {
@@ -82,17 +73,15 @@ public class Network {
 		};
 	}
 
-	public void sendPostRequest(String url, JSONObject body) {
-		this.sendPostRequest(url, body, Network.getDefaultListener(), Network.getDefaultErrorListener());
-	}
-
-	public void sendPostRequest(String url, JSONObject body, Response.Listener<JSONObject> listener) {
-		this.sendPostRequest(url, body, listener, Network.getDefaultErrorListener());
-	}
-
 	public void sendPostRequest(String url, JSONObject body, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-		allowAllSSL();
-		Log.w("Sending request to " + url, body.toString());
+		if(listener == null) {
+			listener = Network.getDefaultListener();
+		}
+		if(errorListener == null) {
+			errorListener = Network.getDefaultErrorListener();
+		}
+
+		Log.w("Sending request", "to " + url + ", payload " + body.toString());
 		// Request a string response from the provided URL.
 		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body,
 				listener,
@@ -102,9 +91,37 @@ public class Network {
 		_queue.add(request);
 	}
 
+	public void sendAuthenticatedPostRequest(String url, final AuthToken token, JSONObject body, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+		if(listener == null) {
+			listener = Network.getDefaultListener();
+		}
+		if(errorListener == null) {
+			errorListener = Network.getDefaultErrorListener();
+		}
+
+		Log.w("Sending authenticated request", "to " + url + ", payload " + body.toString());
+		// Request a string response from the provided URL.
+		final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body,
+				listener,
+				errorListener) {
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				Map<String, String>  params = new HashMap<String, String>();
+				params.put("Cookie", token.getToken());
+
+				return params;
+			}
+		};
+
+		// Add the request to the RequestQueue.
+		_queue.add(request);
+	}
+
+
+
 	private static TrustManager[] trustManagers;
 
-	public static class _FakeX509TrustManager implements
+	private static class _FakeX509TrustManager implements
 			javax.net.ssl.X509TrustManager {
 		private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[] {};
 
@@ -129,7 +146,7 @@ public class Network {
 		}
 	}
 
-	public static void allowAllSSL() {
+	private void allowAllSSL() {
 
 		javax.net.ssl.HttpsURLConnection
 				.setDefaultHostnameVerifier(new HostnameVerifier() {

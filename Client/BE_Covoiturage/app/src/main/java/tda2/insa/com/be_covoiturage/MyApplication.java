@@ -14,17 +14,21 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 public class MyApplication extends Application {
-
-	private static Context context;
+	private static MyApplication _instance;
 
 	public void onCreate(){
 		super.onCreate();
-		MyApplication.context = getApplicationContext();
+		_instance = this;
+	}
+
+	public static MyApplication getInstance() {
+		return _instance;
 	}
 
 	public static Context getAppContext() {
-		return MyApplication.context;
+		return _instance.getApplicationContext();
 	}
+
 
 	public static void presentError(Activity activity, String message) {
 		MyApplication.ErrorDialogFragment f = MyApplication.ErrorDialogFragment.newInstance(message);
