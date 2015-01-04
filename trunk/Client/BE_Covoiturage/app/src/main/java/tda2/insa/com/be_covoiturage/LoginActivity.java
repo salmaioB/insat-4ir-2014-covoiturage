@@ -24,6 +24,7 @@ import com.android.volley.*;
 public class LoginActivity extends ProgressActivity {
 	public final static int LOGIN_EMAIL = 0;
 	public final static String LOGIN_EMAIL_IDENTIFIER = "LOGIN_EMAIL";
+	public final static String AUTH_TOKEN = "AUTH_TOKEN";
 
 	private EditText _emailView;
 	private EditText _passwordView;
@@ -91,8 +92,8 @@ public class LoginActivity extends ProgressActivity {
 		_emailView.setError(null);
 		_passwordView.setError(null);
 
-		String email = _emailView.getText().toString();
-		String password = _passwordView.getText().toString();
+		final String email = _emailView.getText().toString();
+		final String password = _passwordView.getText().toString();
 
 		// Vérification des identifiants
 		if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -112,7 +113,7 @@ public class LoginActivity extends ProgressActivity {
 				obj.put("name", email);
 				obj.put("password", password);
 
-				Network.getInstance().sendPostRequest("http://" + Network.getHost() + "/android/login", obj, new Response.Listener<JSONObject>() {
+				Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
 								try {
@@ -124,8 +125,8 @@ public class LoginActivity extends ProgressActivity {
 
 									String cookie = response.getJSONObject("headers").getString("Set-Cookie");
 									cookie = cookie.substring(0, cookie.indexOf(';'));
-									Log.w("Got cookie", cookie);
-									LoginActivity.this.loginSuccess();
+
+									LoginActivity.this.loginSuccess(new AuthToken(email, cookie));
 								} catch (Exception e) {
 									LoginActivity.this.loginError(e.getMessage());
 								}
@@ -146,8 +147,9 @@ public class LoginActivity extends ProgressActivity {
 	/**
 	 * Affiche le profil de l'utilisateur.
 	 */
-	private void loginSuccess() {
-		Intent intent = new Intent(this, Settings.class);
+	private void loginSuccess(AuthToken authToken) {
+		Intent intent = new Intent(this, ProfileViewActivity.class);
+		intent.putExtra(AUTH_TOKEN, authToken);
 		startActivity(intent);
 		this.showProgress(false);
 	}

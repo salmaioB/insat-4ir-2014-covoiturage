@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.android.volley.Response;
@@ -24,6 +25,7 @@ public class CreateAccountActivity extends ProgressActivity {
 	private EditText _passwordConfirmView;
 	private EditText _firstNameView;
 	private EditText _lastNameView;
+	private CheckBox _driver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,8 @@ public class CreateAccountActivity extends ProgressActivity {
 		_passwordConfirmView = (EditText)findViewById(R.id.confirm_password);
 		_firstNameView = (EditText)findViewById(R.id.first_name);
 		_lastNameView = (EditText)findViewById(R.id.last_name);
+
+		_driver = (CheckBox)findViewById(R.id.driver);
 
 		Button createAccount = (Button)findViewById(R.id.button_create_account);
 		createAccount.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +115,7 @@ public class CreateAccountActivity extends ProgressActivity {
 		String passConfirm = _passwordConfirmView.getText().toString();
 		String firstName = _firstNameView.getText().toString();
 		String lastName = _lastNameView.getText().toString();
+		boolean driver = _driver.isChecked();
 
 		if(validateForm(email, pass, passConfirm, firstName, lastName)) {
 			// On envoie les infos au serveur
@@ -123,10 +128,9 @@ public class CreateAccountActivity extends ProgressActivity {
 				obj.put("password", pass);
 				obj.put("firstName", firstName);
 				obj.put("lastName", lastName);
-				// TODO: driver
-				obj.put("driver", false);
+				obj.put("driver", driver);
 
-				Network.getInstance().sendPostRequest("http://" + Network.getHost() + "/android/createAccount", obj, new Response.Listener<JSONObject>() {
+				Network.getInstance().sendPostRequest(Network.pathToRequest("createAccount"), obj, new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
 								try {
