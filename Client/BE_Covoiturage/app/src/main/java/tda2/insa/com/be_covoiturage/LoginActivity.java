@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -52,10 +54,10 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 	//private UserLoginTask mAuthTask = null;
 
 	// UI references.
-	private AutoCompleteTextView mEmailView;
-	private EditText mPasswordView;
-	private View mProgressView;
-	private View mLoginFormView;
+	private AutoCompleteTextView _emailView;
+	private EditText _passwordView;
+	private View _progressView;
+	private View _loginFormView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +65,11 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
-		mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+		_emailView = (AutoCompleteTextView) findViewById(R.id.email);
 		populateAutoComplete();
 
-		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+		_passwordView = (EditText) findViewById(R.id.password);
+		_passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
 				if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -86,11 +88,12 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 			}
 		});
 
-		mLoginFormView = findViewById(R.id.login_form);
-		mProgressView = findViewById(R.id.login_progress);
+		_loginFormView = findViewById(R.id.login_form);
+		_progressView = findViewById(R.id.login_progress);
 
-		mEmailView.setText("whatsthepassword");
-		mPasswordView.setText("password");
+		// TODO: supprimer ça pour le déploiement :D
+		_emailView.setText("testuser@testmb.net");
+		_passwordView.setText("password");
 	}
 
 	private void populateAutoComplete() {
@@ -104,66 +107,72 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 	 * errors are presented and no actual login attempt is made.
 	 */
 	public void attemptLogin() {
-		/*if (mAuthTask != null) {
-			return;
-		}*/
-
 		// Reset errors.
-		mEmailView.setError(null);
-		mPasswordView.setError(null);
+		_emailView.setError(null);
+		_passwordView.setError(null);
 
 		// Store values at the time of the login attempt.
-		String email = mEmailView.getText().toString();
-		String password = mPasswordView.getText().toString();
+		String email = _emailView.getText().toString();
+		String password = _passwordView.getText().toString();
 
-		boolean cancel = false;
 		View focusView = null;
 
 		((TextView)findViewById(R.id.error)).setText("");
-		if (cancel) {
-			// There was an error; don't attempt login and focus the first
-			// form field with an error.
-			focusView.requestFocus();
-		} else {
-			// Show a progress spinner, and kick off a background task to
-			// perform the user login attempt.
-			showProgress(true);
-			try {
-				JSONObject obj = new JSONObject();
-				obj.put("name", email);
-				obj.put("password", password);
 
-				Network.getInstance().sendPostRequest("http://" + Network.getHost() + "/android/login", obj, new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
+		// Show a progress spinner
+		showProgress(true);
+
+		try {
+			JSONObject obj = new JSONObject();
+			obj.put("name", email);
+			obj.put("password", password);
+
+			Network.getInstance().sendPostRequest("http://" + Network.getHost() + "/android/login", obj, new Response.Listener<JSONObject>() {
+				@Override
+				public void onResponse(JSONObject response) {
+					try {
+						JSONObject data = response.getJSONObject("data");
+						if(!data.getString("status").equals("OK")) {
+							LoginActivity.this.wrongCredentials();
+							return;
+						}
+						String cookie = response.getJSONObject("headers").getString("Set-Cookie");
+						cookie = cookie.substring(0, cookie.indexOf(';'));
+						Log.w("Got cookie", cookie);
 						LoginActivity.this.loginSuccess();
 					}
-				},
-				new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						LoginActivity.this.loginFailure(error.toString());
-						//LoginActivity.this.loginSuccess();
+					catch(Exception e) {
+						LoginActivity.this.loginFailure(e.getMessage());
 					}
-				});
-			}
-			catch(Exception e) {
+				}
+			},
+			new Response.ErrorListener() {
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					LoginActivity.this.loginFailure(error.toString());
+				}
+			});
+		}
+		// Si le JSONObject.put a échoué, que faire à part pleurer ?
+		catch(JSONException e) {
 
-			}
-			//mAuthTask = new UserLoginTask(email, password);
-			//mAuthTask.execute((Void) null);
 		}
 	}
 
 	public void loginSuccess() {
-		this.showProgress(false);
 		Intent intent = new Intent(this, Settings.class);
 		startActivity(intent);
+		this.showProgress(false);
 	}
 
-	public void loginFailure(String error) {
+	public void wrongCredentials() {
 		this.showProgress(false);
-		((TextView)findViewById(R.id.error)).setText(error);
+		_passwordView.setError("Identifiants invalides");
+	}
+
+	public void loginFailure(String message) {
+		MyApplication.presentError(this, "Une erreur inattendue est survenue :" + message);
+		this.showProgress(false);
 	}
 
 	/**
@@ -175,21 +184,21 @@ public class LoginActivity extends Activity/* implements LoaderCallbacks<Cursor>
 		// the progress spinner.
 		int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-		mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-		mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+		_loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+		_loginFormView.animate().setDuration(shortAnimTime).alpha(
 				show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+				_loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 			}
 		});
 
-		mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-		mProgressView.animate().setDuration(shortAnimTime).alpha(
+		_progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+		_progressView.animate().setDuration(shortAnimTime).alpha(
 				show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+				_progressView.setVisibility(show ? View.VISIBLE : View.GONE);
 			}
 		});
 	}

@@ -44,6 +44,12 @@ public class StringRequest extends Request<String> {
         mListener = listener;
     }
 
+	public StringRequest(int method, String url, String body, Listener<String> listener,
+	                     ErrorListener errorListener) {
+		super(method, url, errorListener);
+		mListener = listener;
+	}
+
     /**
      * Creates a new GET request.
      *
