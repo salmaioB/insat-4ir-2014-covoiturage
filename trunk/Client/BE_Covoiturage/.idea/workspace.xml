@@ -63,13 +63,13 @@
       <file leaf-file-name="LoginActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/tda2/insa/com/be_covoiturage/LoginActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.64144146" vertical-offset="1159" max-vertical-offset="4170">
-              <caret line="142" column="21" selection-start-line="142" selection-start-column="21" selection-end-line="142" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.53333336" vertical-offset="1159" max-vertical-offset="4185">
+              <caret line="138" column="24" selection-start-line="138" selection-start-column="24" selection-end-line="138" selection-end-column="24" />
               <folding>
-                <element signature="e#3793#4401#0" expanded="true" />
-                <element signature="e#4395#4396#0" expanded="true" />
-                <element signature="e#4406#4570#0" expanded="true" />
-                <element signature="e#4564#4565#0" expanded="true" />
+                <element signature="e#3793#4408#0" expanded="true" />
+                <element signature="e#4402#4403#0" expanded="true" />
+                <element signature="e#4413#4577#0" expanded="true" />
+                <element signature="e#4571#4572#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1158,8 +1158,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/tda2/insa/com/be_covoiturage/MyApplication.java" />
         <option value="$PROJECT_DIR$/volley/src/main/java/com/android/volley/toolbox/StringRequest.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tda2/insa/com/be_covoiturage/Network.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/tda2/insa/com/be_covoiturage/LoginActivity.java" />
         <option value="$PROJECT_DIR$/volley/src/main/java/com/android/volley/toolbox/JsonObjectRequest.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/tda2/insa/com/be_covoiturage/LoginActivity.java" />
       </list>
     </option>
   </component>
@@ -1650,10 +1650,10 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1590" max-vertical-offset="4215">
           <caret line="141" column="16" selection-start-line="141" selection-start-column="16" selection-end-line="141" selection-end-column="16" />
           <folding>
-            <element signature="e#3793#4401#0" expanded="true" />
-            <element signature="e#4395#4396#0" expanded="true" />
-            <element signature="e#4406#4570#0" expanded="true" />
-            <element signature="e#4564#4565#0" expanded="true" />
+            <element signature="e#3793#4408#0" expanded="true" />
+            <element signature="e#4402#4403#0" expanded="true" />
+            <element signature="e#4413#4577#0" expanded="true" />
+            <element signature="e#4571#4572#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1712,10 +1712,10 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1590" max-vertical-offset="4215">
           <caret line="141" column="16" selection-start-line="141" selection-start-column="16" selection-end-line="141" selection-end-column="16" />
           <folding>
-            <element signature="e#3793#4401#0" expanded="true" />
-            <element signature="e#4395#4396#0" expanded="true" />
-            <element signature="e#4406#4570#0" expanded="true" />
-            <element signature="e#4564#4565#0" expanded="true" />
+            <element signature="e#3793#4408#0" expanded="true" />
+            <element signature="e#4402#4403#0" expanded="true" />
+            <element signature="e#4413#4577#0" expanded="true" />
+            <element signature="e#4571#4572#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1774,10 +1774,10 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1560" max-vertical-offset="4275">
           <caret line="144" column="35" selection-start-line="144" selection-start-column="35" selection-end-line="144" selection-end-column="35" />
           <folding>
-            <element signature="e#3793#4401#0" expanded="true" />
-            <element signature="e#4395#4396#0" expanded="true" />
-            <element signature="e#4406#4570#0" expanded="true" />
-            <element signature="e#4564#4565#0" expanded="true" />
+            <element signature="e#3793#4408#0" expanded="true" />
+            <element signature="e#4402#4403#0" expanded="true" />
+            <element signature="e#4413#4577#0" expanded="true" />
+            <element signature="e#4571#4572#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2038,13 +2038,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/tda2/insa/com/be_covoiturage/LoginActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.64144146" vertical-offset="1159" max-vertical-offset="4170">
-          <caret line="142" column="21" selection-start-line="142" selection-start-column="21" selection-end-line="142" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.53333336" vertical-offset="1159" max-vertical-offset="4185">
+          <caret line="138" column="24" selection-start-line="138" selection-start-column="24" selection-end-line="138" selection-end-column="24" />
           <folding>
-            <element signature="e#3793#4401#0" expanded="true" />
-            <element signature="e#4395#4396#0" expanded="true" />
-            <element signature="e#4406#4570#0" expanded="true" />
-            <element signature="e#4564#4565#0" expanded="true" />
+            <element signature="e#3793#4408#0" expanded="true" />
+            <element signature="e#4402#4403#0" expanded="true" />
+            <element signature="e#4413#4577#0" expanded="true" />
+            <element signature="e#4571#4572#0" expanded="true" />
           </folding>
         </state>
       </provider>
