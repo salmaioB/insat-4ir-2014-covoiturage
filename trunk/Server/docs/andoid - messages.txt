@@ -125,7 +125,7 @@ Commandes:
                   être créé.
                   
          
-   /****** Nécessaitant une authentification ******/
+   /****** Nécessitant une authentification ******/
          
  - detailsAccount:
       Paramètres: 

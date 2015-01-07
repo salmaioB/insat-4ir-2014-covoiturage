@@ -6,15 +6,21 @@ package covoit;
 
 import java.sql.*;
 import covoit.sql.Conn;
+import java.util.ArrayList;
 
 /** User account, with their personal informations. */
-public class User
-{
+	public class User
+	{
+	public User() {
+		routes = new ArrayList<Route>();
+	}
+	
+	
    public static User load(String name) throws SQLException
    {
       User r = new User();
       
-      String q = "SELECT Password, FirstName, LastName, Driver "+
+      String q = "SELECT IdUser, Password, FirstName, LastName, Driver "+
                  "FROM user "+
                  "WHERE MailAddress = ?";
       PreparedStatement st = Conn.prepare(q);
@@ -29,10 +35,35 @@ public class User
       r.firstName = u.getString("FirstName");
       r.lastName = u.getString("LastName");
       r.driver = u.getString("Driver").equals("Y");
+	  int iduser = u.getInt("IdUser");  // getInt existe?
+	  
+	  u.close();
+	  
+	  q = "SELECT Day, GoHour, ReturnHour, CityName, ZIPCode, PlaceName, PlaceAddress "+
+                 "FROM user, route, city, place "+ 
+                 "WHERE user.IdCity = city.IdCity "+
+				 "AND user.IdPlace = place.IdPlace "+
+				 "AND user.IdUser = route.IdUser "+
+				 "AND user.IdUser = ?";
+      st = Conn.prepare(q);
+      st.setString(1, Integer.toString(iduser));
+      ResultSet routes = st.executeQuery();
       
-      
-      u.close();
+	  Route route = new Route();
+	  
+	  while (!routes.next())
+	  {
+		  route.setWeekday(routes.getString("Day"));
+		  route.setStartTime(routes.getTime("GoHour").getHours(), routes.getTime("GoHour").getMinutes());
+		  route.setEndTime(routes.getTime("ReturnHour").getHours(), routes.getTime("ReturnHour").getMinutes());
+		  route.setStart(routes.getString("CityName")+" "+routes.getString("ZIPCode"));
+		  route.setEnd(routes.getString("PlaceName")+" "+routes.getString("PlaceAddress"));
+		  r.getRoutes().add(route);
+	  }
+	  
+	  routes.close();
       st.close();
+      
       return r;
    }
    
@@ -63,10 +94,11 @@ public class User
    }
 
    /** base64(bcrypt([password])) */
-   public String getPassword()      {return passwd;}
-   public String getFirstName()     {return firstName;}
-   public String getLastName()      {return lastName;}
-   public boolean isDriver()        {return driver;}
+   public String getPassword()      	{return passwd;}
+   public String getFirstName()     	{return firstName;}
+   public String getLastName()      	{return lastName;}
+   public ArrayList<Route> getRoutes()	{return routes;}
+   public boolean isDriver()        	{return driver;}
    
 /******************************************************************************/
 
