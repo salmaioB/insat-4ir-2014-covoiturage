@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,8 +16,11 @@ import java.util.ArrayList;
  * Created by remi on 07/01/15.
  */
 public class RouteAdapter extends ArrayAdapter<Route> {
-	public RouteAdapter(Context context, ArrayList<Route> routes) {
+	int _width;
+
+	public RouteAdapter(Context context, ArrayList<Route> routes, int width) {
 		super(context, 0, routes);
+		_width = width;
 	}
 
 	private static View _view;
@@ -27,13 +31,13 @@ public class RouteAdapter extends ArrayAdapter<Route> {
 
 		if(convertView == null) {
 			convertView = ((LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.route_item, parent, false);
-			//((LinearLayout)convertView).addView(new com.google.android.gms.maps.MapFragment().getView());
-			//parent.
 		}
-        /* map is already there, just return view as it is  */
-		//}
-		TextView weekday = (TextView)convertView.findViewById(R.id.week_day);
-		weekday.setText(route.getWeekdayName() + " de " + route.getStartHour() + ":" + route.getStartMinute() + " à " + route.getEndHour() + ":" + route.getEndMinute());
+
+ 		TextView weekday = (TextView)convertView.findViewById(R.id.week_day);
+		weekday.setText(route.getWeekdayName() + " de " + route.getStartTime() + " à " + route.getEndTime());
+
+		route.setMapView((ImageView)convertView.findViewById(R.id.map_view), _width, 100);
+		route.updateStaticMap();
 
 		return convertView;
 	}
