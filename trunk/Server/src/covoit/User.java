@@ -1,6 +1,6 @@
 /******************************************************************************/
 /* server/src/covoit/User.java                                     2014-12-11 */
-/* Covoiturage Sopra - INSA Toulouse                             Félix Poisot */
+/* Covoiturage Sopra - INSA Toulouse                     Félix Julie Philippe */
 /******************************************************************************/
 package covoit;
 
@@ -14,40 +14,72 @@ import java.util.ArrayList;
 	public User() {
 		routes = new ArrayList<Route>();
 	}
-	
-	public static void updateFirstName(String name, String firstName) throws SQLException
+
+	// Mise à jour du prénom (Philippe : Ajout requête)
+	public static void updateFirstName(String mailAddr, String firstName) throws SQLException
 	{
-		String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
+		String q = "UPDATE user SET FirstName = ? WHERE MailAddress = ?;";
 		PreparedStatement st = Conn.prepare(q);
-		st.setString(1, name);
-		ResultSet id = st.executeQuery();
-		int iduser = id.getInt("IdUser");
-		id.close();
-		
-		
+		st.setString(1, firstName);
+		st.setString(2, mailAddr);
+		st.execute();
+		st.close();
 	}
 	
-	public static void updateLastName(String name, String lastName) throws SQLException
+	// Mise à jour du nom (Philippe : Ajout requête)
+	public static void updateLastName(String mailAddr, String lastName) throws SQLException
 	{
-		
+		String q = "UPDATE user SET LastName = ? WHERE MailAddress = ?;";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, lastName);
+		st.setString(2, mailAddr);
+		st.execute();
+		st.close();
 	}
 	
-	public static void updatePassword(String name, String password) throws SQLException
+	// Mise à jour du mot de passe (Philippe : Ajout requête)
+	public static void updatePassword(String mailAddr, String password) throws SQLException
 	{
-		
+		String q = "UPDATE user SET Password = ? WHERE MailAddress = ?;";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, password);
+		st.setString(2, mailAddr);
+		st.execute();
+		st.close();
 	}
 	
-	public static void updateDriver(String name, boolean driver) throws SQLException
+	// Mise à jour du conducteur (Philippe : Ajout requête)
+	public static void updateDriver(String mailAddr, boolean driver) throws SQLException
 	{
-		
+		String q = "UPDATE user SET Driver = ? WHERE MailAddress = ?;";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, (driver) ? ("Y") : ("N"));
+		st.setString(2, mailAddr);
+		st.execute();
+		st.close();
 	}
 	
-	public static void updateRoute(String name, Route route) throws SQLException
+	// Mise à jour de la route (Philippe : Ajout requête et différents traitements)
+	public static void updateRoute(String mailAddr, Route route) throws SQLException
 	{
+		//A faire !!!
+		//Mise à jour de la place si différente (on change l'ID, uniquement Admin peut modifier les 'places')
+		//Mise à jour du lieu de vie si différent (On crée si n'existe pas encore, sinon sélection d'un lieu existant)
+		//Mise à jour de la partie route (si le couple User/jour n'existe pas encore on ajoute toute la ligne, sinon on modifie les heures)
+		
+		/*String q = "UPDATE route SET Day = ?, GoHour = ?, EndHour = ? WHERE route.IdUser = (SELECT user.IdUser FROM user WHERE MailAddress = ?);";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, route.getWeekday());
+		st.setString(2, );
+		st.setString(3, );
+		st.setString(4, mailAddr);
+		st.execute();
+		st.close();*/
 		
 	}
 	
 	/** @param name adresse mail */
+	// Julie : Ajout requêtes et traitement
    public static User load(String name) throws SQLException
    {
       User r = new User();
