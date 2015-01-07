@@ -1,5 +1,8 @@
 package tda2.insa.com.be_covoiturage;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -12,62 +15,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 public class ProfileViewActivity extends ActionBarActivity {
-	User _user;
-
+	PlaceholderFragment _fragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile_view);
 		if (savedInstanceState == null) {
+			_fragment = new PlaceholderFragment();
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment())
+					.add(R.id.container, _fragment)
 					.commit();
 		}
-
-		this.loadProfile((AuthToken) (this.getIntent().getSerializableExtra(LoginActivity.AUTH_TOKEN)));
 	}
-
-	public void loadProfile(final AuthToken authToken) {
-		try {
-			JSONObject obj = new JSONObject();
-			obj.put("name", authToken.getEmail());
-
-			Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("detailsAccount"), authToken, obj, new Response.Listener<JSONObject>() {
-						@Override
-						public void onResponse(JSONObject response) {
-							try {
-								JSONObject data = response.getJSONObject("data");
-
-								_user = new User(authToken, data);
-							} catch (Exception e) {
-								MyApplication.presentError(ProfileViewActivity.this, "Exc: " + e.getMessage());
-							}
-						}
-					},
-					new Response.ErrorListener() {
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							MyApplication.presentError(ProfileViewActivity.this, "Err: " + error.toString());
-						}
-					});
-		}
-		// Si le JSONObject.put a échoué, que faire à part pleurer ?
-		catch (JSONException e) { }
-
-		if(_user == null) {
-			this.logout();
-		}
-	}
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,44 +60,187 @@ public class ProfileViewActivity extends ActionBarActivity {
 		int id = item.getItemId();
 
 		if(id == R.id.action_change_profile) {
-			this.changeProfile();
+			_fragment.editIdentity();
 			return false;
 		}
 		else if(id == R.id.action_logout) {
-			this.logout();
+			_fragment.logout();
 			return false;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
-	void changeProfile() {
-
-	}
-
-	void logout() {
-		if(_user != null) {
-			Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("logout"), _user.getAuthToken(), new JSONObject(), null, null);
-		}
-
-		this.finish();
-
-		Intent i = new Intent(this, LoginActivity.class);
-		this.startActivity(i);
-	}
-
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
+		private User _user;
 
-		public PlaceholderFragment() {
-		}
+		private boolean _canUseMaps;
+		private ListView _infosList;
+		private ListView _routesList;
+		private ArrayAdapter<String> _infos;
+		private RouteAdapter _routes;
+
+		public PlaceholderFragment() {}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_profile_view, container, false);
+
+			Button addRoute = (Button)rootView.findViewById(R.id.add_route);
+			addRoute.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					PlaceholderFragment.this.addRoute();
+				}
+			});
+
+
+			_infosList = (ListView)rootView.findViewById(R.id.profile_infos);
+			_infosList.setClickable(true);
+
+			_routesList = (ListView)rootView.findViewById(R.id.profile_routes);
+
+			String[] values = new String[] {"Identité", "Notifications"};
+
+			_infos = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, values);
+			_infosList.setAdapter(_infos);
+
+			_infosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+					if(position == 0) {
+						PlaceholderFragment.this.editIdentity();
+					}
+					else if(position == 1) {
+						PlaceholderFragment.this.editNotifications();
+					}
+				}
+
+			});
+
+			this.loadProfile((AuthToken) (this.getActivity().getIntent().getSerializableExtra(LoginActivity.AUTH_TOKEN)));
+
 			return rootView;
+		}
+
+		@Override
+		public void onResume() {
+			super.onResume();
+
+			int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getActivity());
+			if(status != ConnectionResult.SUCCESS) {
+				if(GooglePlayServicesUtil.isUserRecoverableError(status)) {
+					Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this.getActivity(), 0);
+					dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialogInterface) {
+							_canUseMaps = false;
+						}
+					});
+					dialog.show();
+				}
+				else {
+					_canUseMaps = false;
+				}
+			}
+			else {
+				_canUseMaps = true;
+			}
+
+			Log.e("canUseMaps", Boolean.toString(_canUseMaps));
+		}
+
+		public void loadProfile(final AuthToken authToken) {
+			try {
+				JSONObject obj = new JSONObject();
+				obj.put("name", authToken.getEmail());
+
+				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("detailsAccount"), authToken, obj, new Response.Listener<JSONObject>() {
+							@Override
+							public void onResponse(JSONObject response) {
+								try {
+									JSONObject data = response.getJSONObject("data");
+
+									_user = new User(authToken, data);
+									PlaceholderFragment.this.onProfileLoaded();
+								} catch (Exception e) {
+									PlaceholderFragment.this.loadFailed(e.getMessage());
+								}
+							}
+						},
+						new Response.ErrorListener() {
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								PlaceholderFragment.this.loadFailed(error.toString());
+							}
+						});
+			}
+			// Si le JSONObject.put a échoué, que faire à part pleurer ?
+			catch (JSONException e) { }
+		}
+
+		private void loadFailed(String message) {
+			MyApplication.presentError(this.getActivity(), "Err: " + message, new DialogInterface.OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					PlaceholderFragment.this.logout();
+				}
+			});
+		}
+
+		public User getUser() {
+			return _user;
+		}
+
+		private void logout() {
+			if(_user != null) {
+				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("logout"), _user.getAuthToken(), new JSONObject(), null, null);
+			}
+
+			this.getActivity().finish();
+
+			Intent i = new Intent(this.getActivity(), LoginActivity.class);
+			this.startActivity(i);
+		}
+
+		public void onProfileLoaded() {
+			_routes = new RouteAdapter(this.getActivity(), _user.getRoutes());
+			_routesList.setAdapter(_routes);
+
+			_routesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+					PlaceholderFragment.this.editRoute(position);
+				}
+
+			});
+		}
+
+		public void editIdentity() {
+			Log.e("edit", "Identity");
+		}
+
+		public void editNotifications() {
+			Log.e("edit", "Notifications");
+		}
+
+		public void editRoute(int index) {
+			Log.e("edit route", Integer.toString(index));
+			//convertView = ((LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.route_item, parent, false);
+			//Fragment fragment = new PlaceholderFragment();
+			//this.getActivity().getSupportFragmentManager().beginTransaction()
+			//		.add(R.id.container, fragment)
+			//		.commit();
+		}
+
+		public void addRoute() {
+			Route newRoute = new Route();
+
+			_user.getRoutes().add(newRoute);
+			_routes.notifyDataSetChanged();
 		}
 	}
 }
