@@ -5,6 +5,8 @@
 
 package covoit;
 
+import javax.json.*;
+
 public class Route {
 	private String _start;
 	private String _end;
@@ -23,6 +25,18 @@ public class Route {
 		_endMinute = 0;
 
 		_weekday = Weekday.Monday;
+	}
+	
+	public Route (JsonObject o){
+		try {
+			_start = o.getString("start");
+			_end = o.getString("end");
+			_startHour = o.getInt("startHour");
+			_startMinute = o.getInt("startMinute");
+			_endHour = o.getInt("endHour");
+			_endMinute = o.getInt("endMinute");
+		} catch (JSONException e) {};
+		
 	}
 
 	public String getStart() {
