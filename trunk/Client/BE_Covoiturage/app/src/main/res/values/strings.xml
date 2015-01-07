@@ -11,6 +11,13 @@
 
     <string name="action_change_profile">Modifier le profil</string>
     <string name="action_logout">Déconnexion</string>
+    <string name="remove_route">Supprimer le trajet</string>
+    <string name="monday">Lundi</string>
+    <string name="tuesday">Mardi</string>
+    <string name="wednesday">Mercredi</string>
+    <string name="thursday">Jeudi</string>
+    <string name="friday">Vendredi</string>
+    <string name="saturday">Samedi</string>
 
 
 </resources>

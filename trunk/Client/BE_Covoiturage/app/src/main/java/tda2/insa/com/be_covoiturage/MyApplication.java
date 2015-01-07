@@ -30,15 +30,29 @@ public class MyApplication extends Application {
 	}
 
 
-	public static void presentError(Activity activity, String message) {
-		MyApplication.ErrorDialogFragment f = MyApplication.ErrorDialogFragment.newInstance(message);
+	public static void presentError(Activity activity, String message, DialogInterface.OnDismissListener listener) {
+		MyApplication.ErrorDialogFragment f = MyApplication.ErrorDialogFragment.newInstance(message, listener);
 		f.show(activity.getFragmentManager(), "errordialog");
 	}
 
+	public static void presentError(Activity activity, String message) {
+		MyApplication.presentError(activity, message, new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {}
+		});
+	}
+
 	public static class ErrorDialogFragment extends DialogFragment {
+		private DialogInterface.OnDismissListener _listener;
+
 		public ErrorDialogFragment() {
 			super();
 		}
+
+		public void setListener(DialogInterface.OnDismissListener l) {
+			_listener = l;
+		}
+
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -47,7 +61,7 @@ public class MyApplication extends Application {
 			builder.setMessage((String)getArguments().get("message"));
 			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-
+					_listener.onDismiss(dialog);
 				}
 			});
 
@@ -55,8 +69,9 @@ public class MyApplication extends Application {
 			return builder.create();
 		}
 
-		public static ErrorDialogFragment newInstance(String message) {
+		public static ErrorDialogFragment newInstance(String message, DialogInterface.OnDismissListener listener) {
 			ErrorDialogFragment myFragment = new ErrorDialogFragment();
+			myFragment.setListener(listener);
 
 			Bundle args = new Bundle();
 			args.putString("message", message);
