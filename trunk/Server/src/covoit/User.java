@@ -9,13 +9,45 @@ import covoit.sql.Conn;
 import java.util.ArrayList;
 
 /** User account, with their personal informations. */
-	public class User
+	public class User 
 	{
 	public User() {
 		routes = new ArrayList<Route>();
 	}
 	
+	public static void updateFirstName(String name, String firstName) throws SQLException
+	{
+		String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, name);
+		ResultSet id = st.executeQuery();
+		int iduser = id.getInt("IdUser");
+		id.close();
+		
+		
+	}
 	
+	public static void updateLastName(String name, String lastName) throws SQLException
+	{
+		
+	}
+	
+	public static void updatePassword(String name, String password) throws SQLException
+	{
+		
+	}
+	
+	public static void updateDriver(String name, boolean driver) throws SQLException
+	{
+		
+	}
+	
+	public static void updateRoute(String name, Route route) throws SQLException
+	{
+		
+	}
+	
+	/** @param name adresse mail */
    public static User load(String name) throws SQLException
    {
       User r = new User();
@@ -39,7 +71,9 @@ import java.util.ArrayList;
 	  
 	  u.close();
 	  
-	  q = "SELECT Day, GoHour, ReturnHour, CityName, ZIPCode, PlaceName, PlaceAddress "+
+	  q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%m') gominutes_, "+
+				 "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%m') returnminutes_, "+
+				 "CityName, ZIPCode, PlaceName, PlaceAddress "+
                  "FROM user, route, city, place "+ 
                  "WHERE user.IdCity = city.IdCity "+
 				 "AND user.IdPlace = place.IdPlace "+
@@ -54,8 +88,8 @@ import java.util.ArrayList;
 	  while (!routes.next())
 	  {
 		  route.setWeekday(routes.getString("Day"));
-		  route.setStartTime(routes.getTime("GoHour").getHours(), routes.getTime("GoHour").getMinutes());
-		  route.setEndTime(routes.getTime("ReturnHour").getHours(), routes.getTime("ReturnHour").getMinutes());
+		  route.setStartTime(routes.getInt("gohour_"), routes.getInt("gominutes_"));
+		  route.setEndTime(routes.getInt("returnhour_"), routes.getInt("returnminutes_"));
 		  route.setStart(routes.getString("CityName")+" "+routes.getString("ZIPCode"));
 		  route.setEnd(routes.getString("PlaceName")+" "+routes.getString("PlaceAddress"));
 		  r.getRoutes().add(route);
