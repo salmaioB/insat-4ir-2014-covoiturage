@@ -7,7 +7,7 @@ package covoit;
 import java.sql.*;
 import covoit.sql.Conn;
 
-/** User account, with their personnal informations. */
+/** User account, with their personal informations. */
 public class User
 {
    public static User load(String name) throws SQLException
@@ -75,6 +75,7 @@ public class User
    private String firstName;
    private String lastName;
    private boolean driver; // Vrai si la personne préfère conduire elle-même.
+   private ArrayList<Route> routes;
    
    private User()    {}
 }
