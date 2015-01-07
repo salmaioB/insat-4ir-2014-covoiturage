@@ -43,11 +43,12 @@ URLs:
    
    Nécessitant une authentification
    - /android/detailsAccount
+   - /android/modifyAccountField
 
    
 Authentification:
 
-   Un cookie SessionID est utlisé. La réussite de la commande 'Login' cause
+   Un cookie SessionID est utilisé. La réussite de la commande 'Login' cause
    l'émission ('Set-Cookie: JSESSIONID=xxx') d'un identifiant unique à durée
    de validité limitée.
    Le client renvoie ('Cookie: JSESSIONID=xxx') cet identifiant pour assurer le
@@ -137,6 +138,18 @@ Commandes:
          - "firstName"  : Prénom
          - "lastName"   : Nom de famille
          - "driver"     : Booléen. Voir CDC pour signification.
+		 - "routes"		: Array avec des routes (départ, arrivée, jour de la semaine)
+      - Sinon: {}
+	  
+ - modifyAccountField:
+       Paramètres: 
+      - "name": Identifiant du compte dont on veut consulter les détails
+	  - "field": Nom, Prénom, Conducteur, Routes, ...
+      Effets:
+         Modifie le champ du compte.
+      Réponse:
+      - Si le compte existe:
+		 - "status": "OK" si tout va bien, "INVALID_NAME" si le compte n'a pas pû être créé.
       - Sinon: {}
       
       
