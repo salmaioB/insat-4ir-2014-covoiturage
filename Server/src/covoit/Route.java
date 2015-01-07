@@ -45,7 +45,7 @@ public class Route {
 		return _weekday;
 	}
 
-	public void setStart(Weekday weekday) {
+	public void setWeekday(Weekday weekday) {
 		weekday = weekday;
 	}
 	

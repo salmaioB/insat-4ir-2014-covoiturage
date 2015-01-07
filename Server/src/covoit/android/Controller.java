@@ -167,7 +167,8 @@ public class Controller extends HttpServlet
             pl.add("name", name)
               .add("firstName", u.getFirstName())
               .add("lastName", u.getLastName())
-              .add("driver", u.isDriver());
+              .add("driver", u.isDriver())
+			  .add("routes", u.getRoutes());
          }  
          write(resp, 200, pl.build());
       }
@@ -175,6 +176,14 @@ public class Controller extends HttpServlet
          write(resp, 400, "Malformed createAccount command: "+reqBody);
       }
    }
+   
+   /** Modifie un champ du profil de l'utilisateur. */
+   private static void doModifyAccountField(HttpServletRequest req, 
+                                   HttpServletResponse resp, JsonObject reqBody)
+	{
+		String name = getString(reqBody, "name");
+		String field = getString(reqBody, "field");
+	}
 
 /* DISPATCH *******************************************************************/
 
