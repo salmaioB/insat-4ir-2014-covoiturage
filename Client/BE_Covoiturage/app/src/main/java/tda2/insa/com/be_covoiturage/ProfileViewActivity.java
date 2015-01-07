@@ -1,11 +1,9 @@
 package tda2.insa.com.be_covoiturage;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,12 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -31,17 +27,38 @@ import org.json.JSONObject;
 
 
 public class ProfileViewActivity extends ActionBarActivity {
-	PlaceholderFragment _fragment;
+	ProfileViewFragment _profileViewFragment;
+	RouteViewFragment _routeViewFragment;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile_view);
 		if (savedInstanceState == null) {
-			_fragment = new PlaceholderFragment();
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, _fragment)
-					.commit();
+			_profileViewFragment = new ProfileViewFragment();
+			_routeViewFragment = new RouteViewFragment();
+			this.switchToProfile();
 		}
+	}
+
+	private void switchToFragment(Fragment fragment) {
+		this.getSupportFragmentManager().beginTransaction()
+				.replace(R.id.container, fragment)
+				.commit();
+
+	}
+
+	public void switchToIdentity() {
+
+	}
+
+	public void switchToRoute(Route r) {
+		this.switchToFragment(_routeViewFragment);
+	}
+
+	public void switchToProfile() {
+		this.switchToFragment(_profileViewFragment);
 	}
 
 	@Override
@@ -60,11 +77,11 @@ public class ProfileViewActivity extends ActionBarActivity {
 		int id = item.getItemId();
 
 		if(id == R.id.action_change_profile) {
-			_fragment.editIdentity();
+			_profileViewFragment.editIdentity();
 			return false;
 		}
 		else if(id == R.id.action_logout) {
-			_fragment.logout();
+			_profileViewFragment.logout();
 			return false;
 		}
 
@@ -74,7 +91,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class ProfileViewFragment extends Fragment {
 		private User _user;
 
 		private boolean _canUseMaps;
@@ -83,7 +100,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 		private ArrayAdapter<String> _infos;
 		private RouteAdapter _routes;
 
-		public PlaceholderFragment() {}
+		public ProfileViewFragment() {}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,7 +110,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 			addRoute.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					PlaceholderFragment.this.addRoute();
+					ProfileViewFragment.this.addRoute();
 				}
 			});
 
@@ -112,10 +129,10 @@ public class ProfileViewActivity extends ActionBarActivity {
 				@Override
 				public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 					if(position == 0) {
-						PlaceholderFragment.this.editIdentity();
+						ProfileViewFragment.this.editIdentity();
 					}
 					else if(position == 1) {
-						PlaceholderFragment.this.editNotifications();
+						ProfileViewFragment.this.editNotifications();
 					}
 				}
 
@@ -153,7 +170,16 @@ public class ProfileViewActivity extends ActionBarActivity {
 			Log.e("canUseMaps", Boolean.toString(_canUseMaps));
 		}
 
-		public void loadProfile(final AuthToken authToken) {
+		public void updateMaps() {
+			if(_user != null) {
+				for (Route r : _user.getRoutes()) {
+					r.invalidateMap();
+					r.updateStaticMap();
+				}
+			}
+		}
+
+		private void loadProfile(final AuthToken authToken) {
 			try {
 				JSONObject obj = new JSONObject();
 				obj.put("name", authToken.getEmail());
@@ -165,16 +191,16 @@ public class ProfileViewActivity extends ActionBarActivity {
 									JSONObject data = response.getJSONObject("data");
 
 									_user = new User(authToken, data);
-									PlaceholderFragment.this.onProfileLoaded();
+									ProfileViewFragment.this.onProfileLoaded();
 								} catch (Exception e) {
-									PlaceholderFragment.this.loadFailed(e.getMessage());
+									ProfileViewFragment.this.loadFailed(e.getMessage());
 								}
 							}
 						},
 						new Response.ErrorListener() {
 							@Override
 							public void onErrorResponse(VolleyError error) {
-								PlaceholderFragment.this.loadFailed(error.toString());
+								ProfileViewFragment.this.loadFailed(error.toString());
 							}
 						});
 			}
@@ -186,7 +212,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 			MyApplication.presentError(this.getActivity(), "Err: " + message, new DialogInterface.OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
-					PlaceholderFragment.this.logout();
+					ProfileViewFragment.this.logout();
 				}
 			});
 		}
@@ -207,16 +233,18 @@ public class ProfileViewActivity extends ActionBarActivity {
 		}
 
 		public void onProfileLoaded() {
-			_routes = new RouteAdapter(this.getActivity(), _user.getRoutes());
+			_routes = new RouteAdapter(this.getActivity(), _user.getRoutes(), this.getView().getWidth());
 			_routesList.setAdapter(_routes);
 
 			_routesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-					PlaceholderFragment.this.editRoute(position);
+					ProfileViewFragment.this.editRoute(position);
 				}
 
 			});
+
+			this.updateMaps();
 		}
 
 		public void editIdentity() {
@@ -228,12 +256,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 		}
 
 		public void editRoute(int index) {
-			Log.e("edit route", Integer.toString(index));
-			//convertView = ((LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.route_item, parent, false);
-			//Fragment fragment = new PlaceholderFragment();
-			//this.getActivity().getSupportFragmentManager().beginTransaction()
-			//		.add(R.id.container, fragment)
-			//		.commit();
+			((ProfileViewActivity)this.getActivity()).switchToRoute(_user.getRoutes().get(index));
 		}
 
 		public void addRoute() {
@@ -241,6 +264,20 @@ public class ProfileViewActivity extends ActionBarActivity {
 
 			_user.getRoutes().add(newRoute);
 			_routes.notifyDataSetChanged();
+		}
+	}
+
+	public static class RouteViewFragment extends Fragment {
+		private User _user;
+		private Route _route;
+
+		public RouteViewFragment() {}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.route_view, container, false);
+
+			return rootView;
 		}
 	}
 }

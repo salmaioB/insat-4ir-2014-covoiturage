@@ -1,5 +1,8 @@
 package tda2.insa.com.be_covoiturage;
 
+import android.util.Log;
+import android.widget.ImageView;
+
 /**
  * Created by remi on 07/01/15.
  */
@@ -9,6 +12,9 @@ public class Route {
 	private Weekday _weekday;
 	private int _startHour, _startMinute;
 	private int _endHour, _endMinute;
+	private boolean _mapUpToDate = false;
+	private ImageView _imageView;
+	private int _imageWidth, _imageHeight;
 
 	public enum Weekday {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
 
@@ -89,6 +95,23 @@ public class Route {
 		return _startMinute;
 	}
 
+	public String getStartTime() {
+		String res = "";
+		if(this.getStartHour() < 10) {
+			res = res + "0";
+		}
+
+		res = res + Integer.toString(this.getStartHour()) + ":";
+
+		if(this.getStartMinute() < 10) {
+			res = res + "0";
+		}
+
+		res = res + Integer.toString(this.getStartMinute());
+
+		return res;
+	}
+
 	public int getEndHour() {
 		return _endHour;
 	}
@@ -97,4 +120,41 @@ public class Route {
 		return _endMinute;
 	}
 
+	public String getEndTime() {
+		String res = "";
+		if(this.getEndHour() < 10) {
+			res = res + "0";
+		}
+
+		res = res + Integer.toString(this.getEndHour()) + ":";
+
+		if(this.getEndMinute() < 10) {
+			res = res + "0";
+		}
+
+		res = res + Integer.toString(this.getEndMinute());
+
+		return res;
+	}
+
+	public void setMapView(ImageView view, int width, int height) {
+		_imageView = view;
+		_imageWidth = width;
+		_imageHeight = height;
+	}
+
+	public void invalidateMap() {
+		_mapUpToDate = false;
+	}
+
+	public String getStaticMapURL() {
+		return 	"https://maps.googleapis.com/maps/api/staticmap?size=" + Integer.toString(_imageWidth) + "x" + Integer.toString(_imageHeight);
+	}
+
+	public void updateStaticMap() {
+		if(_mapUpToDate == false) {
+			new ImageDownloader().execute(this.getStaticMapURL(), _imageView);
+			_mapUpToDate = true;
+		}
+	}
 }

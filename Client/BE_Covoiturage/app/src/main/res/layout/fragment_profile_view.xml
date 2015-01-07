@@ -19,12 +19,12 @@
             android:layout_height="wrap_content"/>
 
         <ListView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="124dp"
             android:id="@+id/profile_infos"
             android:choiceMode="singleChoice"/>
         <ListView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="199dp"
             android:id="@+id/profile_routes"
             android:choiceMode="singleChoice"/>
