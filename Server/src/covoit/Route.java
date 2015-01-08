@@ -8,8 +8,8 @@ package covoit;
 import javax.json.*;
 
 public class Route {
-	private String _start;
-	private String _end;
+	private String _start; // Id ou valeur ?
+	private String _end;   // Id ou valeur ?
 	private Weekday _weekday;
 	private int _startHour, _startMinute;
 	private int _endHour, _endMinute;

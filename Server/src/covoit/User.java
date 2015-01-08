@@ -62,8 +62,30 @@ import java.util.ArrayList;
 	// Mise à jour de la route (Philippe : Ajout requête et différents traitements)
 	public static void updateRoute(String mailAddr, Route route) throws SQLException
 	{
+		// Recherche de l'IdUser pour toutes les requêtes suivantes
+		String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, mailAddr);
+		ResultSet rs = st.executeQuery();
+
+		if (rs.next())
+			int idUser = rs.getInt("IdUser");  		// Comment gérer aucun IdUser ? car "void" !
+		rs.close;
+		
+		/* Syntaxe si on veut des ResultSet modifiables (plus facile à coder), mais il faut tester
+		Statement stmt = Conn.createStatement(
+                                      ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                      ResultSet.CONCUR_UPDATABLE);
+		ResultSet rs = stmt.executeQuery("SELECT a, b FROM TABLE2");*/
+		
+		
+		
 		//A faire !!!
 		//Mise à jour de la place si différente (on change l'ID, uniquement Admin peut modifier les 'places')
+		
+       
+		
+		
 		//Mise à jour du lieu de vie si différent (On crée si n'existe pas encore, sinon sélection d'un lieu existant)
 		//Mise à jour de la partie route (si le couple User/jour n'existe pas encore on ajoute toute la ligne, sinon on modifie les heures)
 		
