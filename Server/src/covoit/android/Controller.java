@@ -13,6 +13,8 @@ import covoit.lib.BCrypt;
 import java.io.*;
 import java.sql.*;
 import java.security.InvalidParameterException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.json.*;
@@ -80,6 +82,18 @@ public class Controller extends HttpServlet {
     private static boolean getBool(JsonObject o, String name) {
         try {
             return o.getBoolean(name);
+        } catch (Throwable e) {
+            throw new InvalidParameterException("Not present");
+        }
+    }
+    
+     /**
+     * Renvoie l'attribut du nom donné, si il existe et que c'est bien un
+     * JsonObject
+     */
+    private static JsonObject getObject(JsonObject o, String name) {
+        try {
+            return o.getJsonObject(name);
         } catch (Throwable e) {
             throw new InvalidParameterException("Not present");
         }
@@ -191,9 +205,39 @@ public class Controller extends HttpServlet {
      */
     private static void doModifyAccountField(HttpServletRequest req,
         HttpServletResponse resp, JsonObject reqBody) {
-        String name = getString(reqBody, "name");
-        String field = getString(reqBody, "field");
-
+        try {
+            String name = getString(reqBody, "name");   //@mail
+            String field = getString(reqBody, "field"); //champ à modifier
+                                                        //nouvelle valeur: value
+            switch (name) {
+                case "FirstName":
+                    String fn = getString(reqBody, "value");
+                    User.updateFirstName(name, fn);
+                    break;
+                case "LastName":
+                    String ln = getString(reqBody, "value");
+                    User.updateLastName(name, ln);
+                    break;
+                case "Password":
+                    String p = getString(reqBody, "value");
+                    User.updatePassword(name, p);
+                    break;
+                case "Driver":
+                    Boolean d = getBool(reqBody, "value");
+                    User.updateDriver(name, d);
+                    break;
+                case "City":
+                    JsonObject o = getObject(reqBody, "value");
+                    String c = o.getString("city");
+                    String z = o.getString("zip");
+                    User.updateCity(name, c, z);
+                    break;
+                default:
+                    break;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /* DISPATCH *******************************************************************/
@@ -221,7 +265,11 @@ public class Controller extends HttpServlet {
         } else if (user.length() != 0) {  // connexion requise
             if (cmd.equals("detailsAccount")) {
                 doDetailsAccount(req, resp, reqBody);
-            } else {
+            } 
+            else if (cmd.equals("modifyAccountField")){
+                doModifyAccountField(req, resp, reqBody);
+            }
+            else {
                 write(resp, 400, "Commande non supportée: " + cmd);
             }
         } else {

@@ -145,6 +145,7 @@ Commandes:
        Paramètres: 
       - "name": Identifiant du compte dont on veut consulter les détails
 	  - "field": Nom, Prénom, Conducteur, Routes, ...
+	  - "value": nouvelle valeur du champ
       Effets:
          Modifie le champ du compte.
       Réponse:
