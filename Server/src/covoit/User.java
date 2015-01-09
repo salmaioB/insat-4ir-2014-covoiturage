@@ -8,7 +8,6 @@ import java.sql.*;
 import covoit.sql.Conn;
 import java.util.ArrayList;
 
-
 /** User account, with their personal informations. */
 	public class User 
 	{
@@ -59,6 +58,48 @@ import java.util.ArrayList;
 		st.execute();
 		st.close();
 	}
+
+	// Mise à jour de la ville (Philippe : Ajout requête)
+	public static void updateCity(String mailAddr, String city, String zip) throws SQLException
+	{
+		int idCity;
+		
+		// Est-ce que ville existe ?
+		String q = "SELECT IdCity FROM city WHERE CityName = ? AND ZIPCode = ?";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, city);
+		st.setString(2, zip);
+		ResultSet rs = st.executeQuery();
+		
+		if (rs.getInt("IdCity") == NULL)
+		{
+			rs.close();
+			// Création
+		    q = "INSERT INTO city (CityName, ZIPCode) VALUES (?, ?)";
+			st = Conn.prepare(q);
+			st.setString(1, city);
+			st.setString(2, zip);
+			st.execute();
+			rs.close();
+			
+			q = "SELECT IdCity FROM city WHERE CityName = ? AND ZIPCode = ?";
+			st = Conn.prepare(q);
+			st.setString(1, city);
+			st.setString(2, zip);
+			rs = st.executeQuery();
+		}
+		idCity = rs.getInt("IdCity");
+		rs.close();
+			
+		// Affectation
+		q = "UPDATE user SET IdCity = ? WHERE MailAddress = ?;";
+		st = Conn.prepare(q);
+		st.setInt(1, idCity);
+		st.setString(2, mailAddr);
+		st.execute();
+		st.close();
+		
+	}
 	
 	// Mise à jour de la route (Philippe : Ajout requête et différents traitements)
 	public static void updateRoute(String mailAddr, Route route) throws SQLException
@@ -69,9 +110,7 @@ import java.util.ArrayList;
 		st.setString(1, mailAddr);
 		ResultSet rs = st.executeQuery();
 
-		if (rs.next()){
 			int idUser = rs.getInt("IdUser");  		// Comment gérer aucun IdUser ? car "void" !
-                }
 		rs.close();
 		
 		/* Syntaxe si on veut des ResultSet modifiables (plus facile à coder), mais il faut tester
@@ -132,7 +171,7 @@ import java.util.ArrayList;
 				 "CityName, ZIPCode, PlaceName, PlaceAddress "+
                  "FROM user, route, city, place "+ 
                  "WHERE user.IdCity = city.IdCity "+
-				 "AND user.IdPlace = place.IdPlace "+
+				 "AND route.IdPlace = place.IdPlace "+
 				 "AND user.IdUser = route.IdUser "+
 				 "AND user.IdUser = ?";
       st = Conn.prepare(q);
@@ -168,6 +207,13 @@ import java.util.ArrayList;
       u.lastName = lastName;
       u.driver = driver;
       
+// Ne pas créer un utilisateur qui existe déjà.
+//??????????
+//?????????
+	  
+	  
+	  
+	  
       String req = "INSERT INTO user "+
             "       (MailAddress, Password, FirstName, LastName, Driver) "+
             "VALUES (?, ?, ?, ?, ?)";
