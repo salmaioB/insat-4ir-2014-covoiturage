@@ -191,6 +191,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 									JSONObject data = response.getJSONObject("data");
 
 									_user = new User(authToken, data);
+									MyApplication.setUser(_user);
 									ProfileViewFragment.this.onProfileLoaded();
 								} catch (Exception e) {
 									ProfileViewFragment.this.loadFailed(e.getMessage());
@@ -215,10 +216,6 @@ public class ProfileViewActivity extends ActionBarActivity {
 					ProfileViewFragment.this.logout();
 				}
 			});
-		}
-
-		public User getUser() {
-			return _user;
 		}
 
 		private void logout() {
@@ -276,7 +273,8 @@ public class ProfileViewActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.route_view, container, false);
-
+			_user = MyApplication.getUser();
+			
 			return rootView;
 		}
 	}
