@@ -5,7 +5,9 @@
 
 package covoit;
 
+import java.math.BigDecimal;
 import javax.json.*;
+import java.util.ArrayList;
 
 public class Route {
 	private String _start; // Id ou valeur ?
@@ -23,7 +25,6 @@ public class Route {
 		_startMinute = 0;
 		_endHour = 18;
 		_endMinute = 0;
-
 		_weekday = Weekday.Monday;
 	}
 	
@@ -35,9 +36,36 @@ public class Route {
 			_startMinute = o.getInt("startMinute");
 			_endHour = o.getInt("endHour");
 			_endMinute = o.getInt("endMinute");
-		} catch (JSONException e) {};
+                        _weekday = Weekday.valueOf(o.getString("weekday"));
+		} catch (Exception e) {};
 		
 	}
+        
+        public static JsonObject getJsonObjectRoute(Route route) {
+            JsonObjectBuilder pl = Json.createObjectBuilder();
+            if (route != null) {
+            pl.add("_start", route.getStart())
+              .add("_end", route.getEnd())
+              .add("_startHour", route.getStartHour())
+              .add("_startMinute", route.getStartMinute())
+              .add("_endHour", route.getStartHour())
+              .add("_endMinute", route.getEndMinute())
+              .add("_weekday", route.getWeekday().toString());
+            return pl.build();
+            }
+            return null;
+        }
+
+        public static JsonArray getJsonObjectRoutes(ArrayList<Route> routes) {
+            JsonArrayBuilder jab = Json.createArrayBuilder();
+            if (routes != null){
+                for (int i=0; i<routes.size(); i++){
+                    jab.add(getJsonObjectRoute(routes.get(i)));
+                }
+                return jab.build();
+            }
+            else return null;
+        }
 
 	public String getStart() {
 		return _start;
