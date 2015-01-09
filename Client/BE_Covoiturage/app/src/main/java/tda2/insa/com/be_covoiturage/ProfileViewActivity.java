@@ -274,7 +274,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.route_view, container, false);
 			_user = MyApplication.getUser();
-			
+
 			return rootView;
 		}
 	}
