@@ -14,7 +14,7 @@ public class User {
 	private ArrayList<Route> _routes;
 	private String _firstName, _lastName;
 	private boolean _isDriver;
-	private int _postalCode;
+	private Place _home;
 
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
@@ -23,7 +23,7 @@ public class User {
 		_firstName = "";
 		_lastName = "";
 		_isDriver = false;
-		_postalCode = 31000;
+		_home = new Place();
 
 		Log.e("Creating user with info", userInfo.toString());
 	}
@@ -44,20 +44,28 @@ public class User {
 		return _isDriver;
 	}
 
+	public void setDriver(boolean d) {
+		_isDriver = d;
+	}
+
 	public String getFirstName() {
 		return _firstName;
+	}
+
+	public void setFirstName(String name) {
+		_firstName = name;
 	}
 
 	public String getLastName() {
 		return _lastName;
 	}
 
-	public int getPostalCode() {
-		return _postalCode;
+	public void setLastName(String name) {
+		_lastName = name;
 	}
 
-	public void setPostalCode(int code) {
-		_postalCode = code;
+	public Place getHome() {
+		return _home;
 	}
 
 	public AuthToken getAuthToken() {
