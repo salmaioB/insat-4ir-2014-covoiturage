@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -246,7 +247,9 @@ public class ProfileViewActivity extends ActionBarActivity {
 
 		public void editIdentity() {
 			Log.e("edit", "Identity");
-		}
+            Intent edit = new Intent(this.getActivity(), IdentiteUser.class);
+            startActivity(edit);
+        }
 
 		public void editNotifications() {
 			Log.e("edit", "Notifications");
@@ -278,4 +281,24 @@ public class ProfileViewActivity extends ActionBarActivity {
 			return rootView;
 		}
 	}
+
+    public static class IdentiteUser extends Fragment {
+        private User _user;
+        private EditText _text;
+
+        public IdentiteUser() {}
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.identite_user, container, false);
+            _user = MyApplication.getUser();
+            _text = (EditText)rootView.findViewById(R.id.NomUser);
+            _text.setText(_user.getLastName());
+            _text = (EditText)rootView.findViewById(R.id.PrenomUser);
+            _text.setText(_user.getFirstName());
+            _text = (EditText)rootView.findViewById(R.id.Postal);
+            _text.setText(_user.getPostalCode());
+            return rootView;
+        }
+    }
 }

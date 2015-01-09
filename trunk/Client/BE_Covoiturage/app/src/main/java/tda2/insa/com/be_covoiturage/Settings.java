@@ -24,9 +24,8 @@ public class Settings extends ActionBarActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
         final ListView listview = (ListView) findViewById(R.id.listView);
-        String[] values = new String[] { "Nom", "Prenom", "Email",
+        String[] values = new String[] { "Nom: ", "Prenom", "Email",
                 "Telephone" };
 
         final ArrayList<String> list = new ArrayList<String>();
@@ -36,7 +35,7 @@ public class Settings extends ActionBarActivity implements View.OnClickListener 
         final StableArrayAdapter adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
-
+        //list.set(0, "Nom2");
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -56,12 +55,20 @@ public class Settings extends ActionBarActivity implements View.OnClickListener 
                     startActivity(edit);
                 } else if (adapter.getItem(position) == "Prenom") {
                     Log.w("list", "testPrenom");
+                    Intent edit = new Intent(Settings.this, EditSetting.class);
+                    startActivity(edit);
                 } else if (adapter.getItem(position) == "Driver") {
                     Log.w("list", "testDriver");
+                    Intent edit = new Intent(Settings.this, EditSetting.class);
+                    startActivity(edit);
                 } else if(adapter.getItem(position) == "Email") {
                     Log.w("list", "testEmail");
+                    Intent edit = new Intent(Settings.this, EditSetting.class);
+                    startActivity(edit);
                 } else if(adapter.getItem(position) == "Tel") {
                     Log.w("list", "testTel");
+                    Intent edit = new Intent(Settings.this, EditSetting.class);
+                    startActivity(edit);
                 }
             }
 
