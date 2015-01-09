@@ -210,23 +210,23 @@ public class Controller extends HttpServlet {
             String field = getString(reqBody, "field"); //champ à modifier
                                                         //nouvelle valeur: value
             switch (name) {
-                case "FirstName":
+                case "firstName":
                     String fn = getString(reqBody, "value");
                     User.updateFirstName(name, fn);
                     break;
-                case "LastName":
+                case "lastName":
                     String ln = getString(reqBody, "value");
                     User.updateLastName(name, ln);
                     break;
-                case "Password":
+                case "password":
                     String p = getString(reqBody, "value");
                     User.updatePassword(name, p);
                     break;
-                case "Driver":
+                case "driver":
                     Boolean d = getBool(reqBody, "value");
                     User.updateDriver(name, d);
                     break;
-                case "City":
+                case "city":
                     JsonObject o = getObject(reqBody, "value");
                     String c = o.getString("city");
                     String z = o.getString("zip");
