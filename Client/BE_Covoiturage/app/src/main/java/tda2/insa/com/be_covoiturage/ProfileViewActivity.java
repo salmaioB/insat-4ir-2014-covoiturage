@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 public class ProfileViewActivity extends ActionBarActivity {
 	ProfileViewFragment _profileViewFragment;
 	RouteViewFragment _routeViewFragment;
+	IdentityViewFragment _identityViewFragment;
 
 
 	@Override
@@ -39,6 +41,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			_profileViewFragment = new ProfileViewFragment();
 			_routeViewFragment = new RouteViewFragment();
+			_identityViewFragment = new IdentityViewFragment();
 			this.switchToProfile();
 		}
 	}
@@ -51,7 +54,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	}
 
 	public void switchToIdentity() {
-
+		this.switchToFragment(_identityViewFragment);
 	}
 
 	public void switchToRoute(Route r) {
@@ -246,9 +249,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 		}
 
 		public void editIdentity() {
-			Log.e("edit", "Identity");
-            Intent edit = new Intent(this.getActivity(), IdentiteUser.class);
-            startActivity(edit);
+			((ProfileViewActivity)this.getActivity()).switchToIdentity();
         }
 
 		public void editNotifications() {
@@ -270,6 +271,9 @@ public class ProfileViewActivity extends ActionBarActivity {
 	public static class RouteViewFragment extends Fragment {
 		private User _user;
 		private Route _route;
+		private EditText _startTime, _endTime;
+		private Spinner _worplaces, _weekday;
+		private Button _removeRoute;
 
 		public RouteViewFragment() {}
 
@@ -278,15 +282,24 @@ public class ProfileViewActivity extends ActionBarActivity {
 			View rootView = inflater.inflate(R.layout.route_view, container, false);
 			_user = MyApplication.getUser();
 
+			_startTime = (EditText)rootView.findViewById(R.id.startTime);
+			_endTime = (EditText)rootView.findViewById(R.id.endTime);
+
+			_worplaces = (Spinner)rootView.findViewById(R.id.workplace);
+			_weekday = (Spinner)rootView.findViewById(R.id.week_day);
+
+			_removeRoute = (Button)rootView.findViewById(R.id.remove_route);
+
+
 			return rootView;
 		}
 	}
 
-    public static class IdentiteUser extends Fragment {
+    public static class IdentityViewFragment extends Fragment {
         private User _user;
         private EditText _text;
 
-        public IdentiteUser() {}
+        public IdentityViewFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -297,7 +310,7 @@ public class ProfileViewActivity extends ActionBarActivity {
             _text = (EditText)rootView.findViewById(R.id.PrenomUser);
             _text.setText(_user.getFirstName());
             _text = (EditText)rootView.findViewById(R.id.Postal);
-            _text.setText(_user.getPostalCode());
+            _text.setText(Integer.toString(_user.getHome().getPostalCode()));
             return rootView;
         }
     }

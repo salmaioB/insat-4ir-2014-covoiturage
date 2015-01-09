@@ -16,6 +16,8 @@ public class Route {
 	private ImageView _imageView;
 	private int _imageWidth, _imageHeight;
 
+	private Place _workplace;
+
 	public enum Weekday {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
 
 	public Route() {
@@ -27,6 +29,7 @@ public class Route {
 		_endMinute = 0;
 
 		_weekday = Weekday.Monday;
+		_workplace = new Place();
 	}
 
 	public String getStart() {
@@ -135,6 +138,10 @@ public class Route {
 		res = res + Integer.toString(this.getEndMinute());
 
 		return res;
+	}
+
+	public Place getWorkspace() {
+		return _workplace;
 	}
 
 	public void setMapView(ImageView view, int width, int height) {
