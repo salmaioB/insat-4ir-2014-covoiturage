@@ -100,7 +100,25 @@ public class User {
 
     }
 
-    // Mise à jour de la route (Philippe : Ajout requête et différents traitements)
+	public static HashMap<String, String> getPlaces() throws SQLException {
+	 // retourner les places prédéfinies
+        String q = "SELECT PlaceName, PlaceAddress FROM place ORDER BY PlaceName";
+        PreparedStatement st = Conn.prepare(q);
+        ResultSet rs = st.executeQuery();
+		
+		HashMap<String, String> rslt = new HashMap<String, String>();
+		
+		while(!rs.next())
+		{
+			rslt.put(rs.getString("PlaceName"), rs.getString("PlaceAddress"));
+		}
+		rs.close();
+		
+		return rslt;
+	
+	}
+	
+    // Mise à jour/création de la route (Philippe : Ajout requête et différents traitements)
     public static void updateRoute(String mailAddr, Route route) throws SQLException {
         // Recherche de l'IdUser pour toutes les requêtes suivantes
         String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
