@@ -17,9 +17,25 @@ import java.util.ArrayList;
  */
 public class User {
 
+    private String name; // aussi l'adresse email ?
+    private String passwd;
+    private String firstName;
+    private String lastName;
+    private boolean driver; // Vrai si la personne préfère conduire elle-même.
+    private ArrayList<Route> routes;
+    
     public User() {
         routes = new ArrayList<Route>();
     }
+    
+     /**
+     * base64(bcrypt([password]))
+     */
+    public String getPassword() {return passwd;}
+    public String getFirstName() {return firstName;}
+    public String getLastName() {return lastName;}
+    public ArrayList<Route> getRoutes() {return routes;}
+    public boolean isDriver() {return driver;}
 
     // Mise à jour du prénom (Philippe : Ajout requête)
     public static void updateFirstName(String mailAddr, String firstName) throws SQLException {
@@ -230,38 +246,4 @@ public class User {
 
         return u;
     }
-
-    /**
-     * base64(bcrypt([password]))
-     */
-    public String getPassword() {
-        return passwd;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public ArrayList<Route> getRoutes() {
-        return routes;
-    }
-
-    public boolean isDriver() {
-        return driver;
-    }
-
-    /**
-     * ***************************************************************************
-     */
-    private String name; // aussi l'adresse email ?
-    private String passwd;
-    private String firstName;
-    private String lastName;
-    private boolean driver; // Vrai si la personne préfère conduire elle-même.
-    private ArrayList<Route> routes;
-
 }
