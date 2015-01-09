@@ -168,7 +168,7 @@ public class Controller extends HttpServlet
               .add("firstName", u.getFirstName())
               .add("lastName", u.getLastName())
               .add("driver", u.isDriver())
-			  .add("routes", u.getRoutes());
+              .add("routes", Route.getJsonObjectRoutes(u.getRoutes()));
          }  
          write(resp, 200, pl.build());
       }
@@ -183,6 +183,11 @@ public class Controller extends HttpServlet
 	{
 		String name = getString(reqBody, "name");
 		String field = getString(reqBody, "field");
+                
+                
+                
+                
+                
 	}
 
 /* DISPATCH *******************************************************************/

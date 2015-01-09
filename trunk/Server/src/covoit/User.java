@@ -8,6 +8,7 @@ import java.sql.*;
 import covoit.sql.Conn;
 import java.util.ArrayList;
 
+
 /** User account, with their personal informations. */
 	public class User 
 	{
@@ -68,9 +69,10 @@ import java.util.ArrayList;
 		st.setString(1, mailAddr);
 		ResultSet rs = st.executeQuery();
 
-		if (rs.next())
+		if (rs.next()){
 			int idUser = rs.getInt("IdUser");  		// Comment gérer aucun IdUser ? car "void" !
-		rs.close;
+                }
+		rs.close();
 		
 		/* Syntaxe si on veut des ResultSet modifiables (plus facile à coder), mais il faut tester
 		Statement stmt = Conn.createStatement(
@@ -141,7 +143,7 @@ import java.util.ArrayList;
 	  
 	  while (!routes.next())
 	  {
-		  route.setWeekday(routes.getString("Day"));
+		  route.setWeekday(Route.Weekday.valueOf(routes.getString("Day")));
 		  route.setStartTime(routes.getInt("gohour_"), routes.getInt("gominutes_"));
 		  route.setEndTime(routes.getInt("returnhour_"), routes.getInt("returnminutes_"));
 		  route.setStart(routes.getString("CityName")+" "+routes.getString("ZIPCode"));
@@ -197,5 +199,5 @@ import java.util.ArrayList;
    private boolean driver; // Vrai si la personne préfère conduire elle-même.
    private ArrayList<Route> routes;
    
-   private User()    {}
+
 }
