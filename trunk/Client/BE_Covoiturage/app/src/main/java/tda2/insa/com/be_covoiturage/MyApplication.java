@@ -15,6 +15,7 @@ import android.os.Bundle;
 
 public class MyApplication extends Application {
 	private static MyApplication _instance;
+	private static User _user;
 
 	public void onCreate(){
 		super.onCreate();
@@ -29,6 +30,13 @@ public class MyApplication extends Application {
 		return _instance.getApplicationContext();
 	}
 
+	public static User getUser() {
+		return _user;
+	}
+
+	public static void setUser(User u) {
+		_user = u;
+	}
 
 	public static void presentError(Activity activity, String message, DialogInterface.OnDismissListener listener) {
 		MyApplication.ErrorDialogFragment f = MyApplication.ErrorDialogFragment.newInstance(message, listener);
