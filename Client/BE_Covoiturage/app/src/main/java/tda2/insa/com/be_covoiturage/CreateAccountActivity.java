@@ -130,11 +130,10 @@ public class CreateAccountActivity extends ProgressActivity {
 				obj.put("lastName", lastName);
 				obj.put("driver", driver);
 
-				Network.getInstance().sendPostRequest(Network.pathToRequest("createAccount"), obj, new Response.Listener<JSONObject>() {
+				Network.getInstance().sendPostRequest(Network.pathToRequest("createAccount"), obj, new Network.NetworkResponseListener() {
 							@Override
-							public void onResponse(JSONObject response) {
+							public void onResponse(JSONObject data, JSONObject headers) {
 								try {
-									JSONObject data = response.getJSONObject("data");
 									if (!data.getString("status").equals("OK")) {
 										CreateAccountActivity.this.creationFailure();
 										return;
@@ -147,10 +146,10 @@ public class CreateAccountActivity extends ProgressActivity {
 								}
 							}
 						},
-						new Response.ErrorListener() {
+						new Network.NetworkErrorListener() {
 							@Override
-							public void onErrorResponse(VolleyError error) {
-								Log.e("Creation failed", error.toString());
+							public void onError(String reason, VolleyError error) {
+								Log.e("Creation failed:", reason + " " + error.toString());
 								CreateAccountActivity.this.creationFailure();
 							}
 						});

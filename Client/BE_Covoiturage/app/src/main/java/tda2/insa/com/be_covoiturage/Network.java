@@ -6,6 +6,7 @@ import android.util.Log;
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.net.ssl.HostnameVerifier;
@@ -40,7 +41,7 @@ public class Network {
 	}
 
 	public static String pathToRequest(String request) {
-		return Network.getHostAndProtocol() + "/android/" + request;
+		return Network.getHostAndProtocol() + "/Server/android/" + request;
 	}
 
 	private Network() {
@@ -55,25 +56,37 @@ public class Network {
 		return _instance;
 	}
 
-	public static Response.Listener<JSONObject> getDefaultListener() {
-		return new Response.Listener<JSONObject>() {
+	public static abstract class NetworkResponseListener {
+		public NetworkResponseListener() {}
+
+		public abstract void onResponse(JSONObject data, JSONObject headers);
+	}
+
+	public static abstract class NetworkErrorListener {
+		public NetworkErrorListener() {}
+
+		public abstract void onError(String reason, VolleyError error);
+	}
+
+	public static NetworkResponseListener getDefaultListener() {
+		return new NetworkResponseListener() {
 			@Override
-			public void onResponse(JSONObject response) {
-				Log.w("Response.Listener: ", response.toString());
+			public void onResponse(JSONObject data, JSONObject headers) {
+				Log.w("NetworkResponseListener: ", data.toString());
 			}
 		};
 	}
 
-	public static Response.ErrorListener getDefaultErrorListener() {
-		return new Response.ErrorListener() {
+	public static NetworkErrorListener getDefaultErrorListener() {
+		return new NetworkErrorListener() {
 			@Override
-			public void onErrorResponse(VolleyError error) {
-				Log.e("ErrorListener: ", error.toString() + "\n" + ((error.networkResponse == null) ? "" : new String(error.networkResponse.data)));
+			public void onError(String reason, VolleyError error) {
+				Log.e("ErrorListener: ", error.toString() + "\n" + reason);
 			}
 		};
 	}
 
-	public void sendPostRequest(String url, JSONObject body, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+	public void sendPostRequest(String url, JSONObject body, NetworkResponseListener listener, NetworkErrorListener errorListener) {
 		if(listener == null) {
 			listener = Network.getDefaultListener();
 		}
@@ -83,15 +96,16 @@ public class Network {
 
 		Log.w("Sending request", "to " + url + ", payload " + body.toString());
 		// Request a string response from the provided URL.
+
 		JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body,
-				listener,
-				errorListener);
+				Network.getVolleyListener(listener),
+				Network.getVolleyListener(errorListener));
 
 		// Add the request to the RequestQueue.
 		_queue.add(request);
 	}
 
-	public void sendAuthenticatedPostRequest(String url, final AuthToken token, JSONObject body, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+	public void sendAuthenticatedPostRequest(String url, final AuthToken token, JSONObject body, NetworkResponseListener listener, NetworkErrorListener errorListener) {
 		if(listener == null) {
 			listener = Network.getDefaultListener();
 		}
@@ -102,8 +116,8 @@ public class Network {
 		Log.w("Sending authenticated request", "to " + url + ", payload " + body.toString());
 		// Request a string response from the provided URL.
 		final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body,
-				listener,
-				errorListener) {
+				Network.getVolleyListener(listener),
+				Network.getVolleyListener(errorListener)) {
 			@Override
 			public Map<String, String> getHeaders() throws AuthFailureError {
 				Map<String, String>  params = new HashMap<String, String>();
@@ -117,7 +131,39 @@ public class Network {
 		_queue.add(request);
 	}
 
+	private static Response.Listener<JSONObject> getVolleyListener(final NetworkResponseListener listener) {
+		return new Response.Listener<JSONObject>() {
+			@Override
+			public void onResponse(JSONObject response) {
+				JSONObject data, headers;
+				try {
+					data = response.getJSONObject("data");
+				}
+				catch(JSONException e) {
+					data = new JSONObject();
+				}
 
+				try {
+					headers = response.getJSONObject("headers");
+				}
+				catch(JSONException e) {
+					headers = new JSONObject();
+				}
+
+				listener.onResponse(data, headers);
+			}
+		};
+	}
+
+	private static Response.ErrorListener getVolleyListener(final NetworkErrorListener listener) {
+		return new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				String reason = (error.networkResponse == null) ? "" : new String(error.networkResponse.data);
+				listener.onError(reason, error);
+			}
+		};
+	}
 
 	private static TrustManager[] trustManagers;
 

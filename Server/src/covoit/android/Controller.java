@@ -243,7 +243,7 @@ public class Controller extends HttpServlet {
     /* DISPATCH *******************************************************************/
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        String cmd = req.getRequestURI().substring("/android/".length());
+        String cmd = req.getRequestURI().substring("/Server/android/".length());
         String user = getUsername(req);
         JsonObject reqBody;
         try {
@@ -273,7 +273,7 @@ public class Controller extends HttpServlet {
                 write(resp, 400, "Commande non supportée: " + cmd);
             }
         } else {
-            write(resp, 400, "Authentification requise, ou commande non supportée");
+            write(resp, 400, "Authentification requise, ou commande non supportée: " + req.getRequestURI());
         }
     }
 
