@@ -1,11 +1,16 @@
 package tda2.insa.com.be_covoiturage;
 
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,6 +32,8 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.NetworkInterface;
 
 
 public class ProfileViewActivity extends ActionBarActivity {
@@ -188,12 +196,10 @@ public class ProfileViewActivity extends ActionBarActivity {
 				JSONObject obj = new JSONObject();
 				obj.put("name", authToken.getEmail());
 
-				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("detailsAccount"), authToken, obj, new Response.Listener<JSONObject>() {
+				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("detailsAccount"), authToken, obj, new Network.NetworkResponseListener() {
 							@Override
-							public void onResponse(JSONObject response) {
+							public void onResponse(JSONObject data, JSONObject headers) {
 								try {
-									JSONObject data = response.getJSONObject("data");
-
 									_user = new User(authToken, data);
 									MyApplication.setUser(_user);
 									ProfileViewFragment.this.onProfileLoaded();
@@ -202,10 +208,10 @@ public class ProfileViewActivity extends ActionBarActivity {
 								}
 							}
 						},
-						new Response.ErrorListener() {
+						new Network.NetworkErrorListener() {
 							@Override
-							public void onErrorResponse(VolleyError error) {
-								ProfileViewFragment.this.loadFailed(error.toString());
+							public void onError(String reason, VolleyError error) {
+								ProfileViewFragment.this.loadFailed(reason + " " + error.toString());
 							}
 						});
 			}
@@ -271,7 +277,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	public static class RouteViewFragment extends Fragment {
 		private User _user;
 		private Route _route;
-		private EditText _startTime, _endTime;
+		private Button _startTime, _endTime;
 		private Spinner _worplaces, _weekday;
 		private Button _removeRoute;
 
@@ -282,8 +288,30 @@ public class ProfileViewActivity extends ActionBarActivity {
 			View rootView = inflater.inflate(R.layout.route_view, container, false);
 			_user = MyApplication.getUser();
 
-			_startTime = (EditText)rootView.findViewById(R.id.startTime);
-			_endTime = (EditText)rootView.findViewById(R.id.endTime);
+			_startTime = (Button)rootView.findViewById(R.id.start_time);
+			_endTime = (Button)rootView.findViewById(R.id.end_time);
+
+			_startTime.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogFragment newFragment = new TimePickerFragment();
+					Bundle bundle = new Bundle();
+					bundle.putInt("hour", _route.getStartHour());
+					bundle.putInt("minute", _route.getStartMinute());
+					newFragment.show(RouteViewFragment.this.getFragmentManager(), "timePicker");
+				}
+			});
+
+			_endTime.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					DialogFragment newFragment = new TimePickerFragment();
+					Bundle bundle = new Bundle();
+					bundle.putInt("hour", _route.getEndHour());
+					bundle.putInt("minute", _route.getEndMinute());
+					newFragment.show(RouteViewFragment.this.getFragmentManager(), "timePicker");
+				}
+			});
 
 			_worplaces = (Spinner)rootView.findViewById(R.id.workplace);
 			_weekday = (Spinner)rootView.findViewById(R.id.week_day);
@@ -292,6 +320,24 @@ public class ProfileViewActivity extends ActionBarActivity {
 
 
 			return rootView;
+		}
+
+		public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+			Route _route;
+
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				int hour = this.getArguments().getInt("hour");
+				int minute = this.getArguments().getInt("minute");
+
+				// Create a new instance of TimePickerDialog and return it
+				return new TimePickerDialog(getActivity(), this, hour, minute,
+						DateFormat.is24HourFormat(getActivity()));
+			}
+
+			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+			}
 		}
 	}
 
@@ -307,11 +353,44 @@ public class ProfileViewActivity extends ActionBarActivity {
             _user = MyApplication.getUser();
             _text = (EditText)rootView.findViewById(R.id.NomUser);
             _text.setText(_user.getLastName());
-            _text = (EditText)rootView.findViewById(R.id.PrenomUser);
+            /*_text = (EditText)rootView.findViewById(R.id.PrenomUser);
             _text.setText(_user.getFirstName());
             _text = (EditText)rootView.findViewById(R.id.Postal);
-            _text.setText(Integer.toString(_user.getHome().getPostalCode()));
-            return rootView;
+            _text.setText(Integer.toString(_user.getHome().getPostalCode()));*/
+
+	        _text.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {
+			        _user.setFirstName("FirstName");
+			        JSONObject obj = new JSONObject();
+			        try {
+				        obj.put("name", _user.getAuthToken().getEmail());
+				        obj.put("field", "firstName");
+				        obj.put("value", IdentityViewFragment.this._text.getText());
+				        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, new Network.NetworkResponseListener() {
+							        @Override
+							        public void onResponse(JSONObject data, JSONObject headers) {
+								        try {
+											Log.e("ok", "ok" + data.toString());
+
+								        } catch (Exception e) {
+									        Log.e("pas ok", e.toString());
+								        }
+							        }
+						        },
+						        new Network.NetworkErrorListener() {
+							        @Override
+					                public void onError(String reason, VolleyError error) {
+								        Log.e("pas ok", reason);
+							        }
+						        });
+			        }
+			        catch(Exception e) {}
+
+				}
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        });
+	        return rootView;
         }
     }
 }

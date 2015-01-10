@@ -172,7 +172,7 @@ public class User {
 
         u.close();
 
-        q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%m') gominutes_, "
+        /*q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%m') gominutes_, "
                 + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%m') returnminutes_, "
                 + "CityName, ZIPCode, PlaceName, PlaceAddress "
                 + "FROM user, route, city, place "
@@ -196,7 +196,7 @@ public class User {
         }
 
         routes.close();
-        st.close();
+        st.close();*/
 
         return r;
     }

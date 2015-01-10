@@ -113,17 +113,16 @@ public class LoginActivity extends ProgressActivity {
 				obj.put("name", email);
 				obj.put("password", password);
 
-				Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Response.Listener<JSONObject>() {
+				Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Network.NetworkResponseListener() {
 							@Override
-							public void onResponse(JSONObject response) {
+							public void onResponse(JSONObject data, JSONObject headers) {
 								try {
-									JSONObject data = response.getJSONObject("data");
 									if (!data.getString("status").equals("OK")) {
 										LoginActivity.this.wrongCredentials();
 										return;
 									}
 
-									String cookie = response.getJSONObject("headers").getString("Set-Cookie");
+									String cookie = headers.getString("Set-Cookie");
 									cookie = cookie.substring(0, cookie.indexOf(';'));
 
 									LoginActivity.this.loginSuccess(new AuthToken(email, cookie));
@@ -132,10 +131,10 @@ public class LoginActivity extends ProgressActivity {
 								}
 							}
 						},
-						new Response.ErrorListener() {
+						new Network.NetworkErrorListener() {
 							@Override
-							public void onErrorResponse(VolleyError error) {
-								LoginActivity.this.loginError(error.toString());
+							public void onError(String reason, VolleyError error) {
+								LoginActivity.this.loginError(reason + " " + error.toString());
 							}
 						});
 			}

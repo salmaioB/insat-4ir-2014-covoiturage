@@ -3,10 +3,12 @@ package tda2.insa.com.be_covoiturage;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.Serializable;
+
 /**
  * Created by remi on 07/01/15.
  */
-public class Route {
+public class Route implements Serializable {
 	private String _start;
 	private String _end;
 	private Weekday _weekday;
