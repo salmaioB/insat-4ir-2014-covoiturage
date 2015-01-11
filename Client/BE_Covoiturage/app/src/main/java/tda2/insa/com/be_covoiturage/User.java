@@ -20,7 +20,7 @@ public class User {
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
 		_routes = new Route[Route.Weekday.values().length];
-		
+
 		for(Route.Weekday day : Route.Weekday.values()) {
 			_routes[day.ordinal()] = new Route(day);
 		}
@@ -43,7 +43,7 @@ public class User {
 				Route route = _routes[index];
 
 				route.setActive(true);
-				route.setWorkspace(Workplace.getWithID(object.getInt("placeID")));
+				route.setWorkplace(Workplace.getWithID(object.getInt("placeID")));
 				route.setStartTime(object.getInt("startHour"), object.getInt("startMinute"));
 				route.setEndTime(object.getInt("endHour"), object.getInt("endMinute"));
 			}

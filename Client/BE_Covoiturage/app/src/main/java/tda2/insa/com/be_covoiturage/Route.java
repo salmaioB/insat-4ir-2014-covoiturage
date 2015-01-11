@@ -3,6 +3,8 @@ package tda2.insa.com.be_covoiturage;
 import android.util.Log;
 import android.widget.ImageView;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.net.URLEncoder;
 
@@ -31,6 +33,19 @@ public class Route implements Serializable {
 
 		_weekday = day;
 		_workplace = Workplace.getWorkplaces().iterator().next();
+	}
+
+	public JSONObject getJSON() {
+		MyJSONObject route = new MyJSONObject();
+
+		route.put("placeID", this.getWorkplace().getID());
+		route.put("startHour", this.getStartHour());
+		route.put("startMinute", this.getStartMinute());
+		route.put("endHour", this.getEndHour());
+		route.put("endMinute", this.getEndMinute());
+		route.put("weekday", this.getWeekday().toString());
+
+		return route;
 	}
 
 	public boolean active() {
@@ -121,10 +136,10 @@ public class Route implements Serializable {
 		return res;
 	}
 
-	public Workplace getWorkspace() {
+	public Workplace getWorkplace() {
 		return _workplace;
 	}
-	public void setWorkspace(Workplace wp) {
+	public void setWorkplace(Workplace wp) {
 		_workplace = wp;
 	}
 
@@ -141,7 +156,7 @@ public class Route implements Serializable {
 	public String getStaticMapURL() {
 		String url ="https://maps.googleapis.com/maps/api/staticmap?size=" + Integer.toString(_imageWidth) + "x" + Integer.toString(_imageHeight);
 
-		String workplace = "57 rue Frédéric Mistral, 09300 Lavelanet";//_workplace.getAddress();
+		String workplace = _workplace.getAddress();
 		String home = MyApplication.getUser().getAddress();
 
 		String[] markers = {"color:green|label:H|" + home, "color:red|label:S|" + workplace};

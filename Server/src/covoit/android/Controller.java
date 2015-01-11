@@ -251,8 +251,8 @@ public class Controller extends HttpServlet {
         }
     }
 
-	   /**
-     * Modifie un champ du profil de l'utilisateur.
+	/**
+     * Modifie un trajet
      */
     private static void doModifyRoute(HttpServletRequest req,
         HttpServletResponse resp, JsonObject reqBody) {
@@ -275,6 +275,57 @@ public class Controller extends HttpServlet {
             write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
+	
+	/**
+     * Ajoute un trajet
+     */
+    private static void doAddRoute(HttpServletRequest req,
+        HttpServletResponse resp, JsonObject reqBody) {
+		try {
+			try {
+				String name = getString(reqBody, "name");   //@mail
+				JsonObject route = getObject(reqBody, "route"); // trajet à ajouter
+
+				User.addRoute(name, new Route(route));
+
+				JsonObject pl = Json.createObjectBuilder()
+						.add("status", "OK")
+						.build();
+				write(resp, 200, pl);
+
+			} catch (SQLException ex) {
+				write(resp, 500, ex.toString());
+			}
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+        }
+    }
+
+	/**
+     * Supprime un trajet
+     */
+    private static void doRemoveRoute(HttpServletRequest req,
+        HttpServletResponse resp, JsonObject reqBody) {
+		try {
+			try {
+				String name = getString(reqBody, "name");   //@mail
+				String weekday = getString(reqBody, "weekday"); // trajet à ajouter
+
+				User.removeRoute(name, Route.Weekday.valueOf(weekday));
+
+				JsonObject pl = Json.createObjectBuilder()
+						.add("status", "OK")
+						.build();
+				write(resp, 200, pl);
+
+			} catch (SQLException ex) {
+				write(resp, 500, ex.toString());
+			}
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+        }
+    }
+
 
     /**
      * Renvoie les détails / infos persos du compte spécifié.
@@ -322,6 +373,12 @@ public class Controller extends HttpServlet {
             }
             else if (cmd.equals("modifyRoute")){
                 doModifyRoute(req, resp, reqBody);
+            }
+            else if (cmd.equals("addRoute")){
+                doAddRoute(req, resp, reqBody);
+            }
+            else if (cmd.equals("removeRoute")){
+                doRemoveRoute(req, resp, reqBody);
             }
             else if (cmd.equals("listWorkplaces")){
                 doListWorkplaces(req, resp, reqBody);

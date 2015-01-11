@@ -56,8 +56,10 @@ public class RouteViewFragment extends Fragment {
 				TimePickerFragment newFragment = new TimePickerFragment();
 
 				Bundle bundle = new Bundle();
-				bundle.putInt(HOUR, _route.getStartHour());
-				bundle.putInt(MINUTE, _route.getStartMinute());
+
+				String[] startTime = _startTime.getText().toString().split(":");
+				bundle.putInt(HOUR, Integer.parseInt(startTime[0]));
+				bundle.putInt(MINUTE, Integer.parseInt(startTime[1]));
 				newFragment.setArguments(bundle);
 
 				newFragment.setParent(RouteViewFragment.this);
@@ -71,8 +73,10 @@ public class RouteViewFragment extends Fragment {
 				TimePickerFragment newFragment = new TimePickerFragment();
 
 				Bundle bundle = new Bundle();
-				bundle.putInt(HOUR, _route.getStartHour());
-				bundle.putInt(MINUTE, _route.getStartMinute());
+
+				String[] endTime = _endTime.getText().toString().split(":");
+				bundle.putInt(HOUR, Integer.parseInt(endTime[0]));
+				bundle.putInt(MINUTE, Integer.parseInt(endTime[1]));
 				newFragment.setArguments(bundle);
 
 				newFragment.setEnd();
@@ -99,7 +103,7 @@ public class RouteViewFragment extends Fragment {
 			}
 		});
 
-		_route = _user.getRoute(Route.Weekday.valueOf(savedInstanceState.getString(WEEK_DAY)));
+		_route = _user.getRoute(Route.Weekday.valueOf(this.getArguments().getString(WEEK_DAY)));
 
 		_active.setText("Je recherche un trajet pour " + _route.getWeekdayName());
 		if(!_route.active()) {
@@ -113,11 +117,48 @@ public class RouteViewFragment extends Fragment {
 		_save.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (_route.active()) {
+					// On modifie le trajet
+					if (_active.isChecked()) {
+						RouteViewFragment.this.updateRoute("modifyRoute");
+					}
+					// On supprime le trajet
+					else {
+						_route.setActive(false);
 
+						MyJSONObject obj = new MyJSONObject();
+						obj.put("name", _user.getAuthToken().getEmail());
+						obj.put("weekday", _route.getWeekday().toString());
+						Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("removeRoute"), _user.getAuthToken(), obj, null, null);
+					}
+				} else {
+					// On créé le trajet
+					if (_active.isChecked()) {
+						RouteViewFragment.this.updateRoute("addRoute");
+					}
+				}
 			}
 		});
 
 		return rootView;
+	}
+
+	private void updateRoute(String command) {
+		MyJSONObject obj = new MyJSONObject();
+		obj.put("name", _user.getAuthToken().getEmail());
+
+		_route.setActive(true);
+		String[] startTime = _startTime.getText().toString().split(":");
+		_route.setStartTime(Integer.parseInt(startTime[0]), Integer.parseInt(startTime[1]));
+
+		String[] endTime = _endTime.getText().toString().split(":");
+		_route.setEndTime(Integer.parseInt(endTime[0]), Integer.parseInt(endTime[1]));
+
+		_route.setWorkplace(Workplace.getWorkplaces().get(_worplaces.getSelectedItemPosition()));
+		_route.invalidateMap();
+
+		obj.put("route", _route.getJSON());
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest(command), _user.getAuthToken(), obj, null, null);
 	}
 
 	@Override
@@ -133,7 +174,7 @@ public class RouteViewFragment extends Fragment {
 
 			_startTime.setText(_route.getStartTime());
 			_endTime.setText(_route.getEndTime());
-			_worplaces.setSelection(Workplace.getWorkplaces().indexOf(_route.getWorkspace()));
+			_worplaces.setSelection(Workplace.getWorkplaces().indexOf(_route.getWorkplace()));
 
 			this.getActivity().getFragmentManager().beginTransaction().show(_map).commit();
 		}
@@ -161,8 +202,8 @@ public class RouteViewFragment extends Fragment {
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			int hour = savedInstanceState.getInt(HOUR);
-			int minute = savedInstanceState.getInt(MINUTE);
+			int hour = this.getArguments().getInt(HOUR);
+			int minute = this.getArguments().getInt(MINUTE);
 
 			return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 		}
