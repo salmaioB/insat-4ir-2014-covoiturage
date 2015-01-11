@@ -6,21 +6,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 /**
+ *
  * Created by remi on 04/01/15.
  */
 public class User {
 	private AuthToken _authToken;
-	private ArrayList<Route> _routes;
+	private Route[] _routes;
 	private String _firstName, _lastName;
 	private boolean _isDriver;
 	private Place _home;
 
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
-		_routes = new ArrayList<>();
+		_routes = new Route[Route.Weekday.values().length];
+		for(Route.Weekday day : Route.Weekday.values()) {
+			_routes[day.ordinal()] = new Route(day);
+		}
 
 		try {
 			_firstName = userInfo.getString("firstName");
@@ -34,12 +36,15 @@ public class User {
 			for(int i = 0; i < routes.length(); ++i) {
 				JSONObject object = routes.getJSONObject(i);
 
-				Route route = new Route();
+				Route.Weekday wd = Route.Weekday.valueOf(object.getString("weekday"));
+				int index = wd.ordinal();
 
-				route.setWorkspace(Workplace.getWorkplaces().get(new Integer(object.getInt("placeID"))));
+				Route route = _routes[index];
+
+				route.setActive(true);
+				route.setWorkspace(Workplace.getWithID(object.getInt("placeID")));
 				route.setStartTime(object.getInt("startHour"), object.getInt("startMinute"));
 				route.setEndTime(object.getInt("endHour"), object.getInt("endMinute"));
-				route.setWeekday(Route.Weekday.valueOf(object.getString("weekday")));
 			}
 		}
 		catch (JSONException e) {
@@ -47,16 +52,12 @@ public class User {
 		}
 	}
 
-	public ArrayList<Route> getRoutes() {
+	public Route getRoute(Route.Weekday day) {
+		return _routes[day.ordinal()];
+	}
+
+	public Route[] getRoutes() {
 		return _routes;
-	}
-
-	public void addRoute(Route r) {
-		_routes.add(r);
-	}
-
-	public void removeRoute(Route r) {
-		_routes.remove(r);
 	}
 
 	public boolean isDriver() {

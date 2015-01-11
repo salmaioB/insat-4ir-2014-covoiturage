@@ -1,7 +1,8 @@
 package tda2.insa.com.be_covoiturage;
 
+import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	ProfileViewFragment _profileViewFragment;
 	RouteViewFragment _routeViewFragment;
 	IdentityViewFragment _identityViewFragment;
+	Fragment _currentFragment;
 
 
 	@Override
@@ -26,10 +28,19 @@ public class ProfileViewActivity extends ActionBarActivity {
 	}
 
 	private void switchToFragment(Fragment fragment) {
-		this.getSupportFragmentManager().beginTransaction()
-				.replace(R.id.container, fragment)
-				.commit();
+		FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
+		transaction.replace(R.id.container, fragment);
 
+		transaction.commit();
+
+		_currentFragment = fragment;
+	}
+
+	@Override
+	public void onBackPressed() {
+		if(_currentFragment != _profileViewFragment) {
+			this.switchToProfile();
+		}
 	}
 
 	public void switchToIdentity() {
@@ -37,7 +48,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	}
 
 	public void switchToRoute(Route r) {
-		_routeViewFragment.setRoute(r);
+		RouteViewFragment.setRoute(r);
 		this.switchToFragment(_routeViewFragment);
 	}
 
