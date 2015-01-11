@@ -13,9 +13,8 @@ import javax.json.*;
 import java.util.ArrayList;
 
 public class Route {
-
-    private String _start; // Id ou valeur ?
-    private String _end;   // Id ou valeur ?
+	
+	private int _idPlace;
     private Weekday _weekday;
     private int _startHour, _startMinute;
     private int _endHour, _endMinute;
@@ -26,8 +25,7 @@ public class Route {
     };
 
     public Route() {
-        _start = "";
-        _end = "";
+        _idPlace = -1;
         _startHour = 8;
         _startMinute = 0;
         _endHour = 18;
@@ -37,8 +35,7 @@ public class Route {
 
     public Route(JsonObject o) {
         try {
-            _start = o.getString("start");
-            _end = o.getString("end");
+            _idPlace = o.getInt("placeID");
             _startHour = o.getInt("startHour");
             _startMinute = o.getInt("startMinute");
             _endHour = o.getInt("endHour");
@@ -52,13 +49,12 @@ public class Route {
     public static JsonObject getJsonObjectRoute(Route route) {
         JsonObjectBuilder pl = Json.createObjectBuilder();
         if (route != null) {
-            pl.add("_start", route.getStart())
-                    .add("_end", route.getEnd())
-                    .add("_startHour", route.getStartHour())
-                    .add("_startMinute", route.getStartMinute())
-                    .add("_endHour", route.getStartHour())
-                    .add("_endMinute", route.getEndMinute())
-                    .add("_weekday", route.getWeekday().toString());
+            pl.add("placeID", route.getPlaceID())
+                    .add("startHour", route.getStartHour())
+                    .add("startMinute", route.getStartMinute())
+                    .add("endHour", route.getStartHour())
+                    .add("endMinute", route.getEndMinute())
+                    .add("weekday", route.getWeekday().toString());
             return pl.build();
         }
         return null;
@@ -76,20 +72,12 @@ public class Route {
         }
     }
 
-    public String getStart() {
-        return _start;
+    public int getPlaceID() {
+        return _idPlace;
     }
 
-    public void setStart(String start) {
-        _start = start;
-    }
-
-    public String getEnd() {
-        return _end;
-    }
-
-    public void setEnd(String end) {
-        _end = end;
+    public void setPlaceID(int id) {
+        _idPlace = id;
     }
 
     public Weekday getWeekday() {
@@ -97,7 +85,7 @@ public class Route {
     }
 
     public void setWeekday(Weekday weekday) {
-        weekday = weekday;
+        _weekday = weekday;
     }
 
     public void setStartTime(int hour, int minute) {

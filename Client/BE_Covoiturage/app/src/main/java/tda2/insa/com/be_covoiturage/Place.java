@@ -5,19 +5,28 @@ package tda2.insa.com.be_covoiturage;
  */
 public class Place {
 	private String _name;
-	private int _postalCode;
+	private int _zipCode;
 
 	Place() {
 		_name = "Toulouse";
-		_postalCode = 31000;
+		_zipCode = 31000;
+
 	}
 
-	public int getPostalCode() {
-		return _postalCode;
+	public int getZipCode() {
+		return _zipCode;
 	}
 
-	public void setPostalCode(int code) {
-		_postalCode = code;
+	public String getPrettyZipCode() {
+		String rep = Integer.toString(this.getZipCode());
+
+		return "00000".substring(5 - rep.length()) + rep;
+	}
+
+	public void setZipCode(int code) {
+		_zipCode = code;
+		if(_zipCode > 99999)
+			_zipCode = 31000;
 	}
 
 	public String getName() {
