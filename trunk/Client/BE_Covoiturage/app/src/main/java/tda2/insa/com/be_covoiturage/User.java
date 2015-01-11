@@ -20,6 +20,7 @@ public class User {
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
 		_routes = new Route[Route.Weekday.values().length];
+		
 		for(Route.Weekday day : Route.Weekday.values()) {
 			_routes[day.ordinal()] = new Route(day);
 		}
