@@ -9,8 +9,6 @@ import java.io.Serializable;
  * Created by remi on 07/01/15.
  */
 public class Route implements Serializable {
-	private String _start;
-	private String _end;
 	private Weekday _weekday;
 	private int _startHour, _startMinute;
 	private int _endHour, _endMinute;
@@ -18,43 +16,25 @@ public class Route implements Serializable {
 	private ImageView _imageView;
 	private int _imageWidth, _imageHeight;
 
-	private Place _workplace;
+	private Workplace _workplace;
 
 	public enum Weekday {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
 
 	public Route() {
-		_start = "";
-		_end = "";
 		_startHour = 8;
 		_startMinute = 0;
 		_endHour = 18;
 		_endMinute = 0;
 
 		_weekday = Weekday.Monday;
-		_workplace = new Place();
-	}
-
-	public String getStart() {
-		return _start;
-	}
-
-	public void setStart(String start) {
-		_start = start;
-	}
-
-	public String getEnd() {
-		return _end;
-	}
-
-	public void setEnd(String end) {
-		_end = end;
+		_workplace = Workplace.getDefaultWorkplace();
 	}
 
 	public Weekday getWeekday() {
 		return _weekday;
 	}
 
-	public void setStart(Weekday weekday) {
+	public void setWeekday(Weekday weekday) {
 		weekday = weekday;
 	}
 
@@ -142,8 +122,11 @@ public class Route implements Serializable {
 		return res;
 	}
 
-	public Place getWorkspace() {
+	public Workplace getWorkspace() {
 		return _workplace;
+	}
+	public void setWorkspace(Workplace wp) {
+		_workplace = wp;
 	}
 
 	public void setMapView(ImageView view, int width, int height) {

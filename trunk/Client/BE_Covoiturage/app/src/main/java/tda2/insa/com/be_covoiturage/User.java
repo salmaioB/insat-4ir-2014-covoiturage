@@ -2,6 +2,8 @@ package tda2.insa.com.be_covoiturage;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,12 +22,29 @@ public class User {
 		_authToken = authToken;
 		_routes = new ArrayList<>();
 
-		_firstName = "";
-		_lastName = "";
-		_isDriver = false;
-		_home = new Place();
+		try {
+			_firstName = userInfo.getString("firstName");
+			_lastName = userInfo.getString("lastName");
+			_isDriver = userInfo.getBoolean("driver");
+			_home = new Place();
+			_home.setName(userInfo.getString("city"));
+			_home.setZipCode(userInfo.getInt("zipCode"));
 
-		Log.e("Creating user with info", userInfo.toString());
+			JSONArray routes = userInfo.getJSONArray("routes");
+			for(int i = 0; i < routes.length(); ++i) {
+				JSONObject object = routes.getJSONObject(i);
+
+				Route route = new Route();
+
+				route.setWorkspace(Workplace.getWorkplaces().get(new Integer(object.getInt("placeID"))));
+				route.setStartTime(object.getInt("startHour"), object.getInt("startMinute"));
+				route.setEndTime(object.getInt("endHour"), object.getInt("endMinute"));
+				route.setWeekday(Route.Weekday.valueOf(object.getString("weekday")));
+			}
+		}
+		catch (JSONException e) {
+			Log.e("User creation error:", e.getMessage());
+		}
 	}
 
 	public ArrayList<Route> getRoutes() {

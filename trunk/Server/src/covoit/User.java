@@ -21,6 +21,8 @@ public class User {
     private String passwd;
     private String firstName;
     private String lastName;
+	private String city;
+	private int zipcode;
     private boolean driver; // Vrai si la personne préfère conduire elle-même.
     private ArrayList<Route> routes;
     
@@ -36,7 +38,9 @@ public class User {
     public String getLastName() {return lastName;}
     public ArrayList<Route> getRoutes() {return routes;}
     public boolean isDriver() {return driver;}
-
+	public String getCity() {return city;}
+	public int getZipCode() {return zipcode;}
+	
     // Mise à jour du prénom (Philippe : Ajout requête)
     public static void updateFirstName(String mailAddr, String firstName) throws SQLException {
         String q = "UPDATE user SET FirstName = ? WHERE MailAddress = ?;";
@@ -153,50 +157,51 @@ public class User {
     public static User load(String name) throws SQLException {
         User r = new User();
 
-        String q = "SELECT IdUser, Password, FirstName, LastName, Driver "
-                + "FROM user "
-                + "WHERE MailAddress = ?";
-        PreparedStatement st = Conn.prepare(q);
-        st.setString(1, name);
-        ResultSet u = st.executeQuery();
+		String q = "SELECT IdUser, Password, FirstName, LastName, Driver, ZipCode, CityName "
+				+ "FROM user, city "
+				+ "WHERE MailAddress = ? "
+				+ "AND city.IdCity = user.IdCity";
+		PreparedStatement st = Conn.prepare(q);
+		st.setString(1, name);
+		ResultSet u = st.executeQuery();
 
-        if (!u.next()) {
-            return null; //got 0 rows
-        }
-        r.name = name;
-        r.passwd = u.getString("Password");
-        r.firstName = u.getString("FirstName");
-        r.lastName = u.getString("LastName");
-        r.driver = u.getString("Driver").equals("Y");
-        int iduser = u.getInt("IdUser");  // getInt existe?
+		if (!u.next()) {
+			return null; //got 0 rows
+		}
+		r.name = name;
+		r.passwd = u.getString("Password");
+		r.firstName = u.getString("FirstName");
+		r.lastName = u.getString("LastName");
+		r.driver = u.getString("Driver").equals("Y");
+		r.city = u.getString("CityName");
+		r.zipcode = u.getInt("ZipCode");
+		int iduser = u.getInt("IdUser");
 
-        u.close();
+		u.close();
+		st.close();
 
-        /*q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%m') gominutes_, "
-                + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%m') returnminutes_, "
-                + "CityName, ZIPCode, PlaceName, PlaceAddress "
+        q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominutes_,"
+                + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminutes_, route.IdPlace "
                 + "FROM user, route, city, place "
-                + "WHERE user.IdCity = city.IdCity "
-                + "AND route.IdPlace = place.IdPlace "
-                + "AND user.IdUser = route.IdUser "
-                + "AND user.IdUser = ?";
+                + "WHERE route.IdUser = ? ";
+		
         st = Conn.prepare(q);
         st.setString(1, Integer.toString(iduser));
         ResultSet routes = st.executeQuery();
 
-        Route route = new Route();
+        while(routes.next()) {
+			Route route = new Route();
 
-        while (!routes.next()) {
-            route.setWeekday(Route.Weekday.valueOf(routes.getString("Day")));
+			route.setWeekday(Route.Weekday.valueOf(routes.getString("Day")));
             route.setStartTime(routes.getInt("gohour_"), routes.getInt("gominutes_"));
             route.setEndTime(routes.getInt("returnhour_"), routes.getInt("returnminutes_"));
-            route.setStart(routes.getString("CityName") + " " + routes.getString("ZIPCode"));
-            route.setEnd(routes.getString("PlaceName") + " " + routes.getString("PlaceAddress"));
+            route.setPlaceID(routes.getInt("route.IdPlace"));
+			
             r.getRoutes().add(route);
         }
 
         routes.close();
-        st.close();*/
+        st.close();
 
         return r;
     }

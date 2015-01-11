@@ -18,6 +18,7 @@
     <string name="thursday">Jeudi</string>
     <string name="friday">Vendredi</string>
     <string name="saturday">Samedi</string>
+    <string name="driver">Conducteur</string>
 
 
 </resources>

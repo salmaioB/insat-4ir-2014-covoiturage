@@ -15,7 +15,6 @@ import java.sql.*;
 import java.security.InvalidParameterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.json.*;
 
@@ -192,6 +191,8 @@ public class Controller extends HttpServlet {
                         .add("firstName", u.getFirstName())
                         .add("lastName", u.getLastName())
                         .add("driver", u.isDriver())
+						.add("city", u.getCity())
+						.add("zipCode", u.getZipCode())
                         .add("routes", Route.getJsonObjectRoutes(u.getRoutes()));
             }
             write(resp, 200, pl.build());
@@ -205,40 +206,65 @@ public class Controller extends HttpServlet {
      */
     private static void doModifyAccountField(HttpServletRequest req,
         HttpServletResponse resp, JsonObject reqBody) {
-        try {
-            String name = getString(reqBody, "name");   //@mail
-            String field = getString(reqBody, "field"); //champ à modifier
-                                                        //nouvelle valeur: value
-            switch (name) {
-                case "firstName":
-                    String fn = getString(reqBody, "value");
-                    User.updateFirstName(name, fn);
-                    break;
-                case "lastName":
-                    String ln = getString(reqBody, "value");
-                    User.updateLastName(name, ln);
-                    break;
-                case "password":
-                    String p = getString(reqBody, "value");
-                    User.updatePassword(name, p);
-                    break;
-                case "driver":
-                    Boolean d = getBool(reqBody, "value");
-                    User.updateDriver(name, d);
-                    break;
-                case "city":
-                    JsonObject o = getObject(reqBody, "value");
-                    String c = o.getString("city");
-                    String z = o.getString("zip");
-                    User.updateCity(name, c, z);
-                    break;
-                default:
-                    break;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+		try {
+			try {
+				String name = getString(reqBody, "name");   //@mail
+				String field = getString(reqBody, "field"); //champ à modifier
+															//nouvelle valeur: value
+				switch (field) {
+					case "firstName":
+						String fn = getString(reqBody, "value");
+						User.updateFirstName(name, fn);
+						break;
+					case "lastName":
+						String ln = getString(reqBody, "value");
+						User.updateLastName(name, ln);
+						break;
+					case "password":
+						String p = getString(reqBody, "value");
+						User.updatePassword(name, p);
+						break;
+					case "driver":
+						Boolean d = getBool(reqBody, "value");
+						User.updateDriver(name, d);
+						break;
+					case "city":
+						JsonObject o = getObject(reqBody, "value");
+						String c = o.getString("city");
+						String z = o.getString("zip");
+						User.updateCity(name, c, z);
+						break;
+					default:
+						throw new InvalidParameterException();
+				}
+
+				JsonObject pl = Json.createObjectBuilder()
+						.add("status", "OK")
+						.build();
+				write(resp, 200, pl);
+
+			} catch (SQLException ex) {
+				write(resp, 500, ex.toString());
+			}
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
+	
+    /**
+     * Renvoie les détails / infos persos du compte spécifié.
+     */
+    private static void doListWorkplaces(HttpServletRequest req,
+            HttpServletResponse resp, JsonObject reqBody) {
+		try {
+			JsonObjectBuilder builder = Json.createObjectBuilder();
+			builder.add("value", Workplaces.getWorplaces());
+			write(resp, 200, builder.build());
+		}
+		catch(SQLException e) {
+			write(resp, 500, e.toString());
+		}
+     }
 
     /* DISPATCH *******************************************************************/
     @Override
@@ -268,6 +294,9 @@ public class Controller extends HttpServlet {
             } 
             else if (cmd.equals("modifyAccountField")){
                 doModifyAccountField(req, resp, reqBody);
+            }
+            else if (cmd.equals("listWorkplaces")){
+                doListWorkplaces(req, resp, reqBody);
             }
             else {
                 write(resp, 400, "Commande non supportée: " + cmd);
