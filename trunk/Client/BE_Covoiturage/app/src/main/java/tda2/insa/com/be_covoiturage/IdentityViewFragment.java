@@ -24,7 +24,7 @@ public class IdentityViewFragment extends Fragment {
 	private EditText _lastName;
 	private EditText _city;
 	private EditText _zipCode;
-	private Button _cancel, _save;
+	private Button _save;
 	private CheckBox _driver;
 
 	public IdentityViewFragment() {}
@@ -93,19 +93,7 @@ public class IdentityViewFragment extends Fragment {
 
 				InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
 						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(_cancel.getWindowToken(), 0);
-
-				((ProfileViewActivity)IdentityViewFragment.this.getActivity()).switchToProfile();
-			}
-		});
-
-		_cancel = (Button)rootView.findViewById(R.id.cancel);
-		_cancel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(_cancel.getWindowToken(), 0);
+				imm.hideSoftInputFromWindow(_save.getWindowToken(), 0);
 
 				((ProfileViewActivity)IdentityViewFragment.this.getActivity()).switchToProfile();
 			}

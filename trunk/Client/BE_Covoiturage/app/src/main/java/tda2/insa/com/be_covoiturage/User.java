@@ -52,6 +52,10 @@ public class User {
 		}
 	}
 
+	public String getAddress() {
+		return _home.getPrettyZipCode() + " " + _home.getName() + ", " + "France";
+	}
+
 	public Route getRoute(Route.Weekday day) {
 		return _routes[day.ordinal()];
 	}

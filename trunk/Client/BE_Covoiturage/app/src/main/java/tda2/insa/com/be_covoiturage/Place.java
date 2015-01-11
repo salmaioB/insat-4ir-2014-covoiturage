@@ -20,7 +20,7 @@ public class Place {
 	public String getPrettyZipCode() {
 		String rep = Integer.toString(this.getZipCode());
 
-		return "00000".substring(5 - rep.length()) + rep;
+		return "00000".substring(rep.length()) + rep;
 	}
 
 	public void setZipCode(int code) {

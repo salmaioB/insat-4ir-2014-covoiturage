@@ -31,11 +31,11 @@ public class RouteAdapter extends ArrayAdapter<Route> {
  		TextView weekday = (TextView)convertView.findViewById(R.id.week_day);
 
 		ImageView img = (ImageView)convertView.findViewById(R.id.map_view);
-		route.setMapView(img, _width, 100);
+		route.setMapView(img, _width, 150);
 		if(route.active()) {
 			route.updateStaticMap();
 			img.setVisibility(View.VISIBLE);
-			img.setMinimumHeight(200);
+			img.setMinimumHeight(300);
 			weekday.setText(route.getWeekdayName() + " de " + route.getStartTime() + " à " + route.getEndTime());
 		}
 		else {
