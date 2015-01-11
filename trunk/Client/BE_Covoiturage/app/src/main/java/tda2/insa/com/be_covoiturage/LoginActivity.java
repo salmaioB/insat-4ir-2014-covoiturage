@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -108,38 +107,34 @@ public class LoginActivity extends ProgressActivity {
 			// On envoie les infos au serveur
 			this.showProgress(true);
 
-			try {
-				JSONObject obj = new JSONObject();
-				obj.put("name", email);
-				obj.put("password", password);
+			MyJSONObject obj = new MyJSONObject();
+			obj.put("name", email);
+			obj.put("password", password);
 
-				Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Network.NetworkResponseListener() {
-							@Override
-							public void onResponse(JSONObject data, JSONObject headers) {
-								try {
-									if (!data.getString("status").equals("OK")) {
-										LoginActivity.this.wrongCredentials();
-										return;
-									}
-
-									String cookie = headers.getString("Set-Cookie");
-									cookie = cookie.substring(0, cookie.indexOf(';'));
-
-									LoginActivity.this.loginSuccess(new AuthToken(email, cookie));
-								} catch (Exception e) {
-									LoginActivity.this.loginError(e.getMessage());
+			Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Network.NetworkResponseListener() {
+						@Override
+						public void onResponse(JSONObject data, JSONObject headers) {
+							try {
+								if (!data.getString("status").equals("OK")) {
+									LoginActivity.this.wrongCredentials();
+									return;
 								}
+
+								String cookie = headers.getString("Set-Cookie");
+								cookie = cookie.substring(0, cookie.indexOf(';'));
+
+								LoginActivity.this.loginSuccess(new AuthToken(email, cookie));
+							} catch (Exception e) {
+								LoginActivity.this.loginError(e.getMessage());
 							}
-						},
-						new Network.NetworkErrorListener() {
-							@Override
-							public void onError(String reason, VolleyError error) {
-								LoginActivity.this.loginError(reason + " " + error.toString());
-							}
-						});
-			}
-			// Si le JSONObject.put a échoué, que faire à part pleurer ?
-			catch (JSONException e) { }
+						}
+					},
+					new Network.NetworkErrorListener() {
+						@Override
+						public void onError(String reason, VolleyError error) {
+							LoginActivity.this.loginError(reason + " " + error.toString());
+						}
+					});
 		}
 	}
 

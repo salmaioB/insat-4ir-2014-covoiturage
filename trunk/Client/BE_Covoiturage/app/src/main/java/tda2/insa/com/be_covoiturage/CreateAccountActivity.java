@@ -2,20 +2,15 @@ package tda2.insa.com.be_covoiturage;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -121,41 +116,37 @@ public class CreateAccountActivity extends ProgressActivity {
 			// On envoie les infos au serveur
 			this.showProgress(true);
 
-			try {
-				JSONObject obj = new JSONObject();
+			MyJSONObject obj = new MyJSONObject();
 
-				obj.put("name", email);
-				obj.put("password", pass);
-				obj.put("firstName", firstName);
-				obj.put("lastName", lastName);
-				obj.put("driver", driver);
+			obj.put("name", email);
+			obj.put("password", pass);
+			obj.put("firstName", firstName);
+			obj.put("lastName", lastName);
+			obj.put("driver", driver);
 
-				Network.getInstance().sendPostRequest(Network.pathToRequest("createAccount"), obj, new Network.NetworkResponseListener() {
-							@Override
-							public void onResponse(JSONObject data, JSONObject headers) {
-								try {
-									if (!data.getString("status").equals("OK")) {
-										CreateAccountActivity.this.creationFailure();
-										return;
-									}
-
-									CreateAccountActivity.this.creationSuccess();
-								} catch (Exception e) {
-									Log.e("Creation failed", e.getMessage());
+			Network.getInstance().sendPostRequest(Network.pathToRequest("createAccount"), obj, new Network.NetworkResponseListener() {
+						@Override
+						public void onResponse(JSONObject data, JSONObject headers) {
+							try {
+								if (!data.getString("status").equals("OK")) {
 									CreateAccountActivity.this.creationFailure();
+									return;
 								}
-							}
-						},
-						new Network.NetworkErrorListener() {
-							@Override
-							public void onError(String reason, VolleyError error) {
-								Log.e("Creation failed:", reason + " " + error.toString());
+
+								CreateAccountActivity.this.creationSuccess();
+							} catch (Exception e) {
+								Log.e("Creation failed", e.getMessage());
 								CreateAccountActivity.this.creationFailure();
 							}
-						});
-			}
-			// Si le JSONObject.put a échoué, que faire à part pleurer ?
-			catch (JSONException e) { }
+						}
+					},
+					new Network.NetworkErrorListener() {
+						@Override
+						public void onError(String reason, VolleyError error) {
+							Log.e("Creation failed:", reason + " " + error.toString());
+							CreateAccountActivity.this.creationFailure();
+						}
+					});
 		}
 	}
 

@@ -1,17 +1,17 @@
 package tda2.insa.com.be_covoiturage;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.VolleyError;
@@ -19,7 +19,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ProfileViewFragment extends Fragment {
@@ -30,6 +29,7 @@ public class ProfileViewFragment extends Fragment {
 	private ListView _routesList;
 	private ArrayAdapter<String> _infos;
 	private RouteAdapter _routes;
+	private Activity _activity;
 
 	public ProfileViewFragment() {}
 
@@ -37,14 +37,7 @@ public class ProfileViewFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_profile_view, container, false);
 
-		Button addRoute = (Button)rootView.findViewById(R.id.add_route);
-		addRoute.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				ProfileViewFragment.this.addRoute();
-			}
-		});
-
+		_activity = this.getActivity();
 
 		_infosList = (ListView)rootView.findViewById(R.id.profile_infos);
 		_infosList.setClickable(true);
@@ -66,7 +59,6 @@ public class ProfileViewFragment extends Fragment {
 					ProfileViewFragment.this.editNotifications();
 				}
 			}
-
 		});
 
 		this.loadProfile((AuthToken) (this.getActivity().getIntent().getSerializableExtra(LoginActivity.AUTH_TOKEN)));
@@ -97,38 +89,39 @@ public class ProfileViewFragment extends Fragment {
 		else {
 			_canUseMaps = true;
 		}
-
-		Log.e("canUseMaps", Boolean.toString(_canUseMaps));
 	}
 
 	public void updateMaps() {
 		if(_user != null) {
-			for (Route r : _user.getRoutes()) {
-				r.invalidateMap();
-				r.updateStaticMap();
+			for(Route.Weekday day : Route.Weekday.values()) {
+				Route r = _user.getRoute(day);
+				if(r.active()) {
+					r.invalidateMap();
+					r.updateStaticMap();
+				}
 			}
 		}
 	}
 
 	private void loadProfile(final AuthToken authToken) {
-		// Liste tous les lieux de travail connus
+		// Liste tous les lieux de travail connus, charge le profil si réussi
 		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("listWorkplaces"), authToken, new JSONObject(), new Network.NetworkResponseListener() {
 					@Override
 					public void onResponse(JSONObject data, JSONObject headers) {
 						try {
 							JSONArray array = data.getJSONArray("value");
-							for(int i = 0; i < array.length(); ++i) {
+							if(array.length() == 0) {
+								throw new IllegalArgumentException(getActivity().getString(R.string.error_no_worplace));
+							}
+							for (int i = 0; i < array.length(); ++i) {
 								JSONObject workplace = array.getJSONObject(i);
 								// Ajouté automatiquement à la liste
 								new Workplace(workplace.getInt("id"), workplace.getString("name"), workplace.getString("address"));
 							}
-						} catch (Exception e) {
-							// Prout
-						}
 
-						// Charge le profil de l'utilisateur une fois les lieux de travail disponibles
-						try {
-							JSONObject obj = new JSONObject();
+
+							// Charge le profil de l'utilisateur une fois les lieux de travail disponibles
+							MyJSONObject obj = new MyJSONObject();
 							obj.put("name", authToken.getEmail());
 
 							// Va chercher les détails du profil
@@ -150,9 +143,9 @@ public class ProfileViewFragment extends Fragment {
 											ProfileViewFragment.this.loadFailed(reason + " " + error.toString());
 										}
 									});
+						} catch (Exception e) {
+							ProfileViewFragment.this.loadFailed(e.getMessage());
 						}
-						// Si le JSONObject.put a échoué, que faire à part pleurer ?
-						catch (JSONException e) { }
 					}
 				},
 				new Network.NetworkErrorListener() {
@@ -178,10 +171,10 @@ public class ProfileViewFragment extends Fragment {
 			Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("logout"), _user.getAuthToken(), new JSONObject(), null, null);
 		}
 
-		this.getActivity().finish();
+		_activity.finish();
 
-		Intent i = new Intent(this.getActivity(), LoginActivity.class);
-		this.startActivity(i);
+		Intent i = new Intent(_activity, LoginActivity.class);
+		_activity.startActivity(i);
 	}
 
 	public void onProfileLoaded() {
@@ -195,8 +188,6 @@ public class ProfileViewFragment extends Fragment {
 			}
 
 		});
-
-		this.updateMaps();
 	}
 
 	public void editIdentity() {
@@ -208,13 +199,6 @@ public class ProfileViewFragment extends Fragment {
 	}
 
 	public void editRoute(int index) {
-		((ProfileViewActivity)this.getActivity()).switchToRoute(_user.getRoutes().get(index));
-	}
-
-	public void addRoute() {
-		Route newRoute = new Route();
-
-		_user.getRoutes().add(newRoute);
-		_routes.notifyDataSetChanged();
+		((ProfileViewActivity)this.getActivity()).switchToRoute(_user.getRoute(Route.Weekday.values()[index]));
 	}
 }

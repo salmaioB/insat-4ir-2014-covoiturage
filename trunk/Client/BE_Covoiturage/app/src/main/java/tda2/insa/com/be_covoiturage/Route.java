@@ -6,36 +6,42 @@ import android.widget.ImageView;
 import java.io.Serializable;
 
 /**
+ *
  * Created by remi on 07/01/15.
  */
 public class Route implements Serializable {
 	private Weekday _weekday;
 	private int _startHour, _startMinute;
 	private int _endHour, _endMinute;
+	boolean _active = false;
 	private boolean _mapUpToDate = false;
 	private ImageView _imageView;
 	private int _imageWidth, _imageHeight;
 
 	private Workplace _workplace;
 
-	public enum Weekday {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
+	public enum Weekday {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}
 
-	public Route() {
+	public Route(Weekday day) {
 		_startHour = 8;
 		_startMinute = 0;
 		_endHour = 18;
 		_endMinute = 0;
 
-		_weekday = Weekday.Monday;
-		_workplace = Workplace.getDefaultWorkplace();
+		_weekday = day;
+		_workplace = Workplace.getWorkplaces().iterator().next();
+	}
+
+	public boolean active() {
+		return _active;
+	}
+
+	public void setActive(boolean active) {
+		_active = active;
 	}
 
 	public Weekday getWeekday() {
 		return _weekday;
-	}
-
-	public void setWeekday(Weekday weekday) {
-		weekday = weekday;
 	}
 
 	public String getWeekdayName() {
@@ -144,8 +150,9 @@ public class Route implements Serializable {
 	}
 
 	public void updateStaticMap() {
-		if(_mapUpToDate == false) {
+		if(!_mapUpToDate) {
 			new ImageDownloader().execute(this.getStaticMapURL(), _imageView);
+			Log.e("update", this.getStaticMapURL());
 			_mapUpToDate = true;
 		}
 	}

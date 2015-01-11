@@ -19,6 +19,7 @@
     <string name="friday">Vendredi</string>
     <string name="saturday">Samedi</string>
     <string name="driver">Conducteur</string>
+    <string name="error_no_worplace">Pas de lieux de travail disponibles. Contactez l\'administrateur.</string>
 
 
 </resources>
