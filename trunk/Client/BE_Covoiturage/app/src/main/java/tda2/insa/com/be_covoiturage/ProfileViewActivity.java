@@ -48,7 +48,9 @@ public class ProfileViewActivity extends ActionBarActivity {
 	}
 
 	public void switchToRoute(Route r) {
-		RouteViewFragment.setRoute(r);
+		Bundle args = new Bundle();
+		args.putString(RouteViewFragment.WEEK_DAY, r.getWeekday().toString());
+		_routeViewFragment.setArguments(args);
 		this.switchToFragment(_routeViewFragment);
 	}
 

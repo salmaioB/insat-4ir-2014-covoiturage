@@ -106,8 +106,9 @@ public class User {
             st.setString(1, city);
             st.setString(2, zip);
             rs = st.executeQuery();
-        }
-        idCity = rs.getInt("IdCity");
+  			rs.next();
+      }
+      idCity = rs.getInt("IdCity");
         rs.close();
 
         // Affectation
@@ -127,20 +128,24 @@ public class User {
         PreparedStatement st = Conn.prepare(q);
         st.setString(1, mailAddr);
         ResultSet rs = st.executeQuery();
+		
+        if (rs.next()) {
+			int idUser = rs.getInt("IdUser");
 
-        int idUser = rs.getInt("IdUser");
-        rs.close();
-
-		q = "UPDATE route SET GoHour = ?, EndHour = ?, IdPlace = ? WHERE route.IdUser = ? AND route.Day = ?;";
-        st = Conn.prepare(q);
-		st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
- 		st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
-        st.setInt(3, route.getPlaceID());
-        st.setString(4, mailAddr);
-        st.setString(5, route.getWeekday().toString());
-        st.execute();
-        st.close();
-    }
+			q = "UPDATE route SET GoHour = ?, ReturnHour = ?, IdPlace = ? WHERE route.IdUser = ? AND route.Day = ?;";
+			
+			st = Conn.prepare(q);
+			st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
+			st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
+			st.setInt(3, route.getPlaceID());
+			st.setInt(4, idUser);
+			st.setString(5, route.getWeekday().toString());
+			st.execute();
+			st.close();
+		}
+ 
+		rs.close();
+	}
 	
 	public static void addRoute(String mailAddr, Route route) throws SQLException {
         // Recherche de l'IdUser pour toutes les requêtes suivantes
@@ -148,22 +153,23 @@ public class User {
         PreparedStatement st = Conn.prepare(q);
         st.setString(1, mailAddr);
         ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+			int idUser = rs.getInt("IdUser");
 
-        int idUser = rs.getInt("IdUser");
-        rs.close();
+			q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`) "
+				+ "VALUES (?, ?, ?, ?, ?);";
 
-		q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`) "
-			+ "VALUES (?, ?, ? ?, ?);";
-	    
-		st = Conn.prepare(q);
-		st.setInt(1, idUser);
-		st.setString(2, route.getWeekday().toString());
-		st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
- 		st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
-		st.setInt(5, route.getPlaceID());
-		
-		st.execute();
-		st.close();
+			st = Conn.prepare(q);
+			st.setInt(1, idUser);
+			st.setString(2, route.getWeekday().toString());
+			st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
+			st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
+			st.setInt(5, route.getPlaceID());
+
+			st.execute();
+			st.close();
+		}
+		rs.close();
     }
 	
 	public static void removeRoute(String mailAddr, Route.Weekday day) throws SQLException {
@@ -173,17 +179,19 @@ public class User {
         st.setString(1, mailAddr);
         ResultSet rs = st.executeQuery();
 
-        int idUser = rs.getInt("IdUser");
-        rs.close();
+        if (rs.next()) {
+			int idUser = rs.getInt("IdUser");
 
-		q = "DELETE FROM covoitsopra.route WHERE `IdUser` = ? AND `Day` = ?;";	    
-		st = Conn.prepare(q);
-		st.setInt(1, idUser);
-		st.setString(2, day.toString());
-		
-		st.execute();
-		st.close();
-    }
+			q = "DELETE FROM covoitsopra.route WHERE `IdUser` = ? AND `Day` = ?;";	    
+			st = Conn.prepare(q);
+			st.setInt(1, idUser);
+			st.setString(2, day.toString());
+
+			st.execute();
+			st.close();
+		}
+		rs.close();
+   }
 
 
 
