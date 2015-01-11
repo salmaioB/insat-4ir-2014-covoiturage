@@ -23,15 +23,18 @@ import java.util.ArrayList;
  * Created by remi on 11/01/15.
  */
 public class RouteViewFragment extends Fragment {
+	public static String WEEK_DAY = "weekday";
+	private static String HOUR = "hour";
+	private static String MINUTE = "minute";
+
 	private User _user;
-	private static Route _route;
 	private Button _startTime, _endTime;
 	private Spinner _worplaces;
 	private ArrayAdapter<String> _workplacesAdapter;
 	private CheckBox _active;
+	private Route _route;
+	private Button _save;
 	private static MapFragment _map;
-
-	private static RouteViewFragment _instance;
 
 	public RouteViewFragment() {}
 
@@ -51,6 +54,13 @@ public class RouteViewFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				TimePickerFragment newFragment = new TimePickerFragment();
+
+				Bundle bundle = new Bundle();
+				bundle.putInt(HOUR, _route.getStartHour());
+				bundle.putInt(MINUTE, _route.getStartMinute());
+				newFragment.setArguments(bundle);
+
+				newFragment.setParent(RouteViewFragment.this);
 				newFragment.show(RouteViewFragment.this.getFragmentManager(), "timePicker");
 			}
 		});
@@ -59,7 +69,14 @@ public class RouteViewFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				TimePickerFragment newFragment = new TimePickerFragment();
+
+				Bundle bundle = new Bundle();
+				bundle.putInt(HOUR, _route.getStartHour());
+				bundle.putInt(MINUTE, _route.getStartMinute());
+				newFragment.setArguments(bundle);
+
 				newFragment.setEnd();
+				newFragment.setParent(RouteViewFragment.this);
 				newFragment.show(RouteViewFragment.this.getFragmentManager(), "timePicker");
 			}
 		});
@@ -82,14 +99,7 @@ public class RouteViewFragment extends Fragment {
 			}
 		});
 
-		return rootView;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		_instance = this;
+		_route = _user.getRoute(Route.Weekday.valueOf(savedInstanceState.getString(WEEK_DAY)));
 
 		_active.setText("Je recherche un trajet pour " + _route.getWeekdayName());
 		if(!_route.active()) {
@@ -98,6 +108,21 @@ public class RouteViewFragment extends Fragment {
 
 		_active.setChecked(_route._active);
 		this.setActive(_route.active());
+
+		_save = (Button)rootView.findViewById(R.id.save_button);
+		_save.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
+		return rootView;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 	}
 
 	private void setActive(boolean active) {
@@ -121,56 +146,37 @@ public class RouteViewFragment extends Fragment {
 		}
 	}
 
-	public static void updateTime() {
-		_instance._startTime.setText(_route.getStartTime());
-		_instance._endTime.setText(_route.getEndTime());
-	}
-
-	public static void setRoute(Route r) {
-		_route = r;
-	}
-
-	public static Route getRoute() {
-		return _route;
+	public void updateTime(int hour, int minute, boolean start) {
+		if(start) {
+			_startTime.setText(Route.getPrettyHour(hour, minute));
+		}
+		else {
+			_endTime.setText(Route.getPrettyHour(hour, minute));
+		}
 	}
 
 	public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 		private boolean _start = true;
+		RouteViewFragment _parent;
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			Route r = RouteViewFragment.getRoute();
+			int hour = savedInstanceState.getInt(HOUR);
+			int minute = savedInstanceState.getInt(MINUTE);
 
-			int hour, minute;
-
-			if(_start) {
-				hour = r.getStartHour();
-				minute = r.getStartMinute();
-			}
-			else {
-				hour = r.getEndHour();
-				minute = r.getEndMinute();
-			}
-
-			return new TimePickerDialog(getActivity(), this, hour, minute,
-					DateFormat.is24HourFormat(getActivity()));
+			return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 		}
 
 		public void setEnd() {
 			_start = false;
 		}
 
+		public void setParent(RouteViewFragment parent) {
+			_parent = parent;
+		}
+
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			Route r = RouteViewFragment.getRoute();
-
-			if(_start) {
-				r.setStartTime(hourOfDay, minute);
-			}
-			else {
-				r.setEndTime(hourOfDay, minute);
-			}
-
-			RouteViewFragment.updateTime();
+			_parent.updateTime(hourOfDay, minute, _start);
 		}
 	}
 

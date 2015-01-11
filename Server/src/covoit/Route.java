@@ -13,14 +13,12 @@ import javax.json.*;
 import java.util.ArrayList;
 
 public class Route {
-	
 	private int _idPlace;
     private Weekday _weekday;
     private int _startHour, _startMinute;
     private int _endHour, _endMinute;
 
     public enum Weekday {
-
         Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
     };
 
@@ -46,25 +44,22 @@ public class Route {
 
     }
 
-    public static JsonObject getJsonObjectRoute(Route route) {
+    public JsonObject getJsonObjectRoute() {
         JsonObjectBuilder pl = Json.createObjectBuilder();
-        if (route != null) {
-            pl.add("placeID", route.getPlaceID())
-                    .add("startHour", route.getStartHour())
-                    .add("startMinute", route.getStartMinute())
-                    .add("endHour", route.getStartHour())
-                    .add("endMinute", route.getEndMinute())
-                    .add("weekday", route.getWeekday().toString());
-            return pl.build();
-        }
-        return null;
+		pl.add("placeID", this.getPlaceID())
+				.add("startHour", this.getStartHour())
+				.add("startMinute", this.getStartMinute())
+				.add("endHour", this.getEndHour())
+				.add("endMinute", this.getEndMinute())
+				.add("weekday", this.getWeekday().toString());
+		return pl.build();
     }
 
     public static JsonArray getJsonObjectRoutes(ArrayList<Route> routes) {
         JsonArrayBuilder jab = Json.createArrayBuilder();
         if (routes != null) {
             for (int i = 0; i < routes.size(); i++) {
-                jab.add(getJsonObjectRoute(routes.get(i)));
+                jab.add(routes.get(i).getJsonObjectRoute());
             }
             return jab.build();
         } else {
@@ -72,7 +67,7 @@ public class Route {
         }
     }
 
-    public int getPlaceID() {
+	public int getPlaceID() {
         return _idPlace;
     }
 

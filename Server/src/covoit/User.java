@@ -128,27 +128,64 @@ public class User {
         st.setString(1, mailAddr);
         ResultSet rs = st.executeQuery();
 
-        int idUser = rs.getInt("IdUser");  		// Comment gérer aucun IdUser ? car "void" !
+        int idUser = rs.getInt("IdUser");
         rs.close();
 
-        /* Syntaxe si on veut des ResultSet modifiables (plus facile à coder), mais il faut tester
-         Statement stmt = Conn.createStatement(
-         ResultSet.TYPE_SCROLL_INSENSITIVE,
-         ResultSet.CONCUR_UPDATABLE);
-         ResultSet rs = stmt.executeQuery("SELECT a, b FROM TABLE2");*/
-		//A faire !!!
-        //Mise à jour de la place si différente (on change l'ID, uniquement Admin peut modifier les 'places')
-		//Mise à jour du lieu de vie si différent (On crée si n'existe pas encore, sinon sélection d'un lieu existant)
-        //Mise à jour de la partie route (si le couple User/jour n'existe pas encore on ajoute toute la ligne, sinon on modifie les heures)
-        /*String q = "UPDATE route SET Day = ?, GoHour = ?, EndHour = ? WHERE route.IdUser = (SELECT user.IdUser FROM user WHERE MailAddress = ?);";
-         PreparedStatement st = Conn.prepare(q);
-         st.setString(1, route.getWeekday());
-         st.setString(2, );
-         st.setString(3, );
-         st.setString(4, mailAddr);
-         st.execute();
-         st.close();*/
+		q = "UPDATE route SET GoHour = ?, EndHour = ?, IdPlace = ? WHERE route.IdUser = ? AND route.Day = ?;";
+        st = Conn.prepare(q);
+		st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
+ 		st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
+        st.setInt(3, route.getPlaceID());
+        st.setString(4, mailAddr);
+        st.setString(5, route.getWeekday().toString());
+        st.execute();
+        st.close();
     }
+	
+	public static void addRoute(String mailAddr, Route route) throws SQLException {
+        // Recherche de l'IdUser pour toutes les requêtes suivantes
+        String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
+        PreparedStatement st = Conn.prepare(q);
+        st.setString(1, mailAddr);
+        ResultSet rs = st.executeQuery();
+
+        int idUser = rs.getInt("IdUser");
+        rs.close();
+
+		q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`) "
+			+ "VALUES (?, ?, ? ?, ?);";
+	    
+		st = Conn.prepare(q);
+		st.setInt(1, idUser);
+		st.setString(2, route.getWeekday().toString());
+		st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
+ 		st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
+		st.setInt(5, route.getPlaceID());
+		
+		st.execute();
+		st.close();
+    }
+	
+	public static void removeRoute(String mailAddr, Route.Weekday day) throws SQLException {
+        // Recherche de l'IdUser pour toutes les requêtes suivantes
+        String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
+        PreparedStatement st = Conn.prepare(q);
+        st.setString(1, mailAddr);
+        ResultSet rs = st.executeQuery();
+
+        int idUser = rs.getInt("IdUser");
+        rs.close();
+
+		q = "DELETE FROM covoitsopra.route WHERE `IdUser` = ? AND `Day` = ?;";	    
+		st = Conn.prepare(q);
+		st.setInt(1, idUser);
+		st.setString(2, day.toString());
+		
+		st.execute();
+		st.close();
+    }
+
+
 
     /**
      * @param name adresse mail

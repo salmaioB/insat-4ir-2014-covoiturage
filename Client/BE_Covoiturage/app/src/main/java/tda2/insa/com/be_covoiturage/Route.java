@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
 
 /**
  *
@@ -87,20 +88,7 @@ public class Route implements Serializable {
 	}
 
 	public String getStartTime() {
-		String res = "";
-		if(this.getStartHour() < 10) {
-			res = res + "0";
-		}
-
-		res = res + Integer.toString(this.getStartHour()) + ":";
-
-		if(this.getStartMinute() < 10) {
-			res = res + "0";
-		}
-
-		res = res + Integer.toString(this.getStartMinute());
-
-		return res;
+		return Route.getPrettyHour(this.getStartHour(), this.getStartMinute());
 	}
 
 	public int getEndHour() {
@@ -112,18 +100,23 @@ public class Route implements Serializable {
 	}
 
 	public String getEndTime() {
+		return Route.getPrettyHour(this.getEndHour(), this.getEndMinute());
+	}
+
+	public static String getPrettyHour(int hour, int minute) {
 		String res = "";
-		if(this.getEndHour() < 10) {
+
+		if(hour < 10) {
 			res = res + "0";
 		}
 
-		res = res + Integer.toString(this.getEndHour()) + ":";
+		res = res + Integer.toString(hour) + ":";
 
-		if(this.getEndMinute() < 10) {
+		if(minute < 10) {
 			res = res + "0";
 		}
 
-		res = res + Integer.toString(this.getEndMinute());
+		res = res + Integer.toString(minute);
 
 		return res;
 	}
@@ -146,7 +139,21 @@ public class Route implements Serializable {
 	}
 
 	public String getStaticMapURL() {
-		return 	"https://maps.googleapis.com/maps/api/staticmap?size=" + Integer.toString(_imageWidth) + "x" + Integer.toString(_imageHeight);
+		String url ="https://maps.googleapis.com/maps/api/staticmap?size=" + Integer.toString(_imageWidth) + "x" + Integer.toString(_imageHeight);
+
+		String workplace = "57 rue Frédéric Mistral, 09300 Lavelanet";//_workplace.getAddress();
+		String home = MyApplication.getUser().getAddress();
+
+		String[] markers = {"color:green|label:H|" + home, "color:red|label:S|" + workplace};
+
+		for(String m : markers) {
+			try {
+				url += "&markers=" + URLEncoder.encode(m, "utf-8");
+			}
+			catch(Exception e){}
+		}
+
+		return url;
 	}
 
 	public void updateStaticMap() {

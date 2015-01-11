@@ -109,6 +109,8 @@ public class ProfileViewFragment extends Fragment {
 					@Override
 					public void onResponse(JSONObject data, JSONObject headers) {
 						try {
+							Workplace.getWorkplaces().clear();
+
 							JSONArray array = data.getJSONArray("value");
 							if(array.length() == 0) {
 								throw new IllegalArgumentException(getActivity().getString(R.string.error_no_worplace));
@@ -118,7 +120,6 @@ public class ProfileViewFragment extends Fragment {
 								// Ajouté automatiquement à la liste
 								new Workplace(workplace.getInt("id"), workplace.getString("name"), workplace.getString("address"));
 							}
-
 
 							// Charge le profil de l'utilisateur une fois les lieux de travail disponibles
 							MyJSONObject obj = new MyJSONObject();
