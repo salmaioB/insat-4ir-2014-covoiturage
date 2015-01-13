@@ -8,6 +8,7 @@
  */
 package covoit;
 
+import java.math.BigDecimal;
 import javax.json.*;
 
 public class ShortUser {
@@ -16,13 +17,15 @@ public class ShortUser {
     private String firstName;
     private String lastName;
     private int hour;
+    private int minute;
     private boolean driver;
 
-    public ShortUser(String name, String firstName, String lastName, int hour, boolean driver){
+    public ShortUser(String name, String firstName, String lastName, int hour, int minute, boolean driver){
         this.name = name;
         this.firstName = firstName;
         this.lastName = lastName;
         this.hour = hour;
+        this.minute = minute;
         this.driver = driver;
     }
     
@@ -40,6 +43,10 @@ public class ShortUser {
 
     public int getHour() {
         return hour;
+    }
+    
+    public int getMinute() {
+        return minute;
     }
     
     public boolean getDriver() {
@@ -62,6 +69,10 @@ public class ShortUser {
         this.hour = hour;
     }
     
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+    
     public void setDriver (boolean driver) {
         this.driver = driver;
     }
@@ -72,7 +83,8 @@ public class ShortUser {
                 .add("firstName", this.getFirstName())
                 .add("lastName", this.getLastName())
                 .add("hour", this.getHour())
-                .add("driver", this.driver);
+                .add("minute", this.getMinute())
+                .add("driver", this.getDriver());
         return pl.build();
     }
 }
