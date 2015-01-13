@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class User {
 
-    private String name; // aussi l'adresse email ?
+    private String name; // l'adresse email
     private String passwd;
     private String firstName;
     private String lastName;
@@ -33,13 +33,14 @@ public class User {
      /**
      * base64(bcrypt([password]))
      */
+    public String getName() {return name;}
     public String getPassword() {return passwd;}
     public String getFirstName() {return firstName;}
     public String getLastName() {return lastName;}
     public ArrayList<Route> getRoutes() {return routes;}
     public boolean isDriver() {return driver;}
-	public String getCity() {return city;}
-	public int getZipCode() {return zipcode;}
+    public String getCity() {return city;}
+    public int getZipCode() {return zipcode;}
 	
     // Mise à jour du prénom (Philippe : Ajout requête)
     public static void updateFirstName(String mailAddr, String firstName) throws SQLException {
