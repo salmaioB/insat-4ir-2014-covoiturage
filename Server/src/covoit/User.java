@@ -306,26 +306,50 @@ public class User {
     public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction) throws SQLException {
         ArrayList<ShortUser> userList = new ArrayList<ShortUser>();
         String req;
-        
-        //Requête à revoir
-        
+
+        // Récup des infos de l'utilisateur courant
         if (direction) 
-            req = "SELECT MailAddress, FirstName, LastName, DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminute_,Driver ";
+            req = "select DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver,IdPlace,IdCity from user,route "
+                    + "where user.IdUser = route.IdUser AND route.Day = ? "
+                    + "AND MailAddress = ?";
+            
         else
-            req = "SELECT MailAddress, FirstName, LastName, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominute_,Driver ";
-        
-        req = req + "FROM user,route " 
-                  + "WHERE user.IdUser = route.IdUser "
-                  + "AND AddrMail = ? AND Day = ?;" ;
-        
+            req = "select DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(CoHour, '%i') minute_,Driver,IdPlace,IdCity from user,route "
+                    + "where user.IdUser = route.IdUser AND route.Day = ? "
+                    + "AND MailAddress = ?";
         PreparedStatement st = Conn.prepare(req);
-        st.setString(1, mailAddr);
         st.setString(1, day.toString());
+        st.setString(2, mailAddr);
         ResultSet u = st.executeQuery();
+        
+        // Requête pour récup des utilisateurs correspondants
+        if (direction) 
+            req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
+                    + "where user.IdUser = route.IdUser AND route.Day = ? "
+                    + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
+                    + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
+                    + "AND IdPlace = ?"
+                    + "AND IdCity = ?";
+         else
+            req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
+                    + "where user.IdUser = route.IdUser AND route.Day = ? "
+                    + "AND DATE_FORMAT(GoHour, '%H') = ?"
+                    + "AND DATE_FORMAT(GoHour, '%i') = ?"
+                    + "AND IdPlace = ?"
+                    + "AND IdCity = ?";
+        
+        PreparedStatement st2 = Conn.prepare(req);
+        st2.setString(1, day.toString());
+        st2.setString(2, u.getString("hour_"));
+        st2.setString(3, u.getString("minute_"));
+        st2.setString(4, u.getString("IdPlace"));
+        st2.setString(5, u.getString("IdCity"));
+        ResultSet u2 = st2.executeQuery();
 
         while (u.next()) {
-            
+            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"),u2.getString("Driver")));
         }
+        return userList;
     }
 
     public static User create(String name, String pwdHash,
