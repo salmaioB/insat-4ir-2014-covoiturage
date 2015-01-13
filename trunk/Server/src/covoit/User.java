@@ -304,7 +304,28 @@ public class User {
     }
 
     public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction) throws SQLException {
+        ArrayList<ShortUser> userList = new ArrayList<ShortUser>();
+        String req;
+        
+        //Requête à revoir
+        
+        if (direction) 
+            req = "SELECT MailAddress, FirstName, LastName, DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminute_,Driver ";
+        else
+            req = "SELECT MailAddress, FirstName, LastName, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominute_,Driver ";
+        
+        req = req + "FROM user,route " 
+                  + "WHERE user.IdUser = route.IdUser "
+                  + "AND AddrMail = ? AND Day = ?;" ;
+        
+        PreparedStatement st = Conn.prepare(req);
+        st.setString(1, mailAddr);
+        st.setString(1, day.toString());
+        ResultSet u = st.executeQuery();
 
+        while (u.next()) {
+            
+        }
     }
 
     public static User create(String name, String pwdHash,
