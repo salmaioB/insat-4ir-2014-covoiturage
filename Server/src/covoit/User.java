@@ -21,8 +21,8 @@ public class User {
     private String passwd;
     private String firstName;
     private String lastName;
-	private String city;
-	private int zipcode;
+    private String city;
+    private int zipcode;
     private boolean driver; // Vrai si la personne préfère conduire elle-même.
     private ArrayList<Route> routes;
     
