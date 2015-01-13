@@ -32,6 +32,7 @@ public class RouteViewFragment extends Fragment {
 	private Spinner _worplaces;
 	private ArrayAdapter<String> _workplacesAdapter;
 	private CheckBox _active;
+	private CheckBox _notifyMe;
 	private Route _route;
 	private Button _save;
 	private static MapFragment _map;
@@ -103,6 +104,8 @@ public class RouteViewFragment extends Fragment {
 			}
 		});
 
+		_notifyMe = (CheckBox)rootView.findViewById(R.id.notify_me);
+
 		_route = _user.getRoute(Route.Weekday.valueOf(this.getArguments().getString(WEEK_DAY)));
 
 		_active.setText("Je recherche un trajet pour " + _route.getWeekdayName());
@@ -157,6 +160,8 @@ public class RouteViewFragment extends Fragment {
 		_route.setWorkplace(Workplace.getWorkplaces().get(_worplaces.getSelectedItemPosition()));
 		_route.invalidateMap();
 
+		_route.setNotifyMe(_notifyMe.isChecked());
+
 		obj.put("route", _route.getJSON());
 		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest(command), _user.getAuthToken(), obj, null, null);
 	}
@@ -168,10 +173,12 @@ public class RouteViewFragment extends Fragment {
 
 	private void setActive(boolean active) {
 		if(active) {
+			_notifyMe.setEnabled(true);
 			_startTime.setEnabled(true);
 			_endTime.setEnabled(true);
 			_worplaces.setEnabled(true);
 
+			_notifyMe.setChecked(_route.getNotifyMe());
 			_startTime.setText(_route.getStartTime());
 			_endTime.setText(_route.getEndTime());
 			_worplaces.setSelection(Workplace.getWorkplaces().indexOf(_route.getWorkplace()));
@@ -179,6 +186,7 @@ public class RouteViewFragment extends Fragment {
 			this.getActivity().getFragmentManager().beginTransaction().show(_map).commit();
 		}
 		else {
+			_notifyMe.setEnabled(false);
 			_startTime.setEnabled(false);
 			_endTime.setEnabled(false);
 			_worplaces.setEnabled(false);
@@ -227,5 +235,8 @@ public class RouteViewFragment extends Fragment {
 			RouteViewFragment.setMapFragement(this);
 			return super.onCreateView(inflater, container, savedInstanceState);
 		}
+
+		//@Override
+		//public void onMap
 	}
 }

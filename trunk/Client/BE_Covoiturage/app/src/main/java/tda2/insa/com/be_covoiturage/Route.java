@@ -20,6 +20,7 @@ public class Route implements Serializable {
 	private boolean _mapUpToDate = false;
 	private ImageView _imageView;
 	private int _imageWidth, _imageHeight;
+	private boolean _notifyMe;
 
 	private Workplace _workplace;
 
@@ -30,6 +31,8 @@ public class Route implements Serializable {
 		_startMinute = 0;
 		_endHour = 18;
 		_endMinute = 0;
+
+		_notifyMe = true;
 
 		_weekday = day;
 		_workplace = Workplace.getWorkplaces().iterator().next();
@@ -44,6 +47,7 @@ public class Route implements Serializable {
 		route.put("endHour", this.getEndHour());
 		route.put("endMinute", this.getEndMinute());
 		route.put("weekday", this.getWeekday().toString());
+		route.put("notifyMe", this.getNotifyMe());
 
 		return route;
 	}
@@ -54,6 +58,14 @@ public class Route implements Serializable {
 
 	public void setActive(boolean active) {
 		_active = active;
+	}
+
+	public boolean getNotifyMe() {
+		return _notifyMe;
+	}
+
+	public void setNotifyMe(boolean notifyMe) {
+		_notifyMe = notifyMe;
 	}
 
 	public Weekday getWeekday() {
@@ -154,7 +166,7 @@ public class Route implements Serializable {
 	}
 
 	public String getStaticMapURL() {
-		String url ="https://maps.googleapis.com/maps/api/staticmap?size=" + Integer.toString(_imageWidth) + "x" + Integer.toString(_imageHeight);
+		String url = "https://maps.googleapis.com/maps/api/staticmap?size=" + Integer.toString(_imageWidth) + "x" + Integer.toString(_imageHeight);
 
 		String workplace = _workplace.getAddress();
 		String home = MyApplication.getUser().getAddress();
@@ -174,7 +186,6 @@ public class Route implements Serializable {
 	public void updateStaticMap() {
 		if(!_mapUpToDate) {
 			new ImageDownloader().execute(this.getStaticMapURL(), _imageView);
-			Log.e("update", this.getStaticMapURL());
 			_mapUpToDate = true;
 		}
 	}
