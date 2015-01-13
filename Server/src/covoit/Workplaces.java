@@ -16,7 +16,8 @@ import javax.json.*;
  * @author remi
  */
 public class Workplaces {
-	public static JsonArrayBuilder getWorplaces() throws SQLException {
+    
+	public static JsonArrayBuilder getWorkplaces() throws SQLException {
 		JsonArrayBuilder array = Json.createArrayBuilder();
         String q = "SELECT IdPlace, PlaceName, PlaceAddress "
                 + "FROM place ";
