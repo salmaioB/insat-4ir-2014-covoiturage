@@ -101,5 +101,12 @@ public class User {
 
     public String getEmail() { return _email; }
 
-    public boolean is_receiveByMail { return _receiveByMail; }
+    public void setEmail(String email) {_email = email; }
+
+    public boolean isReceiveByMail() { return _receiveByMail; }
+
+    public void setReceiveByMail(boolean d) {
+        _receiveByMail = d;
+    }
+
 }

@@ -21,12 +21,12 @@ public class NotificationViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.notification_view, container, false);
         _user = MyApplication.getUser();
-        _email = (EditText)rootView.findViewById(R.id.addressMail);
+        _email = (EditText) rootView.findViewById(R.id.addressMail);
         _email.setText(_user.getEmail());
-        _receiveByMail = (CheckBox)rootView.findViewById(R.id.email);
-        _receiveByMail.setChecked(_user.isDriver());
+        _receiveByMail = (CheckBox) rootView.findViewById(R.id.email);
+        _receiveByMail.setChecked(_user.isReceiveByMail());
 
-
+        return rootView;
     }
 
 }
