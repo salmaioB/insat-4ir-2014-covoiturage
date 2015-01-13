@@ -18,6 +18,14 @@ public class ShortUser {
     private int hour;
     private boolean driver;
 
+    public ShortUser(String name, String firstName, String lastName, int hour, boolean driver){
+        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.hour = hour;
+        this.driver = driver;
+    }
+    
     public String getName() {
         return name;
     }

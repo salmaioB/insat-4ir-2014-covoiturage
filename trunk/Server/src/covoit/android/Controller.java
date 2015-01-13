@@ -396,7 +396,7 @@ public class Controller extends HttpServlet {
             write(resp, 200, pl);
         } else if (cmd.equals("createAccount")) {
             doCreateAccount(req, resp, reqBody);
-        } else if (user.length() != 0) {  // connexion requise
+         } else if (user.length() != 0) {  // connexion requise
             if (cmd.equals("detailsAccount")) {
                 doDetailsAccount(req, resp, reqBody);
             } else if (cmd.equals("modifyAccountField")) {
