@@ -6,32 +6,32 @@
 /*----------------------------------------------------------------------------*/
 /*  BD
     
-Table user :
-   1- IdUser : Int(10) ---------- CP
-   2- MailAddress : Varchar(100)
-   3- LastName : Varchar(50)
-   4- FirstName : Varchar(50)
-   5- Password : Varchar(60)
-   6- Driver : Enum(Y,N)
-   7- IdCity : Int(10) ---------- FK
+ Table user :
+ 1- IdUser : Int(10) ---------- CP
+ 2- MailAddress : Varchar(100)
+ 3- LastName : Varchar(50)
+ 4- FirstName : Varchar(50)
+ 5- Password : Varchar(60)
+ 6- Driver : Enum(Y,N)
+ 7- IdCity : Int(10) ---------- FK
 
-Table route :
-   1- IdUser : Int(10) ---------- CP
-   2- Day : Enum(Monday,...) ---- CP
-   3- GoHour : Time
-   4- ReturnHour : Time
-   5- IdPlace : Int(10) --------- FK
+ Table route :
+ 1- IdUser : Int(10) ---------- CP
+ 2- Day : Enum(Monday,...) ---- CP
+ 3- GoHour : Time
+ 4- ReturnHour : Time
+ 5- IdPlace : Int(10) --------- FK
 
-Table place :
-   1- IdPlace : Int(10) --------- CP
-   2- PlaceName : Varchar(50)
-   3- PlaceAddress : Text
+ Table place :
+ 1- IdPlace : Int(10) --------- CP
+ 2- PlaceName : Varchar(50)
+ 3- PlaceAddress : Text
 
-Table city :
-   1- IdCity : Int(10) ---------- CP
-   2- CityName : Varchar(50)
-   3- ZIPCode : Varchar(50)
-*/
+ Table city :
+ 1- IdCity : Int(10) ---------- CP
+ 2- CityName : Varchar(50)
+ 3- ZIPCode : Varchar(50)
+ */
 /**
  * ***************************************************************************
  */
@@ -54,23 +54,46 @@ public class User {
     private int zipcode;
     private boolean driver; // Vrai si la personne préfère conduire elle-même.
     private ArrayList<Route> routes;
-    
+
     public User() {
         routes = new ArrayList<Route>();
     }
-    
-     /**
+
+    /**
      * base64(bcrypt([password]))
      */
-    public String getName() {return name;}
-    public String getPassword() {return passwd;}
-    public String getFirstName() {return firstName;}
-    public String getLastName() {return lastName;}
-    public ArrayList<Route> getRoutes() {return routes;}
-    public boolean isDriver() {return driver;}
-    public String getCity() {return city;}
-    public int getZipCode() {return zipcode;}
-	
+    public String getName() {
+        return name;
+    }
+
+    public String getPassword() {
+        return passwd;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public ArrayList<Route> getRoutes() {
+        return routes;
+    }
+
+    public boolean isDriver() {
+        return driver;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public int getZipCode() {
+        return zipcode;
+    }
+
     // Mise à jour du prénom (Philippe : Ajout requête)
     public static void updateFirstName(String mailAddr, String firstName) throws SQLException {
         String q = "UPDATE user SET FirstName = ? WHERE MailAddress = ?;";
@@ -136,9 +159,9 @@ public class User {
             st.setString(1, city);
             st.setString(2, zip);
             rs = st.executeQuery();
-  			rs.next();
-      }
-      idCity = rs.getInt("IdCity");
+            rs.next();
+        }
+        idCity = rs.getInt("IdCity");
         rs.close();
 
         // Affectation
@@ -158,52 +181,52 @@ public class User {
         PreparedStatement st = Conn.prepare(q);
         st.setString(1, mailAddr);
         ResultSet rs = st.executeQuery();
-		
+
         if (rs.next()) {
-			int idUser = rs.getInt("IdUser");
+            int idUser = rs.getInt("IdUser");
 
-			q = "UPDATE route SET GoHour = ?, ReturnHour = ?, IdPlace = ?, Notify = ? WHERE route.IdUser = ? AND route.Day = ?;";
-			
-			st = Conn.prepare(q);
-			st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
-			st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
-			st.setInt(3, route.getPlaceID());
-			st.setInt(4, idUser);
-			st.setString(5, route.getWeekday().toString());
-			st.setString(6,  route.getNotifyUser() ? ("Y") : ("N"));
-			st.execute();
-			st.close();
-		}
- 
-		rs.close();
-	}
-	
-	public static void addRoute(String mailAddr, Route route) throws SQLException {
-        // Recherche de l'IdUser pour toutes les requêtes suivantes
-        String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
-        PreparedStatement st = Conn.prepare(q);
-        st.setString(1, mailAddr);
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-			int idUser = rs.getInt("IdUser");
+            q = "UPDATE route SET GoHour = ?, ReturnHour = ?, IdPlace = ?, Notify = ? WHERE route.IdUser = ? AND route.Day = ?;";
 
-			q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`) "
-				+ "VALUES (?, ?, ?, ?, ?);";
+            st = Conn.prepare(q);
+            st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
+            st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
+            st.setInt(3, route.getPlaceID());
+            st.setInt(4, idUser);
+            st.setString(5, route.getWeekday().toString());
+            st.setString(6, route.getNotifyUser() ? ("Y") : ("N"));
+            st.execute();
+            st.close();
+        }
 
-			st = Conn.prepare(q);
-			st.setInt(1, idUser);
-			st.setString(2, route.getWeekday().toString());
-			st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
-			st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
-			st.setInt(5, route.getPlaceID());
-
-			st.execute();
-			st.close();
-		}
-		rs.close();
+        rs.close();
     }
-	
-	public static void removeRoute(String mailAddr, Route.Weekday day) throws SQLException {
+
+    public static void addRoute(String mailAddr, Route route) throws SQLException {
+        // Recherche de l'IdUser pour toutes les requêtes suivantes
+        String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
+        PreparedStatement st = Conn.prepare(q);
+        st.setString(1, mailAddr);
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+            int idUser = rs.getInt("IdUser");
+
+            q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`) "
+                    + "VALUES (?, ?, ?, ?, ?);";
+
+            st = Conn.prepare(q);
+            st.setInt(1, idUser);
+            st.setString(2, route.getWeekday().toString());
+            st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
+            st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
+            st.setInt(5, route.getPlaceID());
+
+            st.execute();
+            st.close();
+        }
+        rs.close();
+    }
+
+    public static void removeRoute(String mailAddr, Route.Weekday day) throws SQLException {
         // Recherche de l'IdUser pour toutes les requêtes suivantes
         String q = "SELECT IdUser FROM user WHERE MailAddress = ?";
         PreparedStatement st = Conn.prepare(q);
@@ -211,20 +234,18 @@ public class User {
         ResultSet rs = st.executeQuery();
 
         if (rs.next()) {
-			int idUser = rs.getInt("IdUser");
+            int idUser = rs.getInt("IdUser");
 
-			q = "DELETE FROM covoitsopra.route WHERE `IdUser` = ? AND `Day` = ?;";	    
-			st = Conn.prepare(q);
-			st.setInt(1, idUser);
-			st.setString(2, day.toString());
+            q = "DELETE FROM covoitsopra.route WHERE `IdUser` = ? AND `Day` = ?;";
+            st = Conn.prepare(q);
+            st.setInt(1, idUser);
+            st.setString(2, day.toString());
 
-			st.execute();
-			st.close();
-		}
-		rs.close();
-   }
-
-
+            st.execute();
+            st.close();
+        }
+        rs.close();
+    }
 
     /**
      * @param name adresse mail
@@ -233,46 +254,46 @@ public class User {
     public static User load(String name) throws SQLException {
         User r = new User();
 
-		String q = "SELECT IdUser, Password, FirstName, LastName, Driver, ZipCode, CityName "
-				+ "FROM user, city "
-				+ "WHERE MailAddress = ? "
-				+ "AND city.IdCity = user.IdCity";
-		PreparedStatement st = Conn.prepare(q);
-		st.setString(1, name);
-		ResultSet u = st.executeQuery();
+        String q = "SELECT IdUser, Password, FirstName, LastName, Driver, ZipCode, CityName "
+                + "FROM user, city "
+                + "WHERE MailAddress = ? "
+                + "AND city.IdCity = user.IdCity";
+        PreparedStatement st = Conn.prepare(q);
+        st.setString(1, name);
+        ResultSet u = st.executeQuery();
 
-		if (!u.next()) {
-			return null; //got 0 rows
-		}
-		r.name = name;
-		r.passwd = u.getString("Password");
-		r.firstName = u.getString("FirstName");
-		r.lastName = u.getString("LastName");
-		r.driver = u.getString("Driver").equals("Y");
-		r.city = u.getString("CityName");
-		r.zipcode = u.getInt("ZipCode");
-		int iduser = u.getInt("IdUser");
+        if (!u.next()) {
+            return null; //got 0 rows
+        }
+        r.name = name;
+        r.passwd = u.getString("Password");
+        r.firstName = u.getString("FirstName");
+        r.lastName = u.getString("LastName");
+        r.driver = u.getString("Driver").equals("Y");
+        r.city = u.getString("CityName");
+        r.zipcode = u.getInt("ZipCode");
+        int iduser = u.getInt("IdUser");
 
-		u.close();
-		st.close();
+        u.close();
+        st.close();
 
         q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominutes_,"
                 + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminutes_, route.IdPlace "
                 + "FROM user, route, city, place "
                 + "WHERE route.IdUser = ? ";
-		
+
         st = Conn.prepare(q);
         st.setString(1, Integer.toString(iduser));
         ResultSet routes = st.executeQuery();
 
-        while(routes.next()) {
-			Route route = new Route();
+        while (routes.next()) {
+            Route route = new Route();
 
-			route.setWeekday(Route.Weekday.valueOf(routes.getString("Day")));
+            route.setWeekday(Route.Weekday.valueOf(routes.getString("Day")));
             route.setStartTime(routes.getInt("gohour_"), routes.getInt("gominutes_"));
             route.setEndTime(routes.getInt("returnhour_"), routes.getInt("returnminutes_"));
             route.setPlaceID(routes.getInt("route.IdPlace"));
-			
+
             r.getRoutes().add(route);
         }
 
@@ -282,11 +303,10 @@ public class User {
         return r;
     }
 
-    
     public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction) throws SQLException {
-        
+
     }
-    
+
     public static User create(String name, String pwdHash,
             String firstName, String lastName, boolean driver
     ) throws SQLException {
