@@ -198,7 +198,7 @@ public class Controller extends HttpServlet {
             }
             write(resp, 200, pl.build());
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed createAccount command: " + reqBody);
+            write(resp, 400, "Malformed detailsAccount command: " + reqBody);
         }
     }
 
@@ -273,7 +273,7 @@ public class Controller extends HttpServlet {
                 write(resp, 500, ex.toString());
             }
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+            write(resp, 400, "Malformed modifyRoute command: " + reqBody);
         }
     }
 
@@ -298,7 +298,7 @@ public class Controller extends HttpServlet {
                 write(resp, 500, ex.toString());
             }
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+            write(resp, 400, "Malformed addRoute command: " + reqBody);
         }
     }
 
@@ -323,7 +323,7 @@ public class Controller extends HttpServlet {
                 write(resp, 500, ex.toString());
             }
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+            write(resp, 400, "Malformed removeRoute command: " + reqBody);
         }
     }
 
@@ -338,15 +338,15 @@ public class Controller extends HttpServlet {
             write(resp, 200, builder.build());
         } catch (SQLException e) {
             write(resp, 500, e.toString());
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed listWorkplaces command: " + reqBody);
         }
     }
 
     /**
      * Renvoie la liste des trajets correspondant à une route. name = mail
-     * address of the user 
-     * weekday = weekday of the route 
-     * direction = go: false, return:
-     * true
+     * address of the user weekday = weekday of the route direction = go: false,
+     * return: true
      */
     private static void doSearchRoutes(HttpServletRequest req,
             HttpServletResponse resp, JsonObject reqBody) {
@@ -357,19 +357,19 @@ public class Controller extends HttpServlet {
                 Boolean direction = getBool(reqBody, "direction"); // go or return
 
                 ArrayList<ShortUser> l = User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction);
-                
+
                 JsonArrayBuilder jab = Json.createArrayBuilder();
-                    if (l != null) {
-                        for (int i = 0; i < l.size(); i++) {
-                            jab.add(l.get(i).getJsonObjectShortUser());
-                        }
+                if (l != null) {
+                    for (int i = 0; i < l.size(); i++) {
+                        jab.add(l.get(i).getJsonObjectShortUser());
                     }
+                }
                 write(resp, 200, jab.build());
             } catch (SQLException ex) {
                 write(resp, 500, ex.toString());
             }
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+            write(resp, 400, "Malformed searchRoutes command: " + reqBody);
         }
     }
 
@@ -409,6 +409,8 @@ public class Controller extends HttpServlet {
                 doRemoveRoute(req, resp, reqBody);
             } else if (cmd.equals("listWorkplaces")) {
                 doListWorkplaces(req, resp, reqBody);
+            } else if (cmd.equals("searchRoutes")) {
+                doSearchRoutes(req, resp, reqBody);
             } else {
                 write(resp, 400, "Commande non supportée: " + cmd);
             }
