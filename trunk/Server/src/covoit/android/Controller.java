@@ -334,7 +334,7 @@ public class Controller extends HttpServlet {
             HttpServletResponse resp, JsonObject reqBody) {
 		try {
 			JsonObjectBuilder builder = Json.createObjectBuilder();
-			builder.add("value", Workplaces.getWorplaces());
+			builder.add("value", Workplaces.getWorkplaces());
 			write(resp, 200, builder.build());
 		}
 		catch(SQLException e) {

@@ -67,21 +67,16 @@ public class Route {
         }
     }
 
-	public int getPlaceID() {
-        return _idPlace;
-    }
+    public int getPlaceID() {return _idPlace;}
+    public int getStartHour() {return _startHour;}
+    public int getStartMinute() {return _startMinute;}
+    public int getEndHour() {return _endHour;}
+    public int getEndMinute() {return _endMinute;}
+    public Weekday getWeekday() {return _weekday;}
 
-    public void setPlaceID(int id) {
-        _idPlace = id;
-    }
+    public void setPlaceID(int id) {_idPlace = id;}
 
-    public Weekday getWeekday() {
-        return _weekday;
-    }
-
-    public void setWeekday(Weekday weekday) {
-        _weekday = weekday;
-    }
+    public void setWeekday(Weekday weekday) {_weekday = weekday;}
 
     public void setStartTime(int hour, int minute) {
         _startHour = hour;
@@ -93,20 +88,6 @@ public class Route {
         _endMinute = minute;
     }
 
-    public int getStartHour() {
-        return _startHour;
-    }
 
-    public int getStartMinute() {
-        return _startMinute;
-    }
-
-    public int getEndHour() {
-        return _endHour;
-    }
-
-    public int getEndMinute() {
-        return _endMinute;
-    }
 
 }
