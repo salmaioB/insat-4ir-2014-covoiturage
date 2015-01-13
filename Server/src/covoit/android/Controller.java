@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.*;
 import javax.json.*;
+import java.util.ArrayList;
 
 /**
  * Point d'arrivée des requêtes sur /android/[whatever]
@@ -353,15 +354,17 @@ public class Controller extends HttpServlet {
             try {
                 String name = getString(reqBody, "name");   //@mail
                 String weekday = getString(reqBody, "weekday"); // trajet à rechercher
-                Boolean direction = getBool(reqBody, "weekday"); // go or return
+                Boolean direction = getBool(reqBody, "direction"); // go or return
 
                 ArrayList<ShortUser> l = User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction);
                 
-                JsonObject pl = Json.createObjectBuilder()
-                        .add("status", "OK")
-                        .build();
-                write(resp, 200, pl);
-
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+                    if (l != null) {
+                        for (int i = 0; i < l.size(); i++) {
+                            jab.add(l.get(i).getJsonObjectShortUser());
+                        }
+                    }
+                write(resp, 200, jab.build());
             } catch (SQLException ex) {
                 write(resp, 500, ex.toString());
             }
