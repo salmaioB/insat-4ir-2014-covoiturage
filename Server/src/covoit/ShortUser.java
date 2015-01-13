@@ -16,6 +16,7 @@ public class ShortUser {
     private String firstName;
     private String lastName;
     private int hour;
+    private boolean driver;
 
     public String getName() {
         return name;
@@ -32,6 +33,10 @@ public class ShortUser {
     public int getHour() {
         return hour;
     }
+    
+    public boolean getDriver() {
+        return driver;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -47,6 +52,10 @@ public class ShortUser {
 
     public void setHour(int hour) {
         this.hour = hour;
+    }
+    
+    public void setDriver (boolean driver) {
+        this.driver = driver;
     }
 
     public JsonObject getJsonObjectShortUser() {
