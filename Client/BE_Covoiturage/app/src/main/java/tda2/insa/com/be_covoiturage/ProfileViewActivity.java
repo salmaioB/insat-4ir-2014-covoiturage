@@ -12,6 +12,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	ProfileViewFragment _profileViewFragment;
 	RouteViewFragment _routeViewFragment;
 	IdentityViewFragment _identityViewFragment;
+    NotificationViewFragment _notificationViewFragment;
 	Fragment _currentFragment;
 
 
@@ -47,7 +48,9 @@ public class ProfileViewActivity extends ActionBarActivity {
 		this.switchToFragment(_identityViewFragment);
 	}
 
-	public void switchToRoute(Route r) {
+    public void switchToNotification() { this.switchToFragment(_notificationViewFragment);}
+
+    public void switchToRoute(Route r) {
 		Bundle args = new Bundle();
 		args.putString(RouteViewFragment.WEEK_DAY, r.getWeekday().toString());
 		_routeViewFragment.setArguments(args);
