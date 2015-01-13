@@ -280,7 +280,7 @@ public class User {
         q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominutes_,"
                 + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminutes_, route.IdPlace "
                 + "FROM user, route, city, place "
-                + "WHERE route.IdUser = ? ";
+                + "WHERE user.IdUser = ? AND route.IdUser = user.IdUser AND place.`IdPlace` = route.`IdPlace`";
 
         st = Conn.prepare(q);
         st.setString(1, Integer.toString(iduser));
@@ -347,7 +347,7 @@ public class User {
         ResultSet u2 = st2.executeQuery();
 
         while (u.next()) {
-            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"),u2.getString("Driver")));
+            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"),u2.getBoolean("Driver")));
         }
         return userList;
     }
