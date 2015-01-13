@@ -63,7 +63,8 @@ public class ShortUser {
         pl.add("name", this.getName())
                 .add("firstName", this.getFirstName())
                 .add("lastName", this.getLastName())
-                .add("hour", this.getHour());
+                .add("hour", this.getHour())
+                .add("driver", this.driver);
         return pl.build();
     }
 }
