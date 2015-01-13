@@ -355,9 +355,7 @@ public class Controller extends HttpServlet {
                 String weekday = getString(reqBody, "weekday"); // trajet à rechercher
                 Boolean direction = getBool(reqBody, "weekday"); // go or return
 
-                ArrayList<> 
-                
-                User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction);
+                ArrayList<ShortUser> l = User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction);
                 
                 JsonObject pl = Json.createObjectBuilder()
                         .add("status", "OK")
