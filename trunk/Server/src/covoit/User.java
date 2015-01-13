@@ -279,7 +279,7 @@ public class User {
 
         q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominutes_,"
                 + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminutes_, route.IdPlace "
-                + "FROM user, route, city, place "
+                + "FROM user, route, place "
                 + "WHERE user.IdUser = ? AND route.IdUser = user.IdUser AND place.`IdPlace` = route.`IdPlace`";
 
         st = Conn.prepare(q);
