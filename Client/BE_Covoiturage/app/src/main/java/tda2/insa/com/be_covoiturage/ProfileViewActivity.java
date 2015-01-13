@@ -24,6 +24,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 			_profileViewFragment = new ProfileViewFragment();
 			_routeViewFragment = new RouteViewFragment();
 			_identityViewFragment = new IdentityViewFragment();
+			_notificationViewFragment = new NotificationViewFragment();
 			this.switchToProfile();
 		}
 	}

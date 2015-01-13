@@ -13,6 +13,7 @@ import covoit.lib.BCrypt;
 import java.io.*;
 import java.sql.*;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.*;
@@ -387,7 +388,7 @@ public class Controller extends HttpServlet {
             return;
         }
 
-        // commandes ne nécessaitant pas d'être connecté.
+       // commandes ne nécessaitant pas d'être connecté.
         if (cmd.equals("login")) {
             doLogin(req, resp, reqBody);
         } else if (cmd.equals("logout")) {

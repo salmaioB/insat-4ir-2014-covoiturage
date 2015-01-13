@@ -47,7 +47,9 @@ public class Route implements Serializable {
 		route.put("endHour", this.getEndHour());
 		route.put("endMinute", this.getEndMinute());
 		route.put("weekday", this.getWeekday().toString());
-		route.put("notifyMe", this.getNotifyMe());
+		route.put("notify", this.getNotifyMe());
+
+		Log.e("route !!", route.toString());
 
 		return route;
 	}

@@ -87,6 +87,7 @@ public class Network {
 	}
 
 	public void sendPostRequest(String url, JSONObject body, NetworkResponseListener listener, NetworkErrorListener errorListener) {
+		_queue.getCache().clear();
 		if(listener == null) {
 			listener = Network.getDefaultListener();
 		}
@@ -106,6 +107,7 @@ public class Network {
 	}
 
 	public void sendAuthenticatedPostRequest(String url, final AuthToken token, JSONObject body, NetworkResponseListener listener, NetworkErrorListener errorListener) {
+		_queue.getCache().clear();
 		if(listener == null) {
 			listener = Network.getDefaultListener();
 		}
