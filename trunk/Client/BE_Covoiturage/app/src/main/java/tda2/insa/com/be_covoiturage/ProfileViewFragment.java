@@ -196,7 +196,7 @@ public class ProfileViewFragment extends Fragment {
 	}
 
 	public void editNotifications() {
-		Log.e("edit", "Notifications");
+        ((ProfileViewActivity)this.getActivity()).switchToNotification();
 	}
 
 	public void editRoute(int index) {

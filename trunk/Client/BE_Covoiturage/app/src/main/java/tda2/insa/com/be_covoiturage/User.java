@@ -16,6 +16,8 @@ public class User {
 	private String _firstName, _lastName;
 	private boolean _isDriver;
 	private Place _home;
+    private String _email;
+    private boolean _receiveByMail;
 
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
@@ -96,4 +98,8 @@ public class User {
 	public AuthToken getAuthToken() {
 		return _authToken;
 	}
+
+    public String getEmail() { return _email; }
+
+    public boolean is_receiveByMail { return _receiveByMail; }
 }
