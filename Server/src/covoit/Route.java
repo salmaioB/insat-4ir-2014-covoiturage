@@ -2,7 +2,7 @@
  * ***************************************************************************
  */
 /* server/src/covoit/Route.java                                    2015-01-07 */
-/* Covoiturage Sopra - INSA Toulouse                             		Julie */
+/* Covoiturage Sopra - INSA Toulouse                                    Julie */
 /**
  * ***************************************************************************
  */
@@ -13,11 +13,12 @@ import javax.json.*;
 import java.util.ArrayList;
 
 public class Route {
-	private int _idPlace;
+    
+    private int _idPlace;
     private Weekday _weekday;
     private int _startHour, _startMinute;
     private int _endHour, _endMinute;
-	private boolean _notifyUser;
+    private boolean _notifyUser;
 
     public enum Weekday {
         Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
@@ -46,6 +47,32 @@ public class Route {
         };
 
     }
+    
+    public boolean getNotifyUser() {return _notifyUser;}
+    public int getPlaceID() {return _idPlace;}
+    public int getStartHour() {return _startHour;}
+    public int getStartMinute() {return _startMinute;}
+    public int getEndHour() {return _endHour;}
+    public int getEndMinute() {return _endMinute;}
+    public Weekday getWeekday() {return _weekday;}
+
+    public void setNotifyUser(boolean notify) {
+	_notifyUser = notify;
+    }
+    
+    public void setPlaceID(int id) {_idPlace = id;}
+
+    public void setWeekday(Weekday weekday) {_weekday = weekday;}
+
+    public void setStartTime(int hour, int minute) {
+        _startHour = hour;
+        _startMinute = minute;
+    }
+
+    public void setEndTime(int hour, int minute) {
+        _endHour = hour;
+        _endMinute = minute;
+    }
 
     public JsonObject getJsonObjectRoute() {
         JsonObjectBuilder pl = Json.createObjectBuilder();
@@ -70,30 +97,4 @@ public class Route {
             return null;
         }
     }
-
-	public boolean getNotifyUser() {return _notifyUser;}
-    public int getPlaceID() {return _idPlace;}
-    public int getStartHour() {return _startHour;}
-    public int getStartMinute() {return _startMinute;}
-    public int getEndHour() {return _endHour;}
-    public int getEndMinute() {return _endMinute;}
-    public Weekday getWeekday() {return _weekday;}
-
-    public void setPlaceID(int id) {_idPlace = id;}
-
-    public void setWeekday(Weekday weekday) {_weekday = weekday;}
-
-    public void setStartTime(int hour, int minute) {
-        _startHour = hour;
-        _startMinute = minute;
-    }
-
-    public void setEndTime(int hour, int minute) {
-        _endHour = hour;
-        _endMinute = minute;
-    }
-	
-	public void setNotifyUser(boolean notify) {
-		_notifyUser = notify;
-	}
 }
