@@ -17,6 +17,7 @@ public class Route {
     private Weekday _weekday;
     private int _startHour, _startMinute;
     private int _endHour, _endMinute;
+	private boolean _notifyUser;
 
     public enum Weekday {
         Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
@@ -29,6 +30,7 @@ public class Route {
         _endHour = 18;
         _endMinute = 0;
         _weekday = Weekday.Monday;
+		_notifyUser = false;
     }
 
     public Route(JsonObject o) {
@@ -39,6 +41,7 @@ public class Route {
             _endHour = o.getInt("endHour");
             _endMinute = o.getInt("endMinute");
             _weekday = Weekday.valueOf(o.getString("weekday"));
+			_notifyUser = o.getBoolean("notify");
         } catch (Exception e) {
         };
 
@@ -51,7 +54,8 @@ public class Route {
 				.add("startMinute", this.getStartMinute())
 				.add("endHour", this.getEndHour())
 				.add("endMinute", this.getEndMinute())
-				.add("weekday", this.getWeekday().toString());
+				.add("weekday", this.getWeekday().toString())
+				.add("notify", this.getNotifyUser());
 		return pl.build();
     }
 
@@ -67,6 +71,7 @@ public class Route {
         }
     }
 
+	public boolean getNotifyUser() {return _notifyUser;}
     public int getPlaceID() {return _idPlace;}
     public int getStartHour() {return _startHour;}
     public int getStartMinute() {return _startMinute;}
@@ -87,7 +92,8 @@ public class Route {
         _endHour = hour;
         _endMinute = minute;
     }
-
-
-
+	
+	public void setNotifyUser(boolean notify) {
+		_notifyUser = notify;
+	}
 }
