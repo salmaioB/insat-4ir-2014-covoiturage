@@ -85,8 +85,8 @@ public class Controller extends HttpServlet {
             throw new InvalidParameterException("Not present");
         }
     }
-    
-     /**
+
+    /**
      * Renvoie l'attribut du nom donné, si il existe et que c'est bien un
      * JsonObject
      */
@@ -156,7 +156,7 @@ public class Controller extends HttpServlet {
                 User.create(username, hash, firstName, lastName, driver);
                 status = "OK";
             } catch (SQLException e) {
-            //write(resp, 500, e.toString());
+                //write(resp, 500, e.toString());
                 //peut être à cause d'autre chose, mais ce sera souvent ça.
                 status = "INVALID_NAME";
             }
@@ -191,8 +191,8 @@ public class Controller extends HttpServlet {
                         .add("firstName", u.getFirstName())
                         .add("lastName", u.getLastName())
                         .add("driver", u.isDriver())
-						.add("city", u.getCity())
-						.add("zipCode", u.getZipCode())
+                        .add("city", u.getCity())
+                        .add("zipCode", u.getZipCode())
                         .add("routes", Route.getJsonObjectRoutes(u.getRoutes()));
             }
             write(resp, 200, pl.build());
@@ -205,142 +205,173 @@ public class Controller extends HttpServlet {
      * Modifie un champ du profil de l'utilisateur.
      */
     private static void doModifyAccountField(HttpServletRequest req,
-        HttpServletResponse resp, JsonObject reqBody) {
-		try {
-			try {
-				String name = getString(reqBody, "name");   //@mail
-				String field = getString(reqBody, "field"); //champ à modifier
-															//nouvelle valeur: value
-				switch (field) {
-					case "firstName":
-						String fn = getString(reqBody, "value");
-						User.updateFirstName(name, fn);
-						break;
-					case "lastName":
-						String ln = getString(reqBody, "value");
-						User.updateLastName(name, ln);
-						break;
-					case "password":
-						String p = getString(reqBody, "value");
-						User.updatePassword(name, p);
-						break;
-					case "driver":
-						Boolean d = getBool(reqBody, "value");
-						User.updateDriver(name, d);
-						break;
-					case "city":
-						JsonObject o = getObject(reqBody, "value");
-						String c = o.getString("city");
-						String z = o.getString("zip");
-						User.updateCity(name, c, z);
-						break;
-					default:
-						throw new InvalidParameterException();
-				}
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                String field = getString(reqBody, "field"); //champ à modifier
+                //nouvelle valeur: value
+                switch (field) {
+                    case "firstName":
+                        String fn = getString(reqBody, "value");
+                        User.updateFirstName(name, fn);
+                        break;
+                    case "lastName":
+                        String ln = getString(reqBody, "value");
+                        User.updateLastName(name, ln);
+                        break;
+                    case "password":
+                        String p = getString(reqBody, "value");
+                        User.updatePassword(name, p);
+                        break;
+                    case "driver":
+                        Boolean d = getBool(reqBody, "value");
+                        User.updateDriver(name, d);
+                        break;
+                    case "city":
+                        JsonObject o = getObject(reqBody, "value");
+                        String c = o.getString("city");
+                        String z = o.getString("zip");
+                        User.updateCity(name, c, z);
+                        break;
+                    default:
+                        throw new InvalidParameterException();
+                }
 
-				JsonObject pl = Json.createObjectBuilder()
-						.add("status", "OK")
-						.build();
-				write(resp, 200, pl);
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
 
-			} catch (SQLException ex) {
-				write(resp, 500, ex.toString());
-			}
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
         } catch (InvalidParameterException e) {
             write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
 
-	/**
+    /**
      * Modifie un trajet
      */
     private static void doModifyRoute(HttpServletRequest req,
-        HttpServletResponse resp, JsonObject reqBody) {
-		try {
-			try {
-				String name = getString(reqBody, "name");   //@mail
-				JsonObject route = getObject(reqBody, "route"); // trajet à modifier
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                JsonObject route = getObject(reqBody, "route"); // trajet à modifier
 
-				User.updateRoute(name, new Route(route));
+                User.updateRoute(name, new Route(route));
 
-				JsonObject pl = Json.createObjectBuilder()
-						.add("status", "OK")
-						.build();
-				write(resp, 200, pl);
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
 
-			} catch (SQLException ex) {
-				write(resp, 500, ex.toString());
-			}
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
         } catch (InvalidParameterException e) {
             write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
-	
-	/**
+
+    /**
      * Ajoute un trajet
      */
     private static void doAddRoute(HttpServletRequest req,
-        HttpServletResponse resp, JsonObject reqBody) {
-		try {
-			try {
-				String name = getString(reqBody, "name");   //@mail
-				JsonObject route = getObject(reqBody, "route"); // trajet à ajouter
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                JsonObject route = getObject(reqBody, "route"); // trajet à ajouter
 
-				User.addRoute(name, new Route(route));
+                User.addRoute(name, new Route(route));
 
-				JsonObject pl = Json.createObjectBuilder()
-						.add("status", "OK")
-						.build();
-				write(resp, 200, pl);
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
 
-			} catch (SQLException ex) {
-				write(resp, 500, ex.toString());
-			}
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
         } catch (InvalidParameterException e) {
             write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
 
-	/**
+    /**
      * Supprime un trajet
      */
     private static void doRemoveRoute(HttpServletRequest req,
-        HttpServletResponse resp, JsonObject reqBody) {
-		try {
-			try {
-				String name = getString(reqBody, "name");   //@mail
-				String weekday = getString(reqBody, "weekday"); // trajet à ajouter
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                String weekday = getString(reqBody, "weekday"); // trajet à ajouter
 
-				User.removeRoute(name, Route.Weekday.valueOf(weekday));
+                User.removeRoute(name, Route.Weekday.valueOf(weekday));
 
-				JsonObject pl = Json.createObjectBuilder()
-						.add("status", "OK")
-						.build();
-				write(resp, 200, pl);
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
 
-			} catch (SQLException ex) {
-				write(resp, 500, ex.toString());
-			}
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
         } catch (InvalidParameterException e) {
             write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
 
-
     /**
-     * Renvoie les détails / infos persos du compte spécifié.
+     * Renvoie la liste des lieux de travail existants.
      */
     private static void doListWorkplaces(HttpServletRequest req,
             HttpServletResponse resp, JsonObject reqBody) {
-		try {
-			JsonObjectBuilder builder = Json.createObjectBuilder();
-			builder.add("value", Workplaces.getWorkplaces());
-			write(resp, 200, builder.build());
-		}
-		catch(SQLException e) {
-			write(resp, 500, e.toString());
-		}
-     }
+        try {
+            JsonObjectBuilder builder = Json.createObjectBuilder();
+            builder.add("value", Workplaces.getWorkplaces());
+            write(resp, 200, builder.build());
+        } catch (SQLException e) {
+            write(resp, 500, e.toString());
+        }
+    }
+
+    /**
+     * Renvoie la liste des trajets correspondant à une route. name = mail
+     * address of the user 
+     * weekday = weekday of the route 
+     * direction = go: false, return:
+     * true
+     */
+    private static void doSearchRoutes(HttpServletRequest req,
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                String weekday = getString(reqBody, "weekday"); // trajet à rechercher
+                Boolean direction = getBool(reqBody, "weekday"); // go or return
+
+                ArrayList<> 
+                
+                User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction);
+                
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
+
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+        }
+    }
+
 
     /* DISPATCH *******************************************************************/
     @Override
@@ -367,23 +398,17 @@ public class Controller extends HttpServlet {
         } else if (user.length() != 0) {  // connexion requise
             if (cmd.equals("detailsAccount")) {
                 doDetailsAccount(req, resp, reqBody);
-            } 
-            else if (cmd.equals("modifyAccountField")){
+            } else if (cmd.equals("modifyAccountField")) {
                 doModifyAccountField(req, resp, reqBody);
-            }
-            else if (cmd.equals("modifyRoute")){
+            } else if (cmd.equals("modifyRoute")) {
                 doModifyRoute(req, resp, reqBody);
-            }
-            else if (cmd.equals("addRoute")){
+            } else if (cmd.equals("addRoute")) {
                 doAddRoute(req, resp, reqBody);
-            }
-            else if (cmd.equals("removeRoute")){
+            } else if (cmd.equals("removeRoute")) {
                 doRemoveRoute(req, resp, reqBody);
-            }
-            else if (cmd.equals("listWorkplaces")){
+            } else if (cmd.equals("listWorkplaces")) {
                 doListWorkplaces(req, resp, reqBody);
-            }
-            else {
+            } else {
                 write(resp, 400, "Commande non supportée: " + cmd);
             }
         } else {
