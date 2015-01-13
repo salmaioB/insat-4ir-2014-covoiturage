@@ -39,8 +39,6 @@ public class User {
 			for(int i = 0; i < routes.length(); ++i) {
 				JSONObject object = routes.getJSONObject(i);
 
-				Log.e(object.getString("weekday"), object.toString());
-
 				Route.Weekday wd = Route.Weekday.valueOf(object.getString("weekday"));
 				int index = wd.ordinal();
 
@@ -50,6 +48,7 @@ public class User {
 				route.setWorkplace(Workplace.getWithID(object.getInt("placeID")));
 				route.setStartTime(object.getInt("startHour"), object.getInt("startMinute"));
 				route.setEndTime(object.getInt("endHour"), object.getInt("endMinute"));
+				route.setNotifyMe(object.getBoolean("notify"));
 			}
 		}
 		catch (JSONException e) {

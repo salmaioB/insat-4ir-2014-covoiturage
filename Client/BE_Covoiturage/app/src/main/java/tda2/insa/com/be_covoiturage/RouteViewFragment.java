@@ -1,11 +1,13 @@
 package tda2.insa.com.be_covoiturage;
 
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,11 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -22,7 +29,7 @@ import java.util.ArrayList;
  *
  * Created by remi on 11/01/15.
  */
-public class RouteViewFragment extends Fragment {
+public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 	public static String WEEK_DAY = "weekday";
 	private static String HOUR = "hour";
 	private static String MINUTE = "minute";
@@ -36,15 +43,23 @@ public class RouteViewFragment extends Fragment {
 	private Route _route;
 	private Button _save;
 	private static MapFragment _map;
+	private static RouteViewFragment _instance;
 
 	public RouteViewFragment() {}
 
 	public static void setMapFragement(MapFragment frag) {
 		_map = frag;
+		_map.getMapAsync(getInstance());
+	}
+
+	public static RouteViewFragment getInstance() {
+		return _instance;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		_instance = this;
+
 		View rootView = inflater.inflate(R.layout.route_view, container, false);
 		_user = MyApplication.getUser();
 
@@ -140,6 +155,8 @@ public class RouteViewFragment extends Fragment {
 						RouteViewFragment.this.updateRoute("addRoute");
 					}
 				}
+
+				((ProfileViewActivity)RouteViewFragment.this.getActivity()).switchToProfile();
 			}
 		});
 
@@ -204,6 +221,39 @@ public class RouteViewFragment extends Fragment {
 		}
 	}
 
+	@Override
+	public void onMapReady(GoogleMap map) {
+		Marker workplaceMarker = null, homeMarker = null;
+		LatLng workplace = Route.getLocationFromAddress(_route.getWorkplace().getAddress());
+		if(workplace != null) {
+			workplaceMarker = map.addMarker(new MarkerOptions()
+					.position(workplace)
+					.title("Lieu de travail"));
+		}
+
+		LatLng home = Route.getLocationFromAddress(_user.getAddress());
+		if(home != null) {
+			homeMarker = map.addMarker(new MarkerOptions()
+					.position(home)
+					.title("Domicile")
+					.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+		}
+
+		LatLngBounds.Builder builder = new LatLngBounds.Builder();
+		if(workplaceMarker != null) {
+			builder.include(workplaceMarker.getPosition());
+		}
+		if(homeMarker != null) {
+			builder.include(homeMarker.getPosition());
+		}
+
+		LatLngBounds bounds = builder.build();
+
+		int padding = _map.getView().getWidth() / 6; // offset from edges of the map in pixels
+		CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+		map.animateCamera(cu);
+	}
+
 	public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 		private boolean _start = true;
 		RouteViewFragment _parent;
@@ -235,8 +285,5 @@ public class RouteViewFragment extends Fragment {
 			RouteViewFragment.setMapFragement(this);
 			return super.onCreateView(inflater, container, savedInstanceState);
 		}
-
-		//@Override
-		//public void onMap
 	}
 }
