@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -42,6 +43,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 	private CheckBox _notifyMe;
 	private Route _route;
 	private Button _save;
+	private String _workplaceAddress;
 	private static MapFragment _map;
 	private static RouteViewFragment _instance;
 
@@ -108,6 +110,18 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 		}
 
 		_worplaces = (Spinner)rootView.findViewById(R.id.workplace);
+		_worplaces.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				_workplaceAddress = Workplace.getWorkplaces().get(position).getAddress();
+				RouteViewFragment.this.updateMap();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
 		_workplacesAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, workplacesNames);
 		_worplaces.setAdapter(_workplacesAdapter);
 
@@ -122,6 +136,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 		_notifyMe = (CheckBox)rootView.findViewById(R.id.notify_me);
 
 		_route = _user.getRoute(Route.Weekday.valueOf(this.getArguments().getString(WEEK_DAY)));
+		_workplaceAddress = _route.getWorkplace().getAddress();
 
 		_active.setText("Je recherche un trajet pour " + _route.getWeekdayName());
 		if(!_route.active()) {
@@ -223,35 +238,57 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 
 	@Override
 	public void onMapReady(GoogleMap map) {
+		this.updateMap();
+	}
+
+	private void updateMap() {
+		_map.getMap().clear();
+		Log.e("map", "update " + _workplaceAddress);
+
 		Marker workplaceMarker = null, homeMarker = null;
-		LatLng workplace = Route.getLocationFromAddress(_route.getWorkplace().getAddress());
+		LatLng workplace = Route.getLocationFromAddress(_workplaceAddress);
 		if(workplace != null) {
-			workplaceMarker = map.addMarker(new MarkerOptions()
+			workplaceMarker = _map.getMap().addMarker(new MarkerOptions()
 					.position(workplace)
 					.title("Lieu de travail"));
 		}
 
 		LatLng home = Route.getLocationFromAddress(_user.getAddress());
 		if(home != null) {
-			homeMarker = map.addMarker(new MarkerOptions()
+			homeMarker = _map.getMap().addMarker(new MarkerOptions()
 					.position(home)
 					.title("Domicile")
 					.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 		}
 
 		LatLngBounds.Builder builder = new LatLngBounds.Builder();
+		int count = 0;
+		LatLng latLng = null;
 		if(workplaceMarker != null) {
-			builder.include(workplaceMarker.getPosition());
+			latLng = workplaceMarker.getPosition();
+			builder.include(latLng);
+			++count;
 		}
 		if(homeMarker != null) {
-			builder.include(homeMarker.getPosition());
+			latLng = homeMarker.getPosition();
+			builder.include(latLng);
+			++count;
 		}
 
-		LatLngBounds bounds = builder.build();
+		if(count < 2) {
+			if(latLng == null) {
+				latLng = new LatLng(43.604482, 1.443962);
+			}
+			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(latLng, 8.0f);
+			_map.getMap().animateCamera(cu);
+		}
+		else {
+			LatLngBounds bounds = builder.build();
 
-		int padding = _map.getView().getWidth() / 6; // offset from edges of the map in pixels
-		CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-		map.animateCamera(cu);
+			int padding = _map.getView().getWidth() / 6; // offset from edges of the map in pixels
+			CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+			_map.getMap().animateCamera(cu);
+		}
 	}
 
 	public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
