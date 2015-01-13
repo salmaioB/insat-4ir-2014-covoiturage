@@ -77,11 +77,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 
-		if(id == R.id.action_change_profile) {
-			_profileViewFragment.editIdentity();
-			return false;
-		}
-		else if(id == R.id.action_logout) {
+		if(id == R.id.action_logout) {
 			_profileViewFragment.logout();
 			return false;
 		}

@@ -1,12 +1,18 @@
 package tda2.insa.com.be_covoiturage;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URLEncoder;
+import java.util.List;
 
 /**
  *
@@ -48,8 +54,6 @@ public class Route implements Serializable {
 		route.put("endMinute", this.getEndMinute());
 		route.put("weekday", this.getWeekday().toString());
 		route.put("notify", this.getNotifyMe());
-
-		Log.e("route !!", route.toString());
 
 		return route;
 	}
@@ -155,6 +159,32 @@ public class Route implements Serializable {
 	}
 	public void setWorkplace(Workplace wp) {
 		_workplace = wp;
+	}
+
+	public static LatLng getLocationFromAddress(String strAddress) {
+
+		Geocoder coder = new Geocoder(MyApplication.getAppContext());
+		List<Address> address;
+		LatLng p1 = null;
+
+		try {
+			address = coder.getFromLocationName(strAddress, 1);
+			if (address == null || address.size() == 0) {
+				return null;
+			}
+			Address location = address.get(0);
+			location.getLatitude();
+			location.getLongitude();
+
+			p1 = new LatLng((location.getLatitude()),
+					(location.getLongitude()));
+
+		}
+		catch(IOException e) {
+			Log.e("getAddress", e.getMessage());
+		}
+
+		return p1;
 	}
 
 	public void setMapView(ImageView view, int width, int height) {

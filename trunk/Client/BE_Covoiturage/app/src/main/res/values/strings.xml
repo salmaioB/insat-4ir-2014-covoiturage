@@ -9,7 +9,6 @@
     <string name="error_field_required">Ce champ est requis</string>
     <string name="title_activity_profile_view">Profil</string>
 
-    <string name="action_change_profile">Modifier le profil</string>
     <string name="action_logout">Déconnexion</string>
     <string name="remove_route">Supprimer le trajet</string>
     <string name="monday">Lundi</string>
