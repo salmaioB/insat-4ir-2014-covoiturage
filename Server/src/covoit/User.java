@@ -3,6 +3,35 @@
  */
 /* server/src/covoit/User.java                                     2014-12-11 */
 /* Covoiturage Sopra - INSA Toulouse                     Félix Julie Philippe */
+/*----------------------------------------------------------------------------*/
+/*  BD
+    
+Table user :
+   1- IdUser : Int(10) ---------- CP
+   2- MailAddress : Varchar(100)
+   3- LastName : Varchar(50)
+   4- FirstName : Varchar(50)
+   5- Password : Varchar(60)
+   6- Driver : Enum(Y,N)
+   7- IdCity : Int(10) ---------- FK
+
+Table route :
+   1- IdUser : Int(10) ---------- CP
+   2- Day : Enum(Monday,...) ---- CP
+   3- GoHour : Time
+   4- ReturnHour : Time
+   5- IdPlace : Int(10) --------- FK
+
+Table place :
+   1- IdPlace : Int(10) --------- CP
+   2- PlaceName : Varchar(50)
+   3- PlaceAddress : Text
+
+Table city :
+   1- IdCity : Int(10) ---------- CP
+   2- CityName : Varchar(50)
+   3- ZIPCode : Varchar(50)
+*/
 /**
  * ***************************************************************************
  */
@@ -133,7 +162,7 @@ public class User {
         if (rs.next()) {
 			int idUser = rs.getInt("IdUser");
 
-			q = "UPDATE route SET GoHour = ?, ReturnHour = ?, IdPlace = ? WHERE route.IdUser = ? AND route.Day = ?;";
+			q = "UPDATE route SET GoHour = ?, ReturnHour = ?, IdPlace = ?, Notify = ? WHERE route.IdUser = ? AND route.Day = ?;";
 			
 			st = Conn.prepare(q);
 			st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
@@ -141,6 +170,7 @@ public class User {
 			st.setInt(3, route.getPlaceID());
 			st.setInt(4, idUser);
 			st.setString(5, route.getWeekday().toString());
+			st.setString(6,  route.getNotifyUser() ? ("Y") : ("N"));
 			st.execute();
 			st.close();
 		}
@@ -252,6 +282,11 @@ public class User {
         return r;
     }
 
+    
+    public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction) throws SQLException {
+        
+    }
+    
     public static User create(String name, String pwdHash,
             String firstName, String lastName, boolean driver
     ) throws SQLException {
