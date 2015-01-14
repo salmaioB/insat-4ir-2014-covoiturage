@@ -18,13 +18,12 @@ import android.widget.TextView;
  *
  * Created by remi on 11/01/15.
  */
-public class IdentityViewFragment extends Fragment {
+public class IdentityViewFragment extends Fragment implements DataFragment {
 	private User _user;
 	private EditText _firstName;
 	private EditText _lastName;
 	private EditText _city;
 	private EditText _zipCode;
-	private Button _save;
 	private CheckBox _driver;
 
 	public IdentityViewFragment() {}
@@ -58,47 +57,6 @@ public class IdentityViewFragment extends Fragment {
 
 		_driver = (CheckBox)rootView.findViewById(R.id.driver);
 
-		_save = (Button)rootView.findViewById(R.id.save);
-		_save.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				MyJSONObject obj = new MyJSONObject();
-				obj.put("name", _user.getAuthToken().getEmail());
-
-				obj.put("field", "firstName");
-				obj.put("value", _firstName.getText().toString());
-				_user.setFirstName(_firstName.getText().toString());
-				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-				obj.put("field", "lastName");
-				obj.put("value", _lastName.getText().toString());
-				_user.setLastName(_lastName.getText().toString());
-				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-				// TODO: password
-
-				obj.put("field", "driver");
-				obj.put("value", _driver.isChecked());
-				_user.setDriver(_driver.isChecked());
-				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-				MyJSONObject city = new MyJSONObject();
-				city.put("city", _city.getText().toString());
-				city.put("zip", _zipCode.getText().toString());
-				obj.put("field", "city");
-				obj.put("value", city);
-				_user.getHome().setName(_city.getText().toString());
-				_user.getHome().setZipCode(Integer.parseInt(_zipCode.getText().toString()));
-				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-				InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
-						.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(_save.getWindowToken(), 0);
-
-				((ProfileViewActivity)IdentityViewFragment.this.getActivity()).switchToProfile();
-			}
-		});
-
 		return rootView;
 	}
 
@@ -111,5 +69,41 @@ public class IdentityViewFragment extends Fragment {
 		_city.setText(_user.getHome().getName());
 		_zipCode.setText(Integer.toString(_user.getHome().getZipCode()));
 		_driver.setChecked(_user.isDriver());
+	}
+
+	@Override
+	public void onExit() {
+		MyJSONObject obj = new MyJSONObject();
+		obj.put("name", _user.getAuthToken().getEmail());
+
+		obj.put("field", "firstName");
+		obj.put("value", _firstName.getText().toString());
+		_user.setFirstName(_firstName.getText().toString());
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+		obj.put("field", "lastName");
+		obj.put("value", _lastName.getText().toString());
+		_user.setLastName(_lastName.getText().toString());
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+		// TODO: password
+
+		obj.put("field", "driver");
+		obj.put("value", _driver.isChecked());
+		_user.setDriver(_driver.isChecked());
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+		MyJSONObject city = new MyJSONObject();
+		city.put("city", _city.getText().toString());
+		city.put("zip", _zipCode.getText().toString());
+		obj.put("field", "city");
+		obj.put("value", city);
+		_user.getHome().setName(_city.getText().toString());
+		_user.getHome().setZipCode(Integer.parseInt(_zipCode.getText().toString()));
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+		InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(_firstName.getWindowToken(), 0);
 	}
 }

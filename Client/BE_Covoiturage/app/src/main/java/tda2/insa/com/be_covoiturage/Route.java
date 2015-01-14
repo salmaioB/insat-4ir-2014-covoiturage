@@ -22,7 +22,7 @@ public class Route implements Serializable {
 	private Weekday _weekday;
 	private int _startHour, _startMinute;
 	private int _endHour, _endMinute;
-	boolean _active = false;
+	private boolean _active = false;
 	private boolean _mapUpToDate = false;
 	private ImageView _imageView;
 	private int _imageWidth, _imageHeight;

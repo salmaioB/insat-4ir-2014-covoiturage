@@ -45,11 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enregistrer"
-            android:id="@+id/save"/>
     </LinearLayout>
 
 </LinearLayout>

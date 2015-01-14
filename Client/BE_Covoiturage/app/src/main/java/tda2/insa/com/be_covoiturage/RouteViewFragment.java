@@ -2,6 +2,7 @@ package tda2.insa.com.be_covoiturage;
 
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.app.DialogFragment;
@@ -15,8 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+
+import com.android.volley.VolleyError;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,13 +28,17 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
  *
  * Created by remi on 11/01/15.
  */
-public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
+public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, DataFragment {
 	public static String WEEK_DAY = "weekday";
 	private static String HOUR = "hour";
 	private static String MINUTE = "minute";
@@ -42,8 +50,9 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 	private CheckBox _active;
 	private CheckBox _notifyMe;
 	private Route _route;
-	private Button _save;
 	private String _workplaceAddress;
+	private Button _searchGo, _searchReturn;
+
 	private static MapFragment _map;
 	private static RouteViewFragment _instance;
 
@@ -126,14 +135,23 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 		_worplaces.setAdapter(_workplacesAdapter);
 
 		_active = (CheckBox)rootView.findViewById(R.id.route_active);
-		_active.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				RouteViewFragment.this.setActive(_active.isChecked());
-			}
-		});
 
 		_notifyMe = (CheckBox)rootView.findViewById(R.id.notify_me);
+
+		_searchGo = (Button)rootView.findViewById(R.id.search_go);
+		_searchGo.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				RouteViewFragment.this.search(false);
+			}
+		});
+		_searchReturn = (Button)rootView.findViewById(R.id.search_return);
+		_searchReturn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				RouteViewFragment.this.search(true);
+			}
+		});
 
 		_route = _user.getRoute(Route.Weekday.valueOf(this.getArguments().getString(WEEK_DAY)));
 		_workplaceAddress = _route.getWorkplace().getAddress();
@@ -143,39 +161,47 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 			_map.getView().setVisibility(View.INVISIBLE);
 		}
 
-		_active.setChecked(_route._active);
+		_active.setChecked(_route.active());
 		this.setActive(_route.active());
-
-		_save = (Button)rootView.findViewById(R.id.save_button);
-		_save.setOnClickListener(new View.OnClickListener() {
+		_active.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (_route.active()) {
-					// On modifie le trajet
-					if (_active.isChecked()) {
-						RouteViewFragment.this.updateRoute("modifyRoute");
-					}
-					// On supprime le trajet
-					else {
-						_route.setActive(false);
-
-						MyJSONObject obj = new MyJSONObject();
-						obj.put("name", _user.getAuthToken().getEmail());
-						obj.put("weekday", _route.getWeekday().toString());
-						Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("removeRoute"), _user.getAuthToken(), obj, null, null);
-					}
-				} else {
-					// On créé le trajet
-					if (_active.isChecked()) {
-						RouteViewFragment.this.updateRoute("addRoute");
-					}
+				RouteViewFragment.this.setActive(_active.isChecked());
+				if (_active.isChecked()) {
+					RouteViewFragment.this.getFragmentManager().executePendingTransactions();
+					RouteViewFragment.this.updateMap();
 				}
-
-				((ProfileViewActivity)RouteViewFragment.this.getActivity()).switchToProfile();
 			}
 		});
 
+		ProfileViewActivity.setRoute(_route);
+
 		return rootView;
+	}
+
+	public void onDestroyView() {
+		super.onDestroyView();
+		Fragment fragment = (getFragmentManager().findFragmentById(R.id.map_view));
+		FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+		ft.remove(fragment);
+		ft.commit();
+	}
+
+	private void search(final boolean direction) {
+		MyJSONObject obj = new MyJSONObject();
+		obj.put("name", _user.getAuthToken().getEmail());
+		obj.put("weekday", _route.getWeekday().toString());
+		obj.put("direction", direction);
+
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("searchRoutes"), _user.getAuthToken(), obj, new Network.NetworkResponseListener() {
+			@Override
+			public void onResponse(JSONObject data, JSONObject headers) {
+				try {
+					JSONArray arr = data.getJSONArray("value");
+					((ProfileViewActivity)RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
+				} catch(JSONException e) {}
+			}
+		}, null);
 	}
 
 	private void updateRoute(String command) {
@@ -201,6 +227,8 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 	@Override
 	public void onResume() {
 		super.onResume();
+		_active.setChecked(_route.active());
+		this.setActive(_route.active());
 	}
 
 	private void setActive(boolean active) {
@@ -215,7 +243,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 			_endTime.setText(_route.getEndTime());
 			_worplaces.setSelection(Workplace.getWorkplaces().indexOf(_route.getWorkplace()));
 
-			this.getActivity().getFragmentManager().beginTransaction().show(_map).commit();
+			this.getFragmentManager().beginTransaction().show(_map).commit();
 		}
 		else {
 			_notifyMe.setEnabled(false);
@@ -223,7 +251,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 			_endTime.setEnabled(false);
 			_worplaces.setEnabled(false);
 
-			this.getActivity().getFragmentManager().beginTransaction().hide(_map).commit();
+			this.getFragmentManager().beginTransaction().hide(_map).commit();
 		}
 	}
 
@@ -242,52 +270,77 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback {
 	}
 
 	private void updateMap() {
-		_map.getMap().clear();
-		Log.e("map", "update " + _workplaceAddress);
+		if(_active.isChecked() && _map.getView().getWidth() > 0) {
+			_map.getMap().clear();
 
-		Marker workplaceMarker = null, homeMarker = null;
-		LatLng workplace = Route.getLocationFromAddress(_workplaceAddress);
-		if(workplace != null) {
-			workplaceMarker = _map.getMap().addMarker(new MarkerOptions()
-					.position(workplace)
-					.title("Lieu de travail"));
-		}
-
-		LatLng home = Route.getLocationFromAddress(_user.getAddress());
-		if(home != null) {
-			homeMarker = _map.getMap().addMarker(new MarkerOptions()
-					.position(home)
-					.title("Domicile")
-					.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-		}
-
-		LatLngBounds.Builder builder = new LatLngBounds.Builder();
-		int count = 0;
-		LatLng latLng = null;
-		if(workplaceMarker != null) {
-			latLng = workplaceMarker.getPosition();
-			builder.include(latLng);
-			++count;
-		}
-		if(homeMarker != null) {
-			latLng = homeMarker.getPosition();
-			builder.include(latLng);
-			++count;
-		}
-
-		if(count < 2) {
-			if(latLng == null) {
-				latLng = new LatLng(43.604482, 1.443962);
+			Marker workplaceMarker = null, homeMarker = null;
+			LatLng workplace = Route.getLocationFromAddress(_workplaceAddress);
+			if (workplace != null) {
+				workplaceMarker = _map.getMap().addMarker(new MarkerOptions()
+						.position(workplace)
+						.title("Lieu de travail"));
 			}
-			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(latLng, 8.0f);
-			_map.getMap().animateCamera(cu);
-		}
-		else {
-			LatLngBounds bounds = builder.build();
 
-			int padding = _map.getView().getWidth() / 6; // offset from edges of the map in pixels
-			CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-			_map.getMap().animateCamera(cu);
+			LatLng home = Route.getLocationFromAddress(_user.getAddress());
+			if (home != null) {
+				homeMarker = _map.getMap().addMarker(new MarkerOptions()
+						.position(home)
+						.title("Domicile")
+						.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+			}
+
+			LatLngBounds.Builder builder = new LatLngBounds.Builder();
+			int count = 0;
+			LatLng latLng = null;
+			if (workplaceMarker != null) {
+				latLng = workplaceMarker.getPosition();
+				builder.include(latLng);
+				++count;
+			}
+			if (homeMarker != null) {
+				latLng = homeMarker.getPosition();
+				builder.include(latLng);
+				++count;
+			}
+
+			if (count < 2) {
+				if (latLng == null) {
+					// Toulouse
+					latLng = new LatLng(43.604482, 1.443962);
+				}
+				CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(latLng, 8.0f);
+				_map.getMap().animateCamera(cu);
+			} else {
+				LatLngBounds bounds = builder.build();
+
+				int padding = _map.getView().getWidth() / 6; // offset from edges of the map in pixels
+				CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+				_map.getMap().animateCamera(cu);
+			}
+		}
+	}
+
+	@Override
+	public void onExit() {
+		if (_route.active()) {
+			// On modifie le trajet
+			if (_active.isChecked()) {
+				RouteViewFragment.this.updateRoute("modifyRoute");
+			}
+			// On supprime le trajet
+			else {
+				_route.setActive(false);
+
+				MyJSONObject obj = new MyJSONObject();
+				obj.put("name", _user.getAuthToken().getEmail());
+				obj.put("weekday", _route.getWeekday().toString());
+				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("removeRoute"), _user.getAuthToken(), obj, null, null);
+			}
+		} else {
+			// On créé le trajet
+			if (_active.isChecked()) {
+				RouteViewFragment.this.updateRoute("addRoute");
+			}
 		}
 	}
 

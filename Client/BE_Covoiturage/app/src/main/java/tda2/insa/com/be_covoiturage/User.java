@@ -39,6 +39,8 @@ public class User {
 			for(int i = 0; i < routes.length(); ++i) {
 				JSONObject object = routes.getJSONObject(i);
 
+				Log.e(object.getString("weekday"), object.toString());
+
 				Route.Weekday wd = Route.Weekday.valueOf(object.getString("weekday"));
 				int index = wd.ordinal();
 

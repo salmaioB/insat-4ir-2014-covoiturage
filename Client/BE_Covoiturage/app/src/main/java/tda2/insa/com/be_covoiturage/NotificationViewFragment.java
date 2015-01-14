@@ -11,7 +11,7 @@ import android.widget.EditText;
 /**
  * Created by PhuThanh on 1/13/15.
  */
-public class NotificationViewFragment extends Fragment {
+public class NotificationViewFragment extends Fragment implements DataFragment {
     private EditText _email;
     private CheckBox _receiveByMail;
     private User _user;
@@ -30,4 +30,8 @@ public class NotificationViewFragment extends Fragment {
 		return rootView;
     }
 
+	@Override
+	public void onExit() {
+
+	}
 }

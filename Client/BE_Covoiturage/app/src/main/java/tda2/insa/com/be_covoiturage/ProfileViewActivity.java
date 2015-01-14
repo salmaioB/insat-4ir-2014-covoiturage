@@ -7,13 +7,25 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.json.JSONArray;
+
 
 public class ProfileViewActivity extends ActionBarActivity {
 	ProfileViewFragment _profileViewFragment;
 	RouteViewFragment _routeViewFragment;
 	IdentityViewFragment _identityViewFragment;
     NotificationViewFragment _notificationViewFragment;
-	Fragment _currentFragment;
+	SearchMatchesFragment _searchMatchesFragment;
+	DataFragment _currentFragment;
+	private static Route _lastRoute;
+
+	public static void setRoute(Route r) {
+		_lastRoute = r;
+	}
+
+	public static Route getRoute() {
+		return _lastRoute;
+	}
 
 
 	@Override
@@ -25,13 +37,18 @@ public class ProfileViewActivity extends ActionBarActivity {
 			_routeViewFragment = new RouteViewFragment();
 			_identityViewFragment = new IdentityViewFragment();
 			_notificationViewFragment = new NotificationViewFragment();
+			_searchMatchesFragment = new SearchMatchesFragment();
 			this.switchToProfile();
 		}
 	}
 
-	private void switchToFragment(Fragment fragment) {
+	private void switchToFragment(DataFragment fragment) {
+		if(_currentFragment != null) {
+			_currentFragment.onExit();
+		}
+
 		FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
-		transaction.replace(R.id.container, fragment);
+		transaction.replace(R.id.container, (Fragment)fragment);
 
 		transaction.commit();
 
@@ -41,7 +58,12 @@ public class ProfileViewActivity extends ActionBarActivity {
 	@Override
 	public void onBackPressed() {
 		if(_currentFragment != _profileViewFragment) {
-			this.switchToProfile();
+			if(_currentFragment == _searchMatchesFragment) {
+				this.switchToRoute(_lastRoute);
+			}
+			else {
+				this.switchToProfile();
+			}
 		}
 	}
 
@@ -60,6 +82,14 @@ public class ProfileViewActivity extends ActionBarActivity {
 
 	public void switchToProfile() {
 		this.switchToFragment(_profileViewFragment);
+	}
+
+	public void switchToSearchMatches(JSONArray arr, boolean direction) {
+		Bundle args = new Bundle();
+		args.putString(SearchMatchesFragment.MATCHES, arr.toString());
+		args.putBoolean(SearchMatchesFragment.DIRECTION, direction);
+		_searchMatchesFragment.setArguments(args);
+		this.switchToFragment(_searchMatchesFragment);
 	}
 
 	@Override
