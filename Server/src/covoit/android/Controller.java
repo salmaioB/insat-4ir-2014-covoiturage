@@ -11,6 +11,7 @@ package covoit.android;
 import covoit.*;
 import covoit.lib.BCrypt;
 import java.io.*;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -365,7 +366,11 @@ public class Controller extends HttpServlet {
                         jab.add(l.get(i).getJsonObjectShortUser());
                     }
                 }
-                write(resp, 200, jab.build());
+				
+				JsonObjectBuilder job = Json.createObjectBuilder();
+				job.add("value", jab);
+				
+                write(resp, 200, job.build());
             } catch (SQLException ex) {
                 write(resp, 500, ex.toString());
             }

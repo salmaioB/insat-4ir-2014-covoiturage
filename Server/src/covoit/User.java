@@ -191,9 +191,9 @@ public class User {
             st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
             st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
             st.setInt(3, route.getPlaceID());
-            st.setInt(4, idUser);
-            st.setString(5, route.getWeekday().toString());
-            st.setString(6, route.getNotifyUser() ? ("Y") : ("N"));
+            st.setString(4, route.getNotifyUser() ? ("Y") : ("N"));
+            st.setInt(5, idUser);
+            st.setString(6, route.getWeekday().toString());
             st.execute();
             st.close();
         }
@@ -210,8 +210,8 @@ public class User {
         if (rs.next()) {
             int idUser = rs.getInt("IdUser");
 
-            q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`) "
-                    + "VALUES (?, ?, ?, ?, ?);";
+            q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`, `Notify`) "
+                    + "VALUES (?, ?, ?, ?, ?, ?);";
 
             st = Conn.prepare(q);
             st.setInt(1, idUser);
@@ -219,6 +219,7 @@ public class User {
             st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
             st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
             st.setInt(5, route.getPlaceID());
+            st.setString(6, route.getNotifyUser() ? ("Y") : ("N"));
 
             st.execute();
             st.close();
@@ -278,7 +279,7 @@ public class User {
         st.close();
 
         q = "SELECT Day, DATE_FORMAT(GoHour, '%H') gohour_, DATE_FORMAT(GoHour, '%i') gominutes_,"
-                + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminutes_, route.IdPlace "
+                + "DATE_FORMAT(ReturnHour, '%H') returnhour_, DATE_FORMAT(ReturnHour, '%i') returnminutes_, route.IdPlace, route.Notify "
                 + "FROM user, route, place "
                 + "WHERE user.IdUser = ? AND route.IdUser = user.IdUser AND place.`IdPlace` = route.`IdPlace`";
 
@@ -293,6 +294,7 @@ public class User {
             route.setStartTime(routes.getInt("gohour_"), routes.getInt("gominutes_"));
             route.setEndTime(routes.getInt("returnhour_"), routes.getInt("returnminutes_"));
             route.setPlaceID(routes.getInt("route.IdPlace"));
+            route.setNotifyUser(routes.getBoolean("route.Notify"));
 
             r.getRoutes().add(route);
         }
@@ -304,17 +306,17 @@ public class User {
     }
 
     public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction) throws SQLException {
-        ArrayList<ShortUser> userList = new ArrayList<ShortUser>();
+        ArrayList<ShortUser> userList = new ArrayList<>();
         String req;
 
         // Récup des infos de l'utilisateur courant
         if (direction) 
-            req = "select DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver,IdPlace,IdCity from user,route "
+            req = "select DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver,IdPlace,IdCity,user.IdUser from user,route "
                     + "where user.IdUser = route.IdUser AND route.Day = ? "
                     + "AND MailAddress = ?";
             
         else
-            req = "select DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(CoHour, '%i') minute_,Driver,IdPlace,IdCity from user,route "
+            req = "select DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver,IdPlace,IdCity,user.IdUser from user,route "
                     + "where user.IdUser = route.IdUser AND route.Day = ? "
                     + "AND MailAddress = ?";
         PreparedStatement st = Conn.prepare(req);
@@ -322,13 +324,18 @@ public class User {
         st.setString(2, mailAddr);
         ResultSet u = st.executeQuery();
         
-        // Requête pour récup des utilisateurs correspondants
+		if(!u.next()) {
+			return null;
+		}
+
+		// Requête pour récup des utilisateurs correspondants
         if (direction) 
             req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
                     + "where user.IdUser = route.IdUser AND route.Day = ? "
                     + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
                     + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
                     + "AND IdPlace = ?"
+ 					+ "AND user.IdUser <> ? "
                     + "AND IdCity = ?";
          else
             req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
@@ -336,18 +343,20 @@ public class User {
                     + "AND DATE_FORMAT(GoHour, '%H') = ?"
                     + "AND DATE_FORMAT(GoHour, '%i') = ?"
                     + "AND IdPlace = ?"
+					+ "AND user.IdUser <> ? "
                     + "AND IdCity = ?";
-        
+				
         PreparedStatement st2 = Conn.prepare(req);
         st2.setString(1, day.toString());
         st2.setString(2, u.getString("hour_"));
         st2.setString(3, u.getString("minute_"));
         st2.setString(4, u.getString("IdPlace"));
-        st2.setString(5, u.getString("IdCity"));
+		st2.setInt(5, u.getInt("user.IdUser"));
+        st2.setString(6, u.getString("IdCity"));
         ResultSet u2 = st2.executeQuery();
 
-        while (u.next()) {
-            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"),u2.getBoolean("Driver")));
+        while (u2.next()) {
+            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"),(u2.getString("Driver").equals("Y"))));
         }
         return userList;
     }
