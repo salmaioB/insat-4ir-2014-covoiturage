@@ -21,7 +21,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ProfileViewFragment extends Fragment {
+public class ProfileViewFragment extends Fragment implements DataFragment {
 	private User _user;
 
 	private boolean _canUseMaps;
@@ -201,5 +201,10 @@ public class ProfileViewFragment extends Fragment {
 
 	public void editRoute(int index) {
 		((ProfileViewActivity)this.getActivity()).switchToRoute(_user.getRoute(Route.Weekday.values()[index]));
+	}
+
+	@Override
+	public void onExit() {
+
 	}
 }

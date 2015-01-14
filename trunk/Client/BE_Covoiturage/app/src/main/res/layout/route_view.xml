@@ -63,11 +63,22 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save_button"
-        android:id="@+id/save_button"
-        android:layout_gravity="center_horizontal"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rechercher un aller"
+            android:id="@+id/search_go"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rechercher un retour"
+            android:id="@+id/search_return"/>
+    </LinearLayout>
 
 </LinearLayout>
