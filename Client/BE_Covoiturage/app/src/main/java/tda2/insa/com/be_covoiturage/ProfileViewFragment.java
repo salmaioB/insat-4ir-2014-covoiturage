@@ -91,18 +91,6 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 		}
 	}
 
-	public void updateMaps() {
-		if(_user != null) {
-			for(Route.Weekday day : Route.Weekday.values()) {
-				Route r = _user.getRoute(day);
-				if(r.active()) {
-					r.invalidateMap();
-					r.updateStaticMap();
-				}
-			}
-		}
-	}
-
 	private void loadProfile(final AuthToken authToken) {
 		// Liste tous les lieux de travail connus, charge le profil si réussi
 		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("listWorkplaces"), authToken, new JSONObject(), new Network.NetworkResponseListener() {

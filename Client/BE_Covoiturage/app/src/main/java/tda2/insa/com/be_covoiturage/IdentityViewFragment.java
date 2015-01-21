@@ -64,11 +64,13 @@ public class IdentityViewFragment extends Fragment implements DataFragment {
 	public void onResume() {
 		super.onResume();
 
-		_firstName.setText(_user.getFirstName());
-		_lastName.setText(_user.getLastName());
-		_city.setText(_user.getHome().getName());
-		_zipCode.setText(Integer.toString(_user.getHome().getZipCode()));
-		_driver.setChecked(_user.isDriver());
+		if(_firstName != null) {
+			_firstName.setText(_user.getFirstName());
+			_lastName.setText(_user.getLastName());
+			_city.setText(_user.getHome().getName());
+			_zipCode.setText(Integer.toString(_user.getHome().getZipCode()));
+			_driver.setChecked(_user.isDriver());
+		}
 	}
 
 	@Override
@@ -102,8 +104,8 @@ public class IdentityViewFragment extends Fragment implements DataFragment {
 		_user.getHome().setZipCode(Integer.parseInt(_zipCode.getText().toString()));
 		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
 
-		InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
+		/*InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(_firstName.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(_firstName.getWindowToken(), 0);*/
 	}
 }

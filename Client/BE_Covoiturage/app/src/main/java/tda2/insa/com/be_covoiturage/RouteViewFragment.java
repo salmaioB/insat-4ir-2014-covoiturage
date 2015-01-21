@@ -50,6 +50,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 	private CheckBox _active;
 	private CheckBox _notifyMe;
 	private Route _route;
+	private boolean _modifyRoute;
 	private String _workplaceAddress;
 	private Button _searchGo, _searchReturn;
 
@@ -188,6 +189,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 	}
 
 	private void search(final boolean direction) {
+		_modifyRoute = false;
 		MyJSONObject obj = new MyJSONObject();
 		obj.put("name", _user.getAuthToken().getEmail());
 		obj.put("weekday", _route.getWeekday().toString());
@@ -197,11 +199,26 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 			@Override
 			public void onResponse(JSONObject data, JSONObject headers) {
 				try {
-					JSONArray arr = data.getJSONArray("value");
-					((ProfileViewActivity)RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
-				} catch(JSONException e) {}
+					final JSONArray arr = data.getJSONArray("value");
+					Log.e("rsrch", arr.toString());
+					//((ProfileViewActivity)RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
+					RouteViewFragment.this.getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() { //your ui altering code here
+							((ProfileViewActivity) RouteViewFragment.this.getActivity()).switchToProfile();
+							//((ProfileViewActivity) RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
+						}
+					});
+				} catch(JSONException e) {
+					Log.e("sjiojio", e.getMessage());
+				}
 			}
-		}, null);
+		}, new Network.NetworkErrorListener() {
+			@Override
+			public void onError(String reason, VolleyError error) {
+				Log.e("reason", reason);
+			}
+		});
 	}
 
 	private void updateRoute(String command) {
@@ -232,6 +249,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 	}
 
 	private void setActive(boolean active) {
+		_modifyRoute = true;
 		if(active) {
 			_notifyMe.setEnabled(true);
 			_startTime.setEnabled(true);
@@ -322,24 +340,26 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 
 	@Override
 	public void onExit() {
-		if (_route.active()) {
-			// On modifie le trajet
-			if (_active.isChecked()) {
-				RouteViewFragment.this.updateRoute("modifyRoute");
-			}
-			// On supprime le trajet
-			else {
-				_route.setActive(false);
+		if(_modifyRoute) {
+			if (_route.active()) {
+				// On modifie le trajet
+				if (_active.isChecked()) {
+					RouteViewFragment.this.updateRoute("modifyRoute");
+				}
+				// On supprime le trajet
+				else {
+					_route.setActive(false);
 
-				MyJSONObject obj = new MyJSONObject();
-				obj.put("name", _user.getAuthToken().getEmail());
-				obj.put("weekday", _route.getWeekday().toString());
-				Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("removeRoute"), _user.getAuthToken(), obj, null, null);
-			}
-		} else {
-			// On créé le trajet
-			if (_active.isChecked()) {
-				RouteViewFragment.this.updateRoute("addRoute");
+					MyJSONObject obj = new MyJSONObject();
+					obj.put("name", _user.getAuthToken().getEmail());
+					obj.put("weekday", _route.getWeekday().toString());
+					Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("removeRoute"), _user.getAuthToken(), obj, null, null);
+				}
+			} else {
+				// On créé le trajet
+				if (_active.isChecked()) {
+					RouteViewFragment.this.updateRoute("addRoute");
+				}
 			}
 		}
 	}
