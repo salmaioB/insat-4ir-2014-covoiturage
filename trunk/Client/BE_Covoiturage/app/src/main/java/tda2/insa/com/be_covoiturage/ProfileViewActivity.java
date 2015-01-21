@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,7 +28,6 @@ public class ProfileViewActivity extends ActionBarActivity {
 		return _lastRoute;
 	}
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +46,8 @@ public class ProfileViewActivity extends ActionBarActivity {
 		if(_currentFragment != null) {
 			_currentFragment.onExit();
 		}
+
+		Log.e("frag", _currentFragment == null ? "null" : _currentFragment.toString());
 
 		FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
 		transaction.replace(R.id.container, (Fragment)fragment);

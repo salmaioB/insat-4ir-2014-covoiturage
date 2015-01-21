@@ -8,7 +8,6 @@
  */
 package covoit;
 
-import java.math.BigDecimal;
 import javax.json.*;
 
 public class ShortUser {
