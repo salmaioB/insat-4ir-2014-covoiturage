@@ -424,5 +424,4 @@ public class Controller extends HttpServlet {
             write(resp, 400, "Authentification requise, ou commande non supportée: " + req.getRequestURI());
         }
     }
-
 }
