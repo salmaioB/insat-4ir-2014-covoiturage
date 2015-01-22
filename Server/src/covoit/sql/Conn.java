@@ -31,10 +31,10 @@ public class Conn
    static // Should be completely synchronized 
    {
       PoolProperties p = new PoolProperties();
-         p.setUrl("jdbc:mysql://localhost:3306/covoitsopra");
+         p.setUrl("jdbc:mysql://remspi.noip.me:3307/covoit");
          p.setDriverClassName("com.mysql.jdbc.Driver");
-         p.setUsername("tomcat");
-         p.setPassword("G3167u5i");
+         p.setUsername("tomcat_covoit");
+         p.setPassword("lauss56/pint");
          p.setJmxEnabled(false); // only useful for named objects.
          p.setValidationQuery("SELECT 1");
          p.setTestWhileIdle(false);

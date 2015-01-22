@@ -159,10 +159,11 @@ public class Controller extends HttpServlet {
                 User.create(username, hash, firstName, lastName, driver);
                 status = "OK";
             } catch (SQLException e) {
-                //write(resp, 500, e.toString());
+                write(resp, 500, e.toString());
                 //peut être à cause d'autre chose, mais ce sera souvent ça.
                 status = "INVALID_NAME";
-            }
+ 				return;
+           }
 
             JsonObject pl = Json.createObjectBuilder()
                     .add("status", status)
