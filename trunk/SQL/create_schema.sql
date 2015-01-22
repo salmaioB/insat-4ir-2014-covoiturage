@@ -1,25 +1,23 @@
 -- --------------------------------------------------------
--- Host:                         felix-host.ddns.net
--- Server version:               5.5.5-10.0.15-MariaDB - mariadb.org binary distribution
--- Server OS:                    Win64
--- HeidiSQL Version:             8.3.0.4694
+-- Hôte:                         remspi.noip.me
+-- Version du serveur:           5.5.37-0+wheezy1 - (Debian)
+-- Serveur OS:                   debian-linux-gnu
+-- HeidiSQL Version:             9.1.0.4867
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
--- Dumping database structure for covoitsopra
-DROP DATABASE IF EXISTS `covoitsopra`;
-CREATE DATABASE IF NOT EXISTS `covoitsopra` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `covoitsopra`;
+-- Export de la structure de la base pour covoit
+CREATE DATABASE IF NOT EXISTS `covoit` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `covoit`;
 
 
--- Dumping structure for table covoitsopra.admin
-DROP TABLE IF EXISTS `admin`;
+-- Export de la structure de table covoit. admin
 CREATE TABLE IF NOT EXISTS `admin` (
-  `IdAdmin` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `IdAdmin` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `LastName` varchar(50) NOT NULL,
   `FirstName` varchar(50) NOT NULL,
   `Login` varchar(50) NOT NULL,
@@ -28,67 +26,64 @@ CREATE TABLE IF NOT EXISTS `admin` (
   UNIQUE KEY `Login` (`Login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Data exporting was unselected.
+-- L'exportation de données n'été pas sélectionné.
 
 
--- Dumping structure for table covoitsopra.city
-DROP TABLE IF EXISTS `city`;
+-- Export de la structure de table covoit. city
 CREATE TABLE IF NOT EXISTS `city` (
-  `IdCity` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `CityName` varchar(50) NOT NULL,
-  `ZIPCode` varchar(50) NOT NULL,
+  `IdCity` int(11) NOT NULL AUTO_INCREMENT,
+  `CityName` text NOT NULL,
+  `ZipCode` varchar(10) NOT NULL,
   PRIMARY KEY (`IdCity`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Data exporting was unselected.
+-- L'exportation de données n'été pas sélectionné.
 
 
--- Dumping structure for table covoitsopra.place
-DROP TABLE IF EXISTS `place`;
+-- Export de la structure de table covoit. place
 CREATE TABLE IF NOT EXISTS `place` (
-  `IdPlace` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `PlaceName` varchar(50) NOT NULL DEFAULT '0',
-  `PlaceAddress` varchar(50) NOT NULL DEFAULT '0',
+  `IdPlace` int(11) NOT NULL AUTO_INCREMENT,
+  `PlaceName` text NOT NULL,
+  `PlaceAddress` text NOT NULL,
   PRIMARY KEY (`IdPlace`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Data exporting was unselected.
+-- L'exportation de données n'été pas sélectionné.
 
 
--- Dumping structure for table covoitsopra.route
-DROP TABLE IF EXISTS `route`;
+-- Export de la structure de table covoit. route
 CREATE TABLE IF NOT EXISTS `route` (
-  `IdUser` int(10) unsigned NOT NULL,
+  `IdUser` int(11) NOT NULL,
   `Day` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
-  `GoHour` time DEFAULT NULL,
-  `ReturnHour` time DEFAULT NULL,
+  `GoHour` time NOT NULL,
+  `ReturnHour` time NOT NULL,
+  `IdPlace` int(11) NOT NULL,
+  `Notify` bit(1) DEFAULT b'1',
   PRIMARY KEY (`IdUser`,`Day`),
-  CONSTRAINT `FK_route_user` FOREIGN KEY (`IdUser`) REFERENCES `user` (`IdUser`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `IdPlace` (`IdPlace`),
+  CONSTRAINT `IdPlace` FOREIGN KEY (`IdPlace`) REFERENCES `place` (`IdPlace`),
+  CONSTRAINT `IdUser` FOREIGN KEY (`IdUser`) REFERENCES `user` (`IdUser`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Data exporting was unselected.
+-- L'exportation de données n'été pas sélectionné.
 
 
--- Dumping structure for table covoitsopra.user
-DROP TABLE IF EXISTS `user`;
+-- Export de la structure de table covoit. user
 CREATE TABLE IF NOT EXISTS `user` (
-  `IdUser` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `IdUser` int(11) NOT NULL AUTO_INCREMENT,
   `MailAddress` varchar(100) NOT NULL,
-  `LastName` varchar(50) NOT NULL,
-  `FirstName` varchar(50) NOT NULL,
+  `LastName` varchar(100) NOT NULL,
+  `FirstName` varchar(100) NOT NULL,
   `Password` varchar(60) NOT NULL,
-  `Driver` enum('Y','N') NOT NULL,
-  `IdCity` int(10) unsigned DEFAULT NULL,
-  `IdPlace` int(10) unsigned DEFAULT NULL,
+  `Driver` char(1) NOT NULL DEFAULT 'N',
+  `IdCity` int(11),
   PRIMARY KEY (`IdUser`),
   UNIQUE KEY `MailAddress` (`MailAddress`),
-  KEY `FK_user_city` (`IdCity`),
-  KEY `FK_user_place` (`IdPlace`),
-  CONSTRAINT `FK_user_city` FOREIGN KEY (`IdCity`) REFERENCES `city` (`IdCity`),
-  CONSTRAINT `FK_user_place` FOREIGN KEY (`IdPlace`) REFERENCES `place` (`IdPlace`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `IdCity` (`IdCity`),
+  CONSTRAINT `IdCity` FOREIGN KEY (`IdCity`) REFERENCES `city` (`IdCity`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Data exporting was unselected.
+-- L'exportation de données n'été pas sélectionné.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
