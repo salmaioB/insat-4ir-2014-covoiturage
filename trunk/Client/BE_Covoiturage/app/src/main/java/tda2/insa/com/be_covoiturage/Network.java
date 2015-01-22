@@ -29,11 +29,12 @@ public class Network {
 	private static Network _instance;
 
 	public static String getHost() {
-		return "felix-host.ddns.net:" + getPort();
+		return "remspi.noip.me:" + getPort();
+		//return "felix-host.ddns.net:" + getPort();
 	}
 
 	public static int getPort() {
-		return 80;
+		return 8080;
 	}
 
 	public static String getHostAndProtocol() {

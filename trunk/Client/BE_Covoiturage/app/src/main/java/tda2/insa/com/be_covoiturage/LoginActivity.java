@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -99,42 +100,44 @@ public class LoginActivity extends ProgressActivity {
 			_emailView.setError(getString(R.string.error_invalid_email));
 			_emailView.requestFocus();
 		}
-		else if(password.isEmpty()) {
-			_passwordView.setError(getString(R.string.error_field_required));
-			_passwordView.requestFocus();
-		}
 		else {
-			// On envoie les infos au serveur
-			this.showProgress(true);
+			if (password.isEmpty()) {
+				_passwordView.setError(getString(R.string.error_field_required));
+				_passwordView.requestFocus();
+			} else {
+				// On envoie les infos au serveur
+				this.showProgress(true);
 
-			MyJSONObject obj = new MyJSONObject();
-			obj.put("name", email);
-			obj.put("password", password);
+				MyJSONObject obj = new MyJSONObject();
+				obj.put("name", email);
+				obj.put("password", password);
 
-			Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Network.NetworkResponseListener() {
-						@Override
-						public void onResponse(JSONObject data, JSONObject headers) {
-							try {
-								if (!data.getString("status").equals("OK")) {
-									LoginActivity.this.wrongCredentials();
-									return;
+				Network.getInstance().sendPostRequest(Network.pathToRequest("login"), obj, new Network.NetworkResponseListener() {
+							@Override
+							public void onResponse(JSONObject data, JSONObject headers) {
+								try {
+									if (!data.getString("status").equals("OK")) {
+										Log.e("result: ", data.getString("status"));
+										LoginActivity.this.wrongCredentials();
+										return;
+									}
+
+									String cookie = headers.getString("Set-Cookie");
+									cookie = cookie.substring(0, cookie.indexOf(';'));
+
+									LoginActivity.this.loginSuccess(new AuthToken(email, cookie));
+								} catch (Exception e) {
+									LoginActivity.this.loginError(e.getMessage());
 								}
-
-								String cookie = headers.getString("Set-Cookie");
-								cookie = cookie.substring(0, cookie.indexOf(';'));
-
-								LoginActivity.this.loginSuccess(new AuthToken(email, cookie));
-							} catch (Exception e) {
-								LoginActivity.this.loginError(e.getMessage());
 							}
-						}
-					},
-					new Network.NetworkErrorListener() {
-						@Override
-						public void onError(String reason, VolleyError error) {
-							LoginActivity.this.loginError(reason + " " + error.toString());
-						}
-					});
+						},
+						new Network.NetworkErrorListener() {
+							@Override
+							public void onError(String reason, VolleyError error) {
+								LoginActivity.this.loginError(reason + " " + error.toString());
+							}
+						});
+			}
 		}
 	}
 
