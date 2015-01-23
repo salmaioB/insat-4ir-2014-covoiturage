@@ -25,7 +25,7 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
         _email = (EditText)rootView.findViewById(R.id.email);
         _email.setText(_user.getEmail());
         _receiveByMail = (CheckBox)rootView.findViewById(R.id.receive);
-        _receiveByMail.setChecked(_user.isDriver());
+        _receiveByMail.setChecked(_user.isReceiveByMail());
 
 		return rootView;
     }
