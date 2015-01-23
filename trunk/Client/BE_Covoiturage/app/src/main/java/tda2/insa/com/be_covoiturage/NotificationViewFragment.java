@@ -38,7 +38,7 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
     public void onExit() {
         MyJSONObject parent = new MyJSONObject();
 	    MyJSONObject obj = new MyJSONObject();
-	    obj.put("name", _user.getAuthToken().getEmail());
+	    parent.put("name", _user.getAuthToken().getEmail());
 
 	    obj.put("notifyAddress", _email.getText().toString());
 	    obj.put("notifyByMail", _notifyByMail.isChecked());
