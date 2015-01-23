@@ -197,6 +197,9 @@ public class Controller extends HttpServlet {
                         .add("driver", u.isDriver())
                         .add("city", u.getCity())
                         .add("zipCode", u.getZipCode())
+                        .add("notifyByMail", u.getNotifyByMail())
+                        .add("notifyByPush", u.getNotifyByPush())
+                        .add("notifyAddress", u.getNotifyAddress())
                         .add("routes", Route.getJsonObjectRoutes(u.getRoutes()));
             }
             write(resp, 200, pl.build());
@@ -253,7 +256,7 @@ public class Controller extends HttpServlet {
                 write(resp, 500, ex.toString());
             }
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+            write(resp, 400, "Malformed modifyNotification command: " + reqBody);
         }
     }
 

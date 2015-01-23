@@ -78,7 +78,7 @@ public class User {
 	}
 	
 	public static void setNotifySettings(String emailAddr, boolean email, boolean push, String address) throws SQLException {
-		String q = "UPDATE user SET NotifyByEmail = ?, NotifyByPush = ?, NotifyAddress = ? WHERE MailAddress = ?;";
+		String q = "UPDATE user SET NotifyByMail = ?, NotifyByPush = ?, NotifyAddress = ? WHERE MailAddress = ?;";
         PreparedStatement st = Conn.prepare(q);
         st.setBoolean(1, email);
         st.setBoolean(2, push);
@@ -281,7 +281,7 @@ public class User {
     public static User load(String name) throws SQLException {
         User r = new User();
 
-        String q = "SELECT IdUser, Password, FirstName, LastName, Driver, ZipCode, CityName "
+        String q = "SELECT IdUser, Password, FirstName, LastName, Driver, ZipCode, CityName, NotifyByMail, NotifyByPush, NotifyAddress "
                 + "FROM user, city "
                 + "WHERE MailAddress = ? "
                 + "AND city.IdCity = user.IdCity";
