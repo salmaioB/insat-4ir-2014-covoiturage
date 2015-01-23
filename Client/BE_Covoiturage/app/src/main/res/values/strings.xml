@@ -21,6 +21,9 @@
     <string name="error_no_worplace">Pas de lieux de travail disponibles. Contactez l\'administrateur.</string>
     <string name="save_button">Enregistrer</string>
     <string name="notify_me_when_new_route">Je veux être notifié en cas de nouveau trajet</string>
+    <string name="receive_by_mail">Recevoir des notifications par mail</string>
+    <string name="email_address_hint">Adresse email</string>
+    <string name="notify_by_push">Recevoir des notifications push</string>
 
 
 </resources>

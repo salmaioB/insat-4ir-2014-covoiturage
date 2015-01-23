@@ -219,8 +219,30 @@ public class Controller extends HttpServlet {
                 //User.updatePassword(name, obj.getString("password"));
                 User.updateDriver(name, obj.getBoolean("driver"));
                 User.updateCity(name, obj.getString("city"), obj.getString("zip"));
+ 
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
+
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
+        }
+    }
+	
+	    /**
+     * Modifie un champ du profil de l'utilisateur.
+     */
+    private static void doModifyNotifications(HttpServletRequest req,
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+				JsonObject obj = getObject(reqBody, "value");
                 User.setNotifySettings(name, obj.getBoolean("notifyByMail"), obj.getBoolean("notifyByPush"), obj.getString("notifyAddress"));
-                User.updateCity(name, obj.getString("city"), obj.getString("zip"));
  
                 JsonObject pl = Json.createObjectBuilder()
                         .add("status", "OK")
@@ -388,6 +410,8 @@ public class Controller extends HttpServlet {
                 doDetailsAccount(req, resp, reqBody);
             } else if (cmd.equals("modifyAccountField")) {
                 doModifyAccountField(req, resp, reqBody);
+            } else if (cmd.equals("modifyNotification")) {
+                doModifyNotifications(req, resp, reqBody);
             } else if (cmd.equals("modifyRoute")) {
                 doModifyRoute(req, resp, reqBody);
             } else if (cmd.equals("addRoute")) {
