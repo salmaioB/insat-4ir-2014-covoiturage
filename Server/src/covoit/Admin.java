@@ -99,4 +99,62 @@ public class Admin {
         st.close();
 
     }
+    
+    public static int nbrDrivers() throws SQLException {
+        String q = "SELECT COUNT(*) from `user` WHERE Driver='y';";
+        PreparedStatement  st = Conn.prepare(q);
+        
+        ResultSet rs = st.executeQuery();
+        
+        int rslt = rs.getInt("COUNT(*)");
+        
+        st.close();
+        rs.close();
+        
+        return rslt;
+    }
+    
+    public static int nbrNonDrivers() throws SQLException {
+        String q = "SELECT COUNT(*) from `user` WHERE Driver='n';";
+        PreparedStatement  st = Conn.prepare(q);
+        
+        ResultSet rs = st.executeQuery();
+        
+        int rslt = rs.getInt("COUNT(*)");
+        
+        st.close();
+        rs.close();
+        
+        return rslt;
+    }
+    
+     public static int nbrUsers() throws SQLException {
+        String q = "SELECT COUNT(*) from `user`;";
+        PreparedStatement  st = Conn.prepare(q);
+        
+        ResultSet rs = st.executeQuery();
+        
+        int rslt = rs.getInt("COUNT(*)");
+        
+        st.close();
+        rs.close();
+        
+        return rslt;
+    }
+     
+       public static int nbrUserstoWorkplace(String day, int place) throws SQLException {
+        String q = "select COUNT(DISTINCT IdUser) from route WHERE route.`Day` = ? AND IdPlace= ?;";
+        PreparedStatement  st = Conn.prepare(q);
+        st.setString(1, day);
+        st.setInt(2, place);
+
+        ResultSet rs = st.executeQuery();
+        
+        int rslt = rs.getInt("COUNT(*)");
+        
+        st.close();
+        rs.close();
+        
+        return rslt;
+    }
 }
