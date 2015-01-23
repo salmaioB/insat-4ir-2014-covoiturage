@@ -24,14 +24,25 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
 
         _email = (EditText)rootView.findViewById(R.id.email);
         _email.setText(_user.getEmail());
+
         _receiveByMail = (CheckBox)rootView.findViewById(R.id.receive);
         _receiveByMail.setChecked(_user.isReceiveByMail());
 
 		return rootView;
     }
 
-	@Override
-	public void onExit() {
+    @Override
+    public void onExit() {
+        MyJSONObject obj = new MyJSONObject();
 
-	}
+        obj.put("field", "email");
+        obj.put("value", _email.getText().toString());
+        _user.setEmail(_email.getText().toString());
+        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+        obj.put("field", "isReceiveByMail");
+        obj.put("value", _receiveByMail.isChecked());
+        _user.setReceiveByMail(_receiveByMail.isChecked());
+        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+    }
 }
