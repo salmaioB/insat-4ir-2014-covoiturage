@@ -18,6 +18,7 @@ public class User {
 	private Place _home;
     private String _email;
     private boolean _receiveByMail;
+    private boolean _receiveNotiInSmp;
 
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
@@ -111,5 +112,9 @@ public class User {
     public void setReceiveByMail(boolean d) {
         _receiveByMail = d;
     }
+
+    public boolean is_receiveNotiInSmp() { return _receiveNotiInSmp; }
+
+    public void set_receiveNotiInSmp(boolean d) { _receiveNotiInSmp = d; }
 
 }
