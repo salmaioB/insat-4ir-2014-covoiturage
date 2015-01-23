@@ -13,9 +13,9 @@
                 int nbD = Admin.nbrDrivers();
                 int nbP = Admin.nbrNonDrivers();
                 int nb = Admin.nbrUsers();
-                out.print("Il y a "+nb+" utilisateurs de l'application.");
-                out.print(nbD+" sont conducteurs.");
-                out.print(nbP+" sont passagers.");
+                out.print("<p>Il y a "+nb+" utilisateurs de l'application.</p>");
+                out.print("<p>"+nbD+" sont conducteurs.</p>");
+                out.print("<p>"+nbP+" sont passagers.</p>");
             %>
         </div> 
     </body>
