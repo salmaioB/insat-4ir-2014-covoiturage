@@ -47,8 +47,6 @@ public class ProfileViewActivity extends ActionBarActivity {
 			_currentFragment.onExit();
 		}
 
-		Log.e("frag", _currentFragment == null ? "null" : _currentFragment.toString());
-
 		FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
 		transaction.replace(R.id.container, (Fragment)fragment);
 
