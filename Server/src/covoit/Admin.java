@@ -39,8 +39,8 @@ public class Admin {
         Admin r = new Admin();
 
             String q = "SELECT IdAdmin, Password, FirstName, LastName "
-                            + "FROM admin"
-                            + "WHERE MailAddress = ? ;";
+                            + "FROM admin "
+                            + "WHERE Login = ? ;";
             
             PreparedStatement st = Conn.prepare(q);
             st.setString(1, name);
