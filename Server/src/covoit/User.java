@@ -366,7 +366,7 @@ public class User {
                     + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
                     + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
                     + "AND IdPlace = ?"
- 					+ "AND user.IdUser <> ? "
+                    + "AND user.IdUser <> ? "
                     + "AND IdCity = ?";
          else
             req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
@@ -374,7 +374,7 @@ public class User {
                     + "AND DATE_FORMAT(GoHour, '%H') = ?"
                     + "AND DATE_FORMAT(GoHour, '%i') = ?"
                     + "AND IdPlace = ?"
-					+ "AND user.IdUser <> ? "
+                    + "AND user.IdUser <> ? "
                     + "AND IdCity = ?";
 				
         PreparedStatement st2 = Conn.prepare(req);
@@ -382,7 +382,7 @@ public class User {
         st2.setString(2, u.getString("hour_"));
         st2.setString(3, u.getString("minute_"));
         st2.setString(4, u.getString("IdPlace"));
-		st2.setInt(5, u.getInt("user.IdUser"));
+	st2.setInt(5, u.getInt("user.IdUser"));
         st2.setString(6, u.getString("IdCity"));
         ResultSet u2 = st2.executeQuery();
 
@@ -398,7 +398,7 @@ public class User {
         String req;
 
         //récupérer ID user
-        req = "select IdUser from user AND MailAddress = ?";
+        req = "select IdUser from user WHERE MailAddress = ?";
 
         PreparedStatement st = Conn.prepare(req);
         st.setString(1, mailAddr);
@@ -409,30 +409,57 @@ public class User {
         }
 
 	// Requête pour récup des utilisateurs correspondants
-        if (direction) 
-            req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
-                    + "where user.IdUser = route.IdUser AND route.Day = ? "
-                    + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
-                    + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
-                    + "AND IdPlace = ?"
-                    + "AND user.IdUser <> ? "
-                    + "AND IdCity = ?";
-         else
-            req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
-                    + "where user.IdUser = route.IdUser AND route.Day = ? "
-                    + "AND DATE_FORMAT(GoHour, '%H') = ?"
-                    + "AND DATE_FORMAT(GoHour, '%i') = ?"
-                    + "AND IdPlace = ?"
-                    + "AND user.IdUser <> ? "
-                    + "AND IdCity = ?";
+        if (driver){
+            
+        
+            if (direction) 
+                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
+                        + "where user.IdUser = route.IdUser AND route.Day = ? "
+                        + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
+                        + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
+                        + "AND IdPlace = ?"
+                        + "AND user.IdUser <> ? "
+                        + "AND IdCity = ?"
+                        + "AND Driver= 'Y'";
+             else
+                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
+                        + "where user.IdUser = route.IdUser AND route.Day = ? "
+                        + "AND DATE_FORMAT(GoHour, '%H') = ?"
+                        + "AND DATE_FORMAT(GoHour, '%i') = ?"
+                        + "AND IdPlace = ?"
+                        + "AND user.IdUser <> ? "
+                        + "AND IdCity = ?"
+                        + "AND Driver = 'Y' ";
+        
+        }
+        else{
+            if (direction) 
+                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
+                        + "where user.IdUser = route.IdUser AND route.Day = ? "
+                        + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
+                        + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
+                        + "AND IdPlace = ?"
+                        + "AND user.IdUser <> ? "
+                        + "AND IdCity = ?"
+                        + "AND Driver= 'N'";
+             else
+                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
+                        + "where user.IdUser = route.IdUser AND route.Day = ? "
+                        + "AND DATE_FORMAT(GoHour, '%H') = ?"
+                        + "AND DATE_FORMAT(GoHour, '%i') = ?"
+                        + "AND IdPlace = ?"
+                        + "AND user.IdUser <> ? "
+                        + "AND IdCity = ?"
+                        + "AND Driver = 'N' ";
+        }
 				
         PreparedStatement st2 = Conn.prepare(req);
         st2.setString(1, day.toString());
         st2.setInt(2, d_hour);
         st2.setInt(3, d_minute);
-        st2.setString(4, rs1.getString("IdPlace"));
+        st2.setString(4, rs1.getString("IdPlace"));  //getIdPlace
         st2.setInt(5, rs1.getInt("user.IdUser"));
-        st2.setString(6, rs1.getString("IdCity"));
+        st2.setString(6, rs1.getString("IdCity")); //getIdcity
         ResultSet rs2 = st2.executeQuery();
 
         while (rs2.next()) {
