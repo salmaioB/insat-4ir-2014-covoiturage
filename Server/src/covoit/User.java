@@ -45,7 +45,6 @@ import java.util.ArrayList;
  * User account, with their personal informations.
  */
 public class User {
-
     private String name; // l'adresse email
     private String passwd;
     private String firstName;
@@ -54,14 +53,41 @@ public class User {
     private int zipcode;
     private boolean driver; // Vrai si la personne préfère conduire elle-même.
     private ArrayList<Route> routes;
+	private boolean notifyByMail;
+	private boolean notifyByPush;
+	private String notifyAddress;
 
     public User() {
-        routes = new ArrayList<Route>();
+        routes = new ArrayList<>();
     }
 
     /**
      * base64(bcrypt([password]))
      */
+	
+	public boolean getNotifyByMail() {
+		return notifyByMail;
+	}
+	
+	public boolean getNotifyByPush() {
+		return notifyByPush;
+	}
+	
+	public String getNotifyAddress() {
+		return notifyAddress;
+	}
+	
+	public static void setNotifySettings(String emailAddr, boolean email, boolean push, String address) throws SQLException {
+		String q = "UPDATE user SET NotifyByEmail = ?, NotifyByPush = ?, NotifyAddress = ? WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
+        st.setBoolean(1, email);
+        st.setBoolean(2, push);
+        st.setString(3, address);
+        st.setString(4, emailAddr);
+        st.execute();
+        st.close();
+	}
+	
     public String getName() {
         return name;
     }
@@ -273,7 +299,11 @@ public class User {
         r.driver = u.getString("Driver").equals("Y");
         r.city = u.getString("CityName");
         r.zipcode = u.getInt("ZipCode");
-        int iduser = u.getInt("IdUser");
+        r.notifyByMail = u.getBoolean("NotifyByMail");
+        r.notifyByPush = u.getBoolean("NotifyByPush");
+        r.notifyAddress = u.getString("NotifyAddress");
+        r.zipcode = u.getInt("ZipCode");
+         int iduser = u.getInt("IdUser");
 
         u.close();
         st.close();
@@ -375,14 +405,15 @@ public class User {
 //??????????
 //?????????
         String req = "INSERT INTO user "
-                + "       (MailAddress, Password, FirstName, LastName, Driver) "
-                + "VALUES (?, ?, ?, ?, ?)";
+                + "       (MailAddress, Password, FirstName, LastName, Driver, NotifyAddress) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement st = Conn.prepare(req);
         st.setString(1, name);
         st.setString(2, pwdHash);
         st.setString(3, firstName);
         st.setString(4, lastName);
         st.setString(5, (driver) ? ("Y") : ("N"));
+        st.setString(6, name);
         st.execute();
         st.close();
 
