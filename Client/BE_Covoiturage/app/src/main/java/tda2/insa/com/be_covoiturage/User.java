@@ -35,6 +35,9 @@ public class User {
 			_home = new Place();
 			_home.setName(userInfo.getString("city"));
 			_home.setZipCode(userInfo.getInt("zipCode"));
+			_notifyByMail = userInfo.getBoolean("notifyByMail");
+			_notifyByPush = userInfo.getBoolean("notifyByPush");
+			_email = userInfo.getString("notifyAddress");
 
 			JSONArray routes = userInfo.getJSONArray("routes");
 			for(int i = 0; i < routes.length(); ++i) {

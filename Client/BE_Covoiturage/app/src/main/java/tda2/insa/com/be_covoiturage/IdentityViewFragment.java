@@ -79,7 +79,7 @@ public class IdentityViewFragment extends Fragment implements DataFragment {
 	public void onExit() {
 		MyJSONObject parent = new MyJSONObject();
 		MyJSONObject obj = new MyJSONObject();
-		obj.put("name", _user.getAuthToken().getEmail());
+		parent.put("name", _user.getAuthToken().getEmail());
 
 		obj.put("firstName", _firstName.getText().toString());
 		obj.put("lastName", _lastName.getText().toString());
