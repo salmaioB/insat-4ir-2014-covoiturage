@@ -14,6 +14,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 /**
  *
  * Created by remi on 11/01/15.
@@ -75,34 +77,24 @@ public class IdentityViewFragment extends Fragment implements DataFragment {
 
 	@Override
 	public void onExit() {
+		MyJSONObject parent = new MyJSONObject();
 		MyJSONObject obj = new MyJSONObject();
 		obj.put("name", _user.getAuthToken().getEmail());
 
-		obj.put("field", "firstName");
-		obj.put("value", _firstName.getText().toString());
+		obj.put("firstName", _firstName.getText().toString());
+		obj.put("lastName", _lastName.getText().toString());
+		obj.put("driver", _driver.isChecked());
+		obj.put("city", _city.getText().toString());
+		obj.put("zip", _zipCode.getText().toString());
+
 		_user.setFirstName(_firstName.getText().toString());
-		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-		obj.put("field", "lastName");
-		obj.put("value", _lastName.getText().toString());
 		_user.setLastName(_lastName.getText().toString());
-		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-		// TODO: password
-
-		obj.put("field", "driver");
-		obj.put("value", _driver.isChecked());
 		_user.setDriver(_driver.isChecked());
-		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
-
-		MyJSONObject city = new MyJSONObject();
-		city.put("city", _city.getText().toString());
-		city.put("zip", _zipCode.getText().toString());
-		obj.put("field", "city");
-		obj.put("value", city);
 		_user.getHome().setName(_city.getText().toString());
 		_user.getHome().setZipCode(Integer.parseInt(_zipCode.getText().toString()));
-		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+		parent.put("value", obj);
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), parent, null, null);
 
 		/*InputMethodManager imm = (InputMethodManager)MyApplication.getAppContext()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);

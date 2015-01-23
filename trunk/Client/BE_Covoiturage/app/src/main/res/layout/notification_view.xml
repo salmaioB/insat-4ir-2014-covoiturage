@@ -3,25 +3,38 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/email"/>
-
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Receive notification by mail"
-        android:id="@+id/receiveByMail"
+        android:text="@string/receive_by_mail"
+        android:id="@+id/notifyByMail"
         android:checked="false" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Space
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/email"
+            android:hint="@string/email_address_hint"/>
+
+    </LinearLayout>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Receive Notification in Smartphone"
-        android:id="@+id/receiveNotiInSmp"
+        android:text="@string/notify_by_push"
+        android:id="@+id/notifyByPush"
         android:checked="false" />
 
 </LinearLayout>

@@ -13,8 +13,8 @@ import android.widget.EditText;
  */
 public class NotificationViewFragment extends Fragment implements DataFragment {
     private EditText _email;
-    private CheckBox _receiveByMail;
-    private CheckBox _receiveNotiInSmp;
+    private CheckBox _notifyByMail;
+    private CheckBox _notifyByPush;
     private User _user;
     public NotificationViewFragment() {}
 
@@ -25,32 +25,30 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
         _email = (EditText)rootView.findViewById(R.id.email);
         _email.setText(_user.getEmail());
 
-        _receiveByMail = (CheckBox)rootView.findViewById(R.id.receiveByMail);
-        _receiveByMail.setChecked(_user.isReceiveByMail());
+        _notifyByMail = (CheckBox)rootView.findViewById(R.id.notifyByMail);
+	    _notifyByMail.setChecked(_user.getNotifyByMail());
 
-        _receiveNotiInSmp = (CheckBox)rootView.findViewById(R.id.receiveNotiInSmp);
-        _receiveNotiInSmp.setChecked(_user.is_receiveNotiInSmp());
+	    _notifyByPush = (CheckBox)rootView.findViewById(R.id.notifyByPush);
+	    _notifyByPush.setChecked(_user.getNotifyByPush());
 
 		return rootView;
     }
 
     @Override
     public void onExit() {
-        MyJSONObject obj = new MyJSONObject();
+        MyJSONObject parent = new MyJSONObject();
+	    MyJSONObject obj = new MyJSONObject();
+	    obj.put("name", _user.getAuthToken().getEmail());
 
-        obj.put("field", "email");
-        obj.put("value", _email.getText().toString());
-        _user.setEmail(_email.getText().toString());
-        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+	    obj.put("notifyAddress", _email.getText().toString());
+	    obj.put("notifyByMail", _notifyByMail.isChecked());
+	    obj.put("notifyByPush", _notifyByPush.isChecked());
 
-        obj.put("field", "isReceiveByMail");
-        obj.put("value", _receiveByMail.isChecked());
-        _user.setReceiveByMail(_receiveByMail.isChecked());
-        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+        _user.setNotifyByMail(_notifyByMail.isChecked());
+	    _user.setNotifyByPush(_notifyByPush.isChecked());
+	    _user.setEmail(_email.getText().toString());
 
-        obj.put("field", "isReceiveNotiInSmp");
-        obj.put("value", _receiveNotiInSmp.isChecked());
-        _user.set_receiveNotiInSmp(_receiveNotiInSmp.isChecked());
-        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+	    parent.put("value", obj);
+	    Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyNotification"), _user.getAuthToken(), parent, null, null);
     }
 }

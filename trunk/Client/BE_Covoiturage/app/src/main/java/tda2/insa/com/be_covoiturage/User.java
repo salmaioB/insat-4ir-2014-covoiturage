@@ -17,8 +17,8 @@ public class User {
 	private boolean _isDriver;
 	private Place _home;
     private String _email;
-    private boolean _receiveByMail;
-    private boolean _receiveNotiInSmp;
+    private boolean _notifyByMail;
+    private boolean _notifyByPush;
 
 	User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
@@ -107,14 +107,14 @@ public class User {
 
     public void setEmail(String email) {_email = email; }
 
-    public boolean isReceiveByMail() { return _receiveByMail; }
+    public boolean getNotifyByMail() { return _notifyByMail; }
 
-    public void setReceiveByMail(boolean d) {
-        _receiveByMail = d;
+    public void setNotifyByMail(boolean d) {
+        _notifyByMail = d;
     }
 
-    public boolean is_receiveNotiInSmp() { return _receiveNotiInSmp; }
+    public boolean getNotifyByPush() { return _notifyByPush; }
 
-    public void set_receiveNotiInSmp(boolean d) { _receiveNotiInSmp = d; }
+    public void setNotifyByPush(boolean d) { _notifyByPush = d; }
 
 }
