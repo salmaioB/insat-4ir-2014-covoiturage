@@ -6,6 +6,7 @@
 package covoit;
 import java.sql.*;
 import covoit.sql.Conn;
+import java.util.ArrayList;
 
 /**
  *
@@ -60,6 +61,7 @@ public class Admin {
             
         return r;
     }
+    
     
     public static void addPlace(String placeName, String placeAddress) throws SQLException {
 
