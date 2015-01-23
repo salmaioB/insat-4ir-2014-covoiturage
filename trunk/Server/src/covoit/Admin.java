@@ -103,12 +103,12 @@ public class Admin {
     }
     
     public static int nbrDrivers() throws SQLException {
-        String q = "SELECT COUNT(*) from `user` WHERE Driver='y';";
+        String q = "SELECT COUNT(*) _nb FROM user WHERE Driver='y';";
         PreparedStatement  st = Conn.prepare(q);
         
         ResultSet rs = st.executeQuery();
         
-        int rslt = rs.getInt("COUNT(*)");
+        int rslt = rs.getInt("_nb");
         
         st.close();
         rs.close();
@@ -117,7 +117,7 @@ public class Admin {
     }
     
     public static int nbrNonDrivers() throws SQLException {
-        String q = "SELECT COUNT(*) from `user` WHERE Driver='n';";
+        String q = "SELECT COUNT(*) from user WHERE Driver='n';";
         PreparedStatement  st = Conn.prepare(q);
         
         ResultSet rs = st.executeQuery();
@@ -131,12 +131,12 @@ public class Admin {
     }
     
      public static int nbrUsers() throws SQLException {
-        String q = "SELECT COUNT(*) from `user`;";
+        String q = "SELECT COUNT(*) _nb from user;";
         PreparedStatement  st = Conn.prepare(q);
         
         ResultSet rs = st.executeQuery();
         
-        int rslt = rs.getInt("COUNT(*)");
+        int rslt = rs.getInt("_nb");
         
         st.close();
         rs.close();
