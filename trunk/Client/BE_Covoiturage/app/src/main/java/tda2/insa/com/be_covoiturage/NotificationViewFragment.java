@@ -14,8 +14,8 @@ import android.widget.EditText;
 public class NotificationViewFragment extends Fragment implements DataFragment {
     private EditText _email;
     private CheckBox _receiveByMail;
+    private CheckBox _receiveNotiInSmp;
     private User _user;
-
     public NotificationViewFragment() {}
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,8 +25,11 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
         _email = (EditText)rootView.findViewById(R.id.email);
         _email.setText(_user.getEmail());
 
-        _receiveByMail = (CheckBox)rootView.findViewById(R.id.receive);
+        _receiveByMail = (CheckBox)rootView.findViewById(R.id.receiveByMail);
         _receiveByMail.setChecked(_user.isReceiveByMail());
+
+        _receiveNotiInSmp = (CheckBox)rootView.findViewById(R.id.receiveNotiInSmp);
+        _receiveNotiInSmp.setChecked(_user.is_receiveNotiInSmp());
 
 		return rootView;
     }
@@ -43,6 +46,11 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
         obj.put("field", "isReceiveByMail");
         obj.put("value", _receiveByMail.isChecked());
         _user.setReceiveByMail(_receiveByMail.isChecked());
+        Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
+
+        obj.put("field", "isReceiveNotiInSmp");
+        obj.put("value", _receiveNotiInSmp.isChecked());
+        _user.set_receiveNotiInSmp(_receiveNotiInSmp.isChecked());
         Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("modifyAccountField"), _user.getAuthToken(), obj, null, null);
     }
 }
