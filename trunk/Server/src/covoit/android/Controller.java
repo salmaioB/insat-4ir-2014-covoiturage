@@ -213,35 +213,15 @@ public class Controller extends HttpServlet {
         try {
             try {
                 String name = getString(reqBody, "name");   //@mail
-                String field = getString(reqBody, "field"); //champ à modifier
-                //nouvelle valeur: value
-                switch (field) {
-                    case "firstName":
-                        String fn = getString(reqBody, "value");
-                        User.updateFirstName(name, fn);
-                        break;
-                    case "lastName":
-                        String ln = getString(reqBody, "value");
-                        User.updateLastName(name, ln);
-                        break;
-                    case "password":
-                        String p = getString(reqBody, "value");
-                        User.updatePassword(name, p);
-                        break;
-                    case "driver":
-                        Boolean d = getBool(reqBody, "value");
-                        User.updateDriver(name, d);
-                        break;
-                    case "city":
-                        JsonObject o = getObject(reqBody, "value");
-                        String c = o.getString("city");
-                        String z = o.getString("zip");
-                        User.updateCity(name, c, z);
-                        break;
-                    default:
-                        throw new InvalidParameterException();
-                }
-
+				JsonObject obj = getObject(reqBody, "value");
+                User.updateFirstName(name, obj.getString("firstName"));
+                User.updateLastName(name, obj.getString("lastName"));
+                //User.updatePassword(name, obj.getString("password"));
+                User.updateDriver(name, obj.getBoolean("driver"));
+                User.updateCity(name, obj.getString("city"), obj.getString("zip"));
+                User.setNotifySettings(name, obj.getBoolean("notifyByMail"), obj.getBoolean("notifyByPush"), obj.getString("notifyAddress"));
+                User.updateCity(name, obj.getString("city"), obj.getString("zip"));
+ 
                 JsonObject pl = Json.createObjectBuilder()
                         .add("status", "OK")
                         .build();
