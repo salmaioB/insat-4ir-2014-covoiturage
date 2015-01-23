@@ -396,6 +396,7 @@ public class User {
     public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction, String placeName, String cityName, int zipCode, int d_hour, int d_minute, boolean driver) throws SQLException {
         ArrayList<ShortUser> userList = new ArrayList<>();
         String req;
+        String driv_aux;
 
         //récupérer ID user
         req = "select IdUser from user WHERE MailAddress = ?";
@@ -409,7 +410,10 @@ public class User {
         }
 
 	// Requête pour récup des utilisateurs correspondants
-        if (driver){
+        if (driver)
+            driv_aux="Y";
+        else
+            driv_aux="N";
             
         
             if (direction) 
@@ -421,7 +425,7 @@ public class User {
                         + "AND user.IdUser <> ? "
                         + "AND CityName = ?"
                         + "AND ZipCode = ? "
-                        + "AND Driver= 'Y'";
+                        + "AND Driver= ?";
              else
                 req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
                         + "where user.IdUser = route.IdUser AND route.Day = ? "
@@ -431,31 +435,8 @@ public class User {
                         + "AND user.IdUser <> ? "
                         + "AND CityName = ?"
                         + "AND ZipCode = ? "
-                        + "AND Driver = 'Y' ";
+                        + "AND Driver = ? ";
         
-        }
-        else{
-            if (direction) 
-                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
-                        + "where user.IdUser = route.IdUser AND route.Day = ? "
-                        + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
-                        + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
-                        + "AND PlaceName = ?"
-                        + "AND user.IdUser <> ? "
-                        + "AND CityName = ?"
-                        + "AND ZipCode = ? "
-                        + "AND Driver= 'N'";
-             else
-                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
-                        + "where user.IdUser = route.IdUser AND route.Day = ? "
-                        + "AND DATE_FORMAT(GoHour, '%H') = ?"
-                        + "AND DATE_FORMAT(GoHour, '%i') = ?"
-                        + "AND PlaceName = ?"
-                        + "AND user.IdUser <> ? "
-                        + "AND CityName = ?"
-                        + "AND ZipCode = ? "
-                        + "AND Driver = 'N' ";
-        }
 				
         PreparedStatement st2 = Conn.prepare(req);
         st2.setString(1, day.toString());
@@ -465,6 +446,7 @@ public class User {
         st2.setInt(5, rs1.getInt("user.IdUser"));
         st2.setString(6, cityName);
         st2.setInt(7, zipCode);
+        st2.setString(8, driv_aux);
         ResultSet rs2 = st2.executeQuery();
 
         while (rs2.next()) {
