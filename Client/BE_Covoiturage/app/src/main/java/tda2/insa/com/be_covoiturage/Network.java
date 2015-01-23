@@ -103,6 +103,10 @@ public class Network {
 				Network.getVolleyListener(listener),
 				Network.getVolleyListener(errorListener));
 
+		request.setRetryPolicy(new DefaultRetryPolicy(
+				30000,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 		// Add the request to the RequestQueue.
 		_queue.add(request);
 	}
@@ -129,6 +133,11 @@ public class Network {
 				return params;
 			}
 		};
+
+		/*request.setRetryPolicy(new DefaultRetryPolicy(
+				30000,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));*/
 
 		// Add the request to the RequestQueue.
 		_queue.add(request);

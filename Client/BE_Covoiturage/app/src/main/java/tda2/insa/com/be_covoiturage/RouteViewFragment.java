@@ -180,14 +180,6 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 		return rootView;
 	}
 
-	public void onDestroyView() {
-		super.onDestroyView();
-		Fragment fragment = (getFragmentManager().findFragmentById(R.id.map_view));
-		FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
-		ft.remove(fragment);
-		ft.commit();
-	}
-
 	private void search(final boolean direction) {
 		_modifyRoute = false;
 		MyJSONObject obj = new MyJSONObject();
@@ -200,15 +192,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 			public void onResponse(JSONObject data, JSONObject headers) {
 				try {
 					final JSONArray arr = data.getJSONArray("value");
-					Log.e("rsrch", arr.toString());
-					//((ProfileViewActivity)RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
-					RouteViewFragment.this.getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() { //your ui altering code here
-							((ProfileViewActivity) RouteViewFragment.this.getActivity()).switchToProfile();
-							//((ProfileViewActivity) RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
-						}
-					});
+					((ProfileViewActivity) RouteViewFragment.this.getActivity()).switchToSearchMatches(arr, direction);
 				} catch(JSONException e) {
 					Log.e("sjiojio", e.getMessage());
 				}
