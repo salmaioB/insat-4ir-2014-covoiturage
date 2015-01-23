@@ -318,7 +318,7 @@ public class Controller extends HttpServlet {
         try {
             try {
                 String name = getString(reqBody, "name");   //@mail
-                String weekday = getString(reqBody, "weekday"); // trajet à ajouter
+                String weekday = getString(reqBody, "weekday"); // trajet à supprimer
 
                 User.removeRoute(name, Route.Weekday.valueOf(weekday));
 
