@@ -421,21 +421,22 @@ public class User {
                         + "where user.IdUser = route.IdUser AND route.Day = ? "
                         + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
                         + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
-                        + "AND PlaceName = ?"
+                        + "AND IdPlace IN (SELECT IdPlace FROM place WHERE PlaceName= ?)"
                         + "AND user.IdUser <> ? "
-                        + "AND CityName = ?"
-                        + "AND ZipCode = ? "
-                        + "AND Driver= ?";
+                        + "AND Driver= ? "
+                        + "AND IdCity IN (SELECT IdCity FROM city WHERE CityName = ? AND ZipCode = ?)"
+                        ;
+                        
              else
                 req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
                         + "where user.IdUser = route.IdUser AND route.Day = ? "
                         + "AND DATE_FORMAT(GoHour, '%H') = ?"
                         + "AND DATE_FORMAT(GoHour, '%i') = ?"
-                        + "AND PlaceName = ?"
+                        + "AND IdPlace IN (SELECT IdPlace FROM place WHERE PlaceName= ?)"
                         + "AND user.IdUser <> ? "
-                        + "AND CityName = ?"
-                        + "AND ZipCode = ? "
-                        + "AND Driver = ? ";
+                        + "AND Driver = ? "
+                        + "AND IdCity IN (SELECT IdCity FROM city WHERE CityName = ? AND ZipCode = ?)"
+                        ;
         
 				
         PreparedStatement st2 = Conn.prepare(req);
@@ -444,9 +445,10 @@ public class User {
         st2.setInt(3, d_minute);
         st2.setString(4, placeName);
         st2.setInt(5, rs1.getInt("user.IdUser"));
-        st2.setString(6, cityName);
-        st2.setInt(7, zipCode);
-        st2.setString(8, driv_aux);
+        st2.setString(6, driv_aux);
+        st2.setString(7, cityName);
+        st2.setInt(8, zipCode);
+        
         ResultSet rs2 = st2.executeQuery();
 
         while (rs2.next()) {
