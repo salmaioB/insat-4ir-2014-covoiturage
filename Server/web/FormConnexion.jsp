@@ -4,15 +4,19 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>SOPRA CoVoiturage</title>
     </head>
     <body>
-        <h3>Formulaire de connexion</h3>
-        <div>
+        <h1 style="text-align:center;">SOPRA CoVoiturage</h1>
+        <h3 style="text-align:center;">Administration du site</h3>
+        <br />
+        <br />
+        <br />
+        <div style="text-align:center;">
             <form action="LoginServlet" method="post">
-                                login : <input type="text" name="login" />
-                                password : <input type="password" name="password" />
-                                <input type="submit" value="connexion" />
+                                Identifiant : <input type="text" name="login" />
+                                Mot de passe : <input type="password" name="password" />
+                                <input type="submit" value="Connexion" />
             </form>
                 <%
                     String erreur = (String) request.getAttribute("erreur");
