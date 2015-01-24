@@ -83,7 +83,7 @@ public class LoginServlet extends HttpServlet {
             try {
                 currentAdmin = Admin.load(login);
             } catch (SQLException e) {
-                String erreur = "admin non existant" + e.getMessage();
+                String erreur = "admin non existant " + e.getMessage();
                 request.setAttribute("erreur", erreur);
                 request.getRequestDispatcher("FormConnexion.jsp").forward(request, response);
                 return;

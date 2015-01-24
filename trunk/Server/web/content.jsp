@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>SOPRA Covoiturage</title>
     </head>
     <%@page import="covoit.Admin" %>
     <body>
@@ -18,9 +18,9 @@
         %>
         <h3>Rapports</h3>
         <ul>
-            <li><% out.print("<p><a href=\"nbConnexions\">Nombre de connexions</a></p>"); %></li>
+            <li><% out.print("<p><a href=\"nbConnexions.jsp\">Nombre de connexions</a></p>"); %></li>
             <li><% out.print("<p><a href=\"nbUsers.jsp\">Nombre d'utilisateurs</a></p>"); %></li>
-            <li><% out.print("<p><a href=\"nbUsersHouseWorkplace\">Nombre d'utilisateurs par couple Lieu de départ/Lieu de travail</a></p>"); %></li>
+            <li><% out.print("<p><a href=\"nbUsersHouseWorkplace.jsp\">Nombre d'utilisateurs par couple Lieu de départ/Lieu de travail</a></p>"); %></li>
         </ul>        
         
         <%
