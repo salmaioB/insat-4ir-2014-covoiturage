@@ -9,6 +9,7 @@ import java.sql.*;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
+
 /** Connection pool déjà configuré. */
 public class Conn
 {
@@ -31,7 +32,7 @@ public class Conn
    static // Should be completely synchronized 
    {
       PoolProperties p = new PoolProperties();
-         p.setUrl("jdbc:mysql://remspi.noip.me:3307/covoit");
+         p.setUrl("jdbc:mysql://192.168.1.25/covoit");
          p.setDriverClassName("com.mysql.jdbc.Driver");
          p.setUsername("tomcat_covoit");
          p.setPassword("lauss56/pint");
