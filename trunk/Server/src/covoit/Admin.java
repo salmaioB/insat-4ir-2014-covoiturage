@@ -224,7 +224,7 @@ public class Admin {
         ArrayList<ShortUser> userList = new ArrayList<>();
         String req;
            
-        req = "select MailAddress, FirstName, LastName, Driver from user ";
+        req = "select MailAddress, FirstName, LastName, Driver from user ORDER BY LastName, Firstname ";
         
         PreparedStatement st = Conn.prepare(req);
         ResultSet rs = st.executeQuery();
@@ -246,15 +246,36 @@ public class Admin {
         }   
         
         public static void chMailUser(String mailAddress, String newMail) throws SQLException {
-            
+            String q = "UPDATE user SET MailAddress = ? WHERE MailAddress = ?;";
+            PreparedStatement st = Conn.prepare(q);
+
+            st.setString(1, newMail);
+            st.setString(2, mailAddress);
+
+            st.execute();
+            st.close();
         }
         
         public static void chLastNameUser(String mailAddress, String newLName) throws SQLException {
-            
+            String q = "UPDATE user SET LastName = ? WHERE MailAddress = ?;";
+            PreparedStatement st = Conn.prepare(q);
+
+            st.setString(1,newLName);
+            st.setString(2, mailAddress);
+
+            st.execute();
+            st.close();
         }
         
         public static void chFirstNameUser(String mailAddress, String newFName) throws SQLException {
-            
+            String q = "UPDATE user SET FirstName = ? WHERE MailAddress = ?;";
+            PreparedStatement st = Conn.prepare(q);
+
+            st.setString(1,newFName);
+            st.setString(2, mailAddress);
+
+            st.execute();
+            st.close();
         }
         
         public static void chPwdUser(String mailAddress, String Pwd) throws SQLException {
@@ -262,7 +283,6 @@ public class Admin {
         }
         
         public static void chDriverUser(String mailAddress, boolean drives) throws SQLException {
-            
         }
     ////////////////////////////////////////////////////////////////////////////
     //****************************************************************************
