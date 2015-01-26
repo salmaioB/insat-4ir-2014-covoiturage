@@ -88,7 +88,7 @@ public class Admin {
     public static ArrayList<Workplaces> loadPlaces() throws SQLException {
         ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
 
-        String q = "SELECT IdPlace,PlaceName,PlaceAddress";
+        String q = "SELECT IdPlace,PlaceName,PlaceAddress from place;";
 
         PreparedStatement st = Conn.prepare(q);
         ResultSet u = st.executeQuery();
@@ -106,7 +106,7 @@ public class Admin {
 
     public static void addPlace(String placeName, String placeAddress) throws SQLException {
 
-        String q = "SELECT * FROM covoitsopra.place WHERE PlaceName = ? OR PlaceAddress = ?;";
+        String q = "SELECT IdPlace FROM place WHERE PlaceName = ? AND PlaceAddress = ?;";
         PreparedStatement st = Conn.prepare(q);
         st.setString(1, placeName);
         st.setString(2, placeAddress);
