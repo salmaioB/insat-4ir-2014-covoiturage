@@ -26,12 +26,11 @@
             %>
         </div>
         <div style="text-align:center;">
-            <h3>Modifier un lieu de travail</h3>
-            <table>
+            <h3>Liste des lieux de travail</h3>
+            <table border="1">
                 <tr>
                     <th>Nom</th>
                     <th>Adresse</th>
-                    <th>Action</th>
                 </tr>
                 <%
                     ArrayList<Workplaces> listPlaces = Admin.loadPlaces();
@@ -39,15 +38,38 @@
                         out.print("<tr>");
                         out.print(String.format("<td>%s</td>", listPlaces.get(i).getName()));
                         out.print(String.format("<td>%s</td>", listPlaces.get(i).getAddress()));
-                        out.print("<td><p>");
-                        out.print("<form action=\"PlacesServlet\" method=\"post\"><input type=\"submit\" name=\"Modify\" value=\"Modifier\" /></form>");
-                        out.print("</p><p>");
-                        out.print("<form action=\"PlacesServlet\" method=\"post\"><input type=\"submit\" name=\"Delete\" value=\"Supprimer\" /></form>");
-                        out.print("</p></td>");
                         out.print("</tr>");
                     }
                 %>
             </table>
+        </div>
+        <div style="text-align:center;">
+            <h3>Modification ou suppression des lieux de travail</h3>
+            <form>
+                <%
+                    String modify = (String) request.getAttribute("modify");
+                %>
+                <select name="nomlieu">
+                    <%                        
+                        for (int i = 0; i < listPlaces.size(); i++) {
+                            out.print(String.format("<option>%s</option>", listPlaces.get(i).getName()));
+                        }
+
+                    %>
+                </select>
+                <%                        
+                    if (modify==null) {
+                        out.print("<form action=\"PlacesServlet\" method=\"post\"><input type=\"submit\" name=\"Modify\" value=\"Modifier\" /></form>");
+                        out.print("<form action=\"PlacesServlet\" method=\"post\"><input type=\"submit\" name=\"Delete\" value=\"Supprimer\" /></form>");
+                    } 
+                    else {
+                        out.print("<form action=\"PlacesServlet\" method=\"post\">");
+                        out.print("Nom : <input type=\"text\" name=\"placeNameM\" />");
+                        out.print("Adresse : <input type=\"text\" name=\"placeAddressM\" />");
+                        out.print("<input type=\"submit\" name=\"ModifyValues\" value=\"Modifier le lieu\" /></form>");
+                    }
+                %>
+            </form>
         </div>
     </body>
 </html>

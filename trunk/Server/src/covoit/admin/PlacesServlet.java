@@ -74,9 +74,11 @@ public class PlacesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         if (request.getParameter("Create") != null) {
             String placeName = request.getParameter("placeName");
             String placeAddress = request.getParameter("placeAddress");
+            request.setAttribute("modify", null);
 
             if (!placeName.isEmpty() && !placeAddress.isEmpty()) {
                 try {
@@ -91,11 +93,27 @@ public class PlacesServlet extends HttpServlet {
                 response.sendRedirect("manageWorkplaces.jsp");
             }
         }
+        
         else if (request.getParameter("Modify")!=null){
-            
+            request.setAttribute("modify", "true");
+            String name = request.getParameter("name");
+            request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
         }
+        
         else if (request.getParameter("Delete")!=null){
-            
+            request.setAttribute("modify", null);
+            String name = (String) request.getParameter("nomlieu");
+            //Admin.deletePlace(name);
+            request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
+        }
+        
+        else if (request.getParameter("ModifyValues")!=null){
+            String pnm = (String) request.getParameter("placeNameM");
+            String pam = (String) request.getParameter("placeAddressM");
+            String name = (String) request.getParameter("nomlieu");
+            //updatePlace(nomPlace, nouveaunom, nouvelleadresse)
+            request.setAttribute("modify", null);
+            request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
         }
     }
 
