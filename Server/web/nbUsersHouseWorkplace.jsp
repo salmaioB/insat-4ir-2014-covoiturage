@@ -5,6 +5,7 @@
 --%>
 
 <%@page import="covoit.Workplaces"%>
+<%@page import="covoit.City"%>
 <%@page import="java.util.ArrayList" %>
 <%@page import="covoit.Admin" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -24,6 +25,7 @@
 
 <%
 ArrayList<Workplaces> liste = (ArrayList<Workplaces>) Admin.loadPlaces();
+ArrayList<City> liste2 = (ArrayList<City>) Admin.loadCity();
 %>
             <form action="SearchServlet" method="post">
             <select name="placeSelected">
@@ -36,13 +38,20 @@ for (int i=0; i<liste.size(); i++)
     String item2 = liste.get(i).getAddress();
 %>
             <option value="<%=item0%>"><%=item1+" - "+item2%></option>
-<%
-}
-%>
+<% } %>
             </select>
             <br>
             <select name="CitySelected">
             <option value="vide" selected>-- choisissez une ville</option>
+<%
+for (int i=0; i<liste2.size(); i++)
+{
+    int item1 = liste2.get(i).getId();
+    String item2 = liste2.get(i).getName();
+    String item3 = liste2.get(i).getZip();
+%>
+            <option value="<%=item1%>"><%=item2+"("+item3+")"%></option>
+<% } %>
             </select>
             <br>
             <input type="submit" value="Recherche" />
