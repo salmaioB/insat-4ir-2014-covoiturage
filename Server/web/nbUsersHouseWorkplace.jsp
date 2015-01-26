@@ -29,7 +29,7 @@ ArrayList<City> liste2 = (ArrayList<City>) Admin.loadCity();
 %>
             <form action="SearchServlet" method="post">
             <select name="placeSelected">
-            <option value="vide" selected>-- choisissez un lieu de travail</option>
+            <option value="0" selected>-- choisissez un lieu de travail</option>
 <%
 for (int i=0; i<liste.size(); i++)
 {
@@ -41,8 +41,8 @@ for (int i=0; i<liste.size(); i++)
 <% } %>
             </select>
             <br>
-            <select name="CitySelected">
-            <option value="vide" selected>-- choisissez une ville</option>
+            <select name="citySelected">
+            <option value="0" selected>-- choisissez un domicile</option>
 <%
 for (int i=0; i<liste2.size(); i++)
 {
@@ -56,6 +56,12 @@ for (int i=0; i<liste2.size(); i++)
             <br>
             <input type="submit" value="Recherche" />
             </form>
+            <%
+                String erreur = (String) request.getAttribute("erreur");
+                if (erreur != null) {
+                    out.print(String.format("Erreur: %s", erreur));
+                }
+            %>
         </div>
     </body>
 </html>
