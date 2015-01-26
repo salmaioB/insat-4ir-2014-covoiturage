@@ -7,10 +7,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Gestion Lieux de travail</title>
+        <title>Gestion lieux de travail</title>
     </head>
     <body>
-        <h1>Gestion Lieux de travail</h1>
+        <h1>Gestion lieux de travail</h1>
         <div style="text-align:center;">
             <h3>Ajouter un lieu de travail</h3>
             <form action="PlacesServlet" method="post">
@@ -44,31 +44,18 @@
             </table>
         </div>
         <div style="text-align:center;">
-            <h3>Modification ou suppression des lieux de travail</h3>
+            <h3>Suppression des lieux de travail</h3>
             <form>
-                <%
-                    String modify = (String) request.getAttribute("modify");
-                %>
                 <select name="nomlieu">
                     <%                        
                         for (int i = 0; i < listPlaces.size(); i++) {
                             out.print(String.format("<option>%s</option>", listPlaces.get(i).getName()));
                         }
-
                     %>
-                </select>
-                <%                        
-                    if (modify==null) {
-                        out.print("<form action=\"PlacesServlet\" method=\"post\"><input type=\"submit\" name=\"Modify\" value=\"Modifier\" /></form>");
-                        out.print("<form action=\"PlacesServlet\" method=\"post\"><input type=\"submit\" name=\"Delete\" value=\"Supprimer\" /></form>");
-                    } 
-                    else {
-                        out.print("<form action=\"PlacesServlet\" method=\"post\">");
-                        out.print("Nom : <input type=\"text\" name=\"placeNameM\" />");
-                        out.print("Adresse : <input type=\"text\" name=\"placeAddressM\" />");
-                        out.print("<input type=\"submit\" name=\"ModifyValues\" value=\"Modifier le lieu\" /></form>");
-                    }
-                %>
+                </select>                     
+                <form action="PlacesServlet" method="post">
+                    <input type="submit" name="Delete" value="Supprimer" />
+                </form>
             </form>
         </div>
     </body>

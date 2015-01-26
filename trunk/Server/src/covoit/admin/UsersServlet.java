@@ -6,6 +6,8 @@
 package covoit.admin;
 
 import covoit.Admin;
+import covoit.User;
+import covoit.lib.BCrypt;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -21,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Kapouter
  */
-@WebServlet(name = "PlacesServlet", urlPatterns = {"/PlacesServlet"})
-public class PlacesServlet extends HttpServlet {
+@WebServlet(name = "UsersServlet", urlPatterns = {"/UsersServlet"})
+public class UsersServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +43,10 @@ public class PlacesServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PlacesServlet</title>");
+            out.println("<title>Servlet UsersServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PlacesServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UsersServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -76,27 +78,32 @@ public class PlacesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         if (request.getParameter("Create") != null) {
-            String placeName = request.getParameter("placeName");
-            String placeAddress = request.getParameter("placeAddress");
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String mailAddress = request.getParameter("mailAddress");
+            String driverN = request.getParameter("driver");
+            boolean driver = false;
+            if (driverN == "YES"){
+                driver = true;
+            }
 
-            if (!placeName.isEmpty() && !placeAddress.isEmpty()) {
+            if (!firstName.isEmpty() && !lastName.isEmpty()) {
                 try {
-                    Admin.addPlace(placeName, placeAddress);
+                    String hash = BCrypt.hashpw("password", BCrypt.gensalt());
+                    User.create(mailAddress, hash, firstName, lastName, driver);
                 } catch (SQLException e) {
                     String erreur = e.getMessage();
                     request.setAttribute("erreur", erreur);
-                    request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
+                    request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
                     return;
                 }
             } else {
-                response.sendRedirect("manageWorkplaces.jsp");
+                response.sendRedirect("manageUsers.jsp");
             }
-        }
-
-        else if (request.getParameter("Delete")!=null){
-            String name = (String) request.getParameter("nomlieu");
+            
+        } else if (request.getParameter("Delete") != null) {
+            String name = (String) request.getParameter("mailAddress");
             try {
                 Admin.deletePlace(name);
             } catch (SQLException ex) {
