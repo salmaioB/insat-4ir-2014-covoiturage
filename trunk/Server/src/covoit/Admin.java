@@ -75,6 +75,12 @@ public class Admin {
         return r;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //****************************************************************************
+    //ACTIONS SUR LES WORKPLACES
+    //****************************************************************************
+    ////////////////////////////////////////////////////////////////////////////
+     
     /**
      * 
      * @return la liste de toutes les workplaces
@@ -83,8 +89,7 @@ public class Admin {
     public static ArrayList<Workplaces> loadPlaces() throws SQLException {
         ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
 
-        String q = "SELECT PlaceName, PlaceAddress "
-                + "FROM place ;";
+        String q = "SELECT PlaceName, PlaceAddress FROM place ;";
 
         PreparedStatement st = Conn.prepare(q);
         ResultSet u = st.executeQuery();
@@ -124,37 +129,24 @@ public class Admin {
         }
 
         rs.close();
-
     }
 
-    public static void deletePlace(String placeName, String placeAddress) throws SQLException {
-
-        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ? AND PlaceAddress = ?;";
+    public static void deletePlace(String placeName) throws SQLException {
+        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ?;";
         PreparedStatement st = Conn.prepare(q);
 
         st.setString(1, placeName);
-        st.setString(2, placeAddress);
-
+        
         st.execute();
         st.close();
-
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //****************************************************************************
+    //RAPPORTS
+    //****************************************************************************
+    ////////////////////////////////////////////////////////////////////////////
     
-    public static ArrayList<ShortUser> getUsers() throws SQLException {
-        ArrayList<ShortUser> userList = new ArrayList<>();
-        String req;
-           
-        req = "select MailAddress, FirstName, LastName, Driver from user ";
-        
-        PreparedStatement st = Conn.prepare(req);
-        ResultSet rs = st.executeQuery();
-
-        while (rs.next()) {
-            userList.add(new ShortUser(rs.getString("MailAddress"),rs.getString("FirstName"),rs.getString("LastName"),(rs.getString("Driver").equals("Y"))));
-        }
-        return userList;
-    }
-
     public static int nbrDrivers() throws SQLException {
         String q = "SELECT COUNT(*) _nb, Driver FROM user WHERE Driver='y';";
         PreparedStatement st = Conn.prepare(q);
@@ -173,6 +165,8 @@ public class Admin {
         return rslt;
     }
 
+    
+    
     public static int nbrNonDrivers() throws SQLException {
         String q = "SELECT COUNT(*) FROM user WHERE Driver='n';";
         PreparedStatement st = Conn.prepare(q);
@@ -220,4 +214,39 @@ public class Admin {
 
         return rslt;
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //****************************************************************************
+    //ACTIONS SUR LES USERS
+    //****************************************************************************
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public static ArrayList<ShortUser> getUsers() throws SQLException {
+        ArrayList<ShortUser> userList = new ArrayList<>();
+        String req;
+           
+        req = "select MailAddress, FirstName, LastName, Driver from user ";
+        
+        PreparedStatement st = Conn.prepare(req);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()) {
+            userList.add(new ShortUser(rs.getString("MailAddress"),rs.getString("FirstName"),rs.getString("LastName"),(rs.getString("Driver").equals("Y"))));
+        }
+        return userList;
+    }
+    
+        public static void deleteUser(String mailAddress) throws SQLException {
+        String q = "DELETE FROM user WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
+
+        st.setString(1, mailAddress);
+
+        st.execute();
+        st.close();
+    }
+    
+    
+    
+    
 }
