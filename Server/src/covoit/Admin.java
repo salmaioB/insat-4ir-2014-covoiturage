@@ -7,6 +7,7 @@ package covoit;
 
 import java.sql.*;
 import covoit.sql.Conn;
+import covoit.Workplaces;
 import java.util.ArrayList;
 
 /**
@@ -74,6 +75,33 @@ public class Admin {
         return r;
     }
 
+    /**
+     * 
+     * @return la liste de toutes les workplaces
+     * @throws SQLException 
+     */
+    public static ArrayList<Workplaces> loadPlaces() throws SQLException {
+        ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
+
+        String q = "SELECT *, PlaceName, PlaceAddress "
+                + "FROM place ;";
+
+        PreparedStatement st = Conn.prepare(q);
+        ResultSet u = st.executeQuery();
+
+        if (!u.next()) {
+            throw new SQLException(""); //got 0 rows
+        }
+        while (!u.next()) {
+            listPlaces.add(new Workplaces(u.getString("PlaceName"), u.getString("PlaceAddress")));
+        }
+
+        u.close();
+        st.close();
+
+        return listPlaces;
+    }
+
     public static void addPlace(String placeName, String placeAddress) throws SQLException {
 
         String q = "SELECT * FROM place WHERE PlaceName = ? OR PlaceAddress = ?;";
@@ -94,6 +122,8 @@ public class Admin {
 
             st.execute();
             st.close();
+        } else {
+            throw new SQLException("Ce lieu de travail existe déjà.");
         }
 
         rs.close();
