@@ -7,7 +7,6 @@ package covoit;
 
 import java.sql.*;
 import covoit.sql.Conn;
-import covoit.Workplaces;
 import java.util.ArrayList;
 
 /**
@@ -89,13 +88,14 @@ public class Admin {
     public static ArrayList<Workplaces> loadPlaces() throws SQLException {
         ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
 
-        String q = "SELECT PlaceName, PlaceAddress FROM place ;";
+        String q = "SELECT IdPlace,PlaceName,PlaceAddress";
 
         PreparedStatement st = Conn.prepare(q);
         ResultSet u = st.executeQuery();
 
         while (u.next()) {
-            listPlaces.add(new Workplaces(u.getString("PlaceName"), u.getString("PlaceAddress")));
+            listPlaces.add(new Workplaces(u.getInt("IdPlace"),u.getString("PlaceName"), u.getString("PlaceAddress")));
+
         }
 
         u.close();
@@ -115,8 +115,7 @@ public class Admin {
 
         //si ni le nom, ni l'addresse n'ont jamais été rentré
         if (!rs.next()) {
-            q = "INSERT INTO covoitsopra.place (`PlaceName`, `PlaceAddress`) "
-                    + "VALUES (?, ?);";
+            q = "INSERT INTO place (PlaceName, PlaceAddress) VALUES (?, ?);";
 
             st = Conn.prepare(q);
             st.setString(1, placeName);
@@ -132,7 +131,7 @@ public class Admin {
     }
 
     public static void deletePlace(String placeName) throws SQLException {
-        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ?;";
+        String q = "DELETE FROM place WHERE PlaceName = ?;";
         PreparedStatement st = Conn.prepare(q);
 
         st.setString(1, placeName);
@@ -244,9 +243,26 @@ public class Admin {
 
         st.execute();
         st.close();
-    }
-    
-    
-    
+        }   
+        
+        public static void chMailUser(String mailAddress, String newMail) throws SQLException {
+            
+        }
+        
+        public static void chLastNameUser(String mailAddress, String newLName) throws SQLException {
+            
+        }
+        
+        public static void chFirstNameUser(String mailAddress, String newFName) throws SQLException {
+            
+        }
+        
+        public static void chPwdUser(String mailAddress, String Pwd) throws SQLException {
+            
+        }
+        
+        public static void chDriverUser(String mailAddress, boolean drives) throws SQLException {
+            
+        }
     
 }
