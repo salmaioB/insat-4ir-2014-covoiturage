@@ -127,16 +127,32 @@ public class Admin {
 
     }
 
-    public static void deletePlace(String placeName) throws SQLException {
+    public static void deletePlace(String placeName, String placeAddress) throws SQLException {
 
-        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ?;";
+        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ? AND PlaceAddress = ?;";
         PreparedStatement st = Conn.prepare(q);
 
         st.setString(1, placeName);
+        st.setString(2, placeAddress);
 
         st.execute();
         st.close();
 
+    }
+    
+    public static ArrayList<ShortUser> getUsers() throws SQLException {
+        ArrayList<ShortUser> userList = new ArrayList<>();
+        String req;
+           
+        req = "select MailAddress, FirstName, LastName, Driver from user ";
+        
+        PreparedStatement st = Conn.prepare(req);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()) {
+            userList.add(new ShortUser(rs.getString("MailAddress"),rs.getString("FirstName"),rs.getString("LastName"),(rs.getString("Driver").equals("Y"))));
+        }
+        return userList;
     }
 
     public static int nbrDrivers() throws SQLException {
