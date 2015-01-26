@@ -83,7 +83,7 @@ public class Admin {
     public static ArrayList<Workplaces> loadPlaces() throws SQLException {
         ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
 
-        String q = "SELECT *, PlaceName, PlaceAddress "
+        String q = "SELECT PlaceName, PlaceAddress "
                 + "FROM place ;";
 
         PreparedStatement st = Conn.prepare(q);
