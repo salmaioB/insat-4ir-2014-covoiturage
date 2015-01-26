@@ -26,6 +26,13 @@
         <servlet-name>GenerateReports</servlet-name>
         <servlet-class>covoit.admin.GenerateReports</servlet-class>
     </servlet>
+    <servlet>
+        <description>
+        </description>
+        <display-name>SearchServlet</display-name>
+        <servlet-name>SearchServlet</servlet-name>
+        <servlet-class>covoit.admin.SearchServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AndroidCtrl</servlet-name>
         <url-pattern>/android/*</url-pattern>
