@@ -60,7 +60,7 @@ public class Admin {
         ResultSet u = st.executeQuery();
 
         if (!u.next()) {
-            return null; //got 0 rows
+            throw new SQLException(""); //got 0 rows
         }
         r.name = name;
         r.passwd = u.getString("Password");
