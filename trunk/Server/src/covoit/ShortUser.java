@@ -27,6 +27,12 @@ public class ShortUser {
         this.minute = minute;
         this.driver = driver;
     }
+    public ShortUser(String name, String firstName, String lastName,boolean driver){
+        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.driver = driver;
+    }
     
     public String getName() {
         return name;
