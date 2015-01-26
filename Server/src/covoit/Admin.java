@@ -106,7 +106,7 @@ public class Admin {
 
     public static void addPlace(String placeName, String placeAddress) throws SQLException {
 
-        String q = "SELECT * FROM place WHERE PlaceName = ? OR PlaceAddress = ?;";
+        String q = "SELECT * FROM covoitsopra.place WHERE PlaceName = ? OR PlaceAddress = ?;";
         PreparedStatement st = Conn.prepare(q);
         st.setString(1, placeName);
         st.setString(2, placeAddress);
