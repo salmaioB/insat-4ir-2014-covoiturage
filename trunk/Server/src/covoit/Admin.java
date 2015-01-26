@@ -127,13 +127,12 @@ public class Admin {
 
     }
 
-    public static void deletePlace(String placeName, String placeAddress) throws SQLException {
+    public static void deletePlace(String placeName) throws SQLException {
 
-        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ? AND PlaceAddress = ?;";
+        String q = "DELETE FROM covoitsopra.place WHERE PlaceName = ?;";
         PreparedStatement st = Conn.prepare(q);
 
         st.setString(1, placeName);
-        st.setString(2, placeAddress);
 
         st.execute();
         st.close();
