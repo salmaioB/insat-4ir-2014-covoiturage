@@ -16,6 +16,21 @@ import javax.json.*;
  * @author remi
  */
 public class Workplaces {
+    
+    private String name;
+    private String address;
+    
+    public Workplaces(String name, String address){
+        this.name = name;
+        this.address = address;
+    }
+    
+    public String getName(){
+        return name;
+    }
+    public String getAddress(){
+        return address;
+    }
 
     public static JsonArrayBuilder getWorkplaces() throws SQLException {
         JsonArrayBuilder array = Json.createArrayBuilder();
