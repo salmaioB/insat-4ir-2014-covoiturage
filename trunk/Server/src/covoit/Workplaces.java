@@ -17,12 +17,18 @@ import javax.json.*;
  */
 public class Workplaces {
     
+    private int id;
     private String name;
     private String address;
     
-    public Workplaces(String name, String address){
+    public Workplaces(int id, String name, String address){
+        this.id = id;
         this.name = name;
         this.address = address;
+    }
+    
+    public int getId(){
+        return id;
     }
     
     public String getName(){
