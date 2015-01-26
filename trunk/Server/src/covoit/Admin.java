@@ -89,9 +89,6 @@ public class Admin {
         PreparedStatement st = Conn.prepare(q);
         ResultSet u = st.executeQuery();
 
-        if (!u.next()) {
-            throw new SQLException(""); //got 0 rows
-        }
         while (!u.next()) {
             listPlaces.add(new Workplaces(u.getString("PlaceName"), u.getString("PlaceAddress")));
         }
