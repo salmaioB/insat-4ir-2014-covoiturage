@@ -89,7 +89,7 @@ public class Admin {
         PreparedStatement st = Conn.prepare(q);
         ResultSet u = st.executeQuery();
 
-        while (!u.next()) {
+        while (u.next()) {
             listPlaces.add(new Workplaces(u.getString("PlaceName"), u.getString("PlaceAddress")));
         }
 
