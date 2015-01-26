@@ -88,7 +88,7 @@ public class Admin {
     public static ArrayList<Workplaces> loadPlaces() throws SQLException {
         ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
 
-        String q = "SELECT IdPlace,PlaceName,PlaceAddress from place;";
+        String q = "SELECT IdPlace,PlaceName,PlaceAddress from place ORDER BY PlaceName,PlaceAddress;";
 
         PreparedStatement st = Conn.prepare(q);
         ResultSet u = st.executeQuery();
@@ -264,5 +264,34 @@ public class Admin {
         public static void chDriverUser(String mailAddress, boolean drives) throws SQLException {
             
         }
+    ////////////////////////////////////////////////////////////////////////////
+    //****************************************************************************
+    //ACTIONS SUR LES CITY
+    //****************************************************************************
+    ////////////////////////////////////////////////////////////////////////////
+     
+    /**
+     * 
+     * @return la liste de toutes les city
+     * @throws SQLException 
+     */
+    public static ArrayList<City> loadCity() throws SQLException {
+        ArrayList<City> listPlaces = new ArrayList<City>();
+
+        String q = "SELECT IdCity, CityName, ZipCode FROM city ORDER BY CityName,ZipCode ;";
+
+        PreparedStatement st = Conn.prepare(q);
+        ResultSet u = st.executeQuery();
+
+        while (u.next()) {
+            listPlaces.add(new City(u.getInt("IdCity"),u.getString("CityName"), u.getString("ZipCode")));
+        }
+
+        u.close();
+        st.close();
+
+        return listPlaces;
+    }
+
     
 }
