@@ -77,13 +77,14 @@ public class PlacesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        if (request.getParameter("Create") != null) {
+        if (request.getParameter("Button") == "Creer") {
             String placeName = request.getParameter("placeName");
             String placeAddress = request.getParameter("placeAddress");
 
             if (!placeName.isEmpty() && !placeAddress.isEmpty()) {
                 try {
                     Admin.addPlace(placeName, placeAddress);
+                    request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
                 } catch (SQLException e) {
                     String erreur = e.getMessage();
                     request.setAttribute("erreur", erreur);
@@ -92,17 +93,27 @@ public class PlacesServlet extends HttpServlet {
                 }
             } else {
                 response.sendRedirect("manageWorkplaces.jsp");
+                return;
             }
         }
-
-        else if (request.getParameter("Delete")!=null){
+        else if (request.getParameter("Button") == "Supprimer"){
             String name = (String) request.getParameter("nomlieu");
+
             try {
                 Admin.deletePlace(name);
+                request.setAttribute("erreur", "BABULU");
+                request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
+                return;
             } catch (SQLException ex) {
+                request.setAttribute("erreur", ex.getMessage());
                 Logger.getLogger(PlacesServlet.class.getName()).log(Level.SEVERE, null, ex);
+                request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
+                return;
             }
-            request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
+        }
+        else {
+            response.sendRedirect("manageWorkplaces.jsp");
+            return;
         }
     }
 

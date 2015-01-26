@@ -16,7 +16,7 @@
             <form action="PlacesServlet" method="post">
                                 Nom : <input type="text" name="placeName" />
                                 Adresse : <input type="text" name="placeAddress" />
-                                <input type="submit" name="Create" value="Créer" />
+                                <input type="submit" name="Button" value="Creer" />
             </form>
             <%
                 String erreur = (String) request.getAttribute("erreur");
@@ -47,14 +47,18 @@
             <h3>Suppression des lieux de travail</h3>
             <form>
                 <select name="nomlieu">
-                    <%                        
+                    <%
                         for (int i = 0; i < listPlaces.size(); i++) {
                             out.print(String.format("<option>%s</option>", listPlaces.get(i).getName()));
+                        }
+                        String erreurD = (String) request.getAttribute("erreurD");
+                        if (erreurD != null) {
+                            out.print(String.format("Erreur: %s", erreurD));
                         }
                     %>
                 </select>                     
                 <form action="PlacesServlet" method="post">
-                    <input type="submit" name="Delete" value="Supprimer" />
+                    <input type="submit" name="Button" value="Supprimer" />
                 </form>
             </form>
         </div>
