@@ -5,8 +5,11 @@
  */
 package covoit.admin;
 
+import covoit.User;
+import covoit.lib.BCrypt;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,7 +40,7 @@ public class ModifyUserServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ModifyUserServlet</title>");            
+            out.println("<title>Servlet ModifyUserServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ModifyUserServlet at " + request.getContextPath() + "</h1>");
@@ -58,7 +61,52 @@ public class ModifyUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        if (request.getParameter("Modify") != null) {
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String password = request.getParameter("password");
+            String driverN = request.getParameter("driver");
+            boolean driver = false;
+            if (driverN == "YES") {
+                driver = true;
+            }
+            String name = request.getParameter("name");
+            if (!firstName.isEmpty()) {
+                try {
+                    User.updateFirstName(name, firstName);
+                } catch (SQLException e) {
+                    String erreur = e.getMessage();
+                    request.setAttribute("erreur", erreur);
+                    request.getRequestDispatcher("modifyUser.jsp").forward(request, response);
+                    return;
+                }
+            } else if (!lastName.isEmpty()) {
+                try {
+                    User.updateLastName(name, lastName);
+                } catch (SQLException e) {
+                    String erreur = e.getMessage();
+                    request.setAttribute("erreur", erreur);
+                    request.getRequestDispatcher("modifyUser.jsp").forward(request, response);
+                    return;
+                }
+
+            } else if (!password.isEmpty()) {
+                try {
+                    String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+                    User.updatePassword(name, hash);
+                } catch (SQLException e) {
+                    String erreur = e.getMessage();
+                    request.setAttribute("erreur", erreur);
+                    request.getRequestDispatcher("modifyUser.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                response.sendRedirect("modifyUser.jsp");
+            }
+
+        } else {
+            response.sendRedirect("modifyUser.jsp");
+        }
     }
 
     /**

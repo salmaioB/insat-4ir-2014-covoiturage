@@ -12,6 +12,6 @@
         <title>SOPRA Covoiturage</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Non implémentée</h1>
     </body>
 </html>
