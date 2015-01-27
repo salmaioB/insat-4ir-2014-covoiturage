@@ -23,7 +23,7 @@
                                     <option>YES</option>
                                     <option>NO</option>
                                 </select>
-                                <input type="submit" name="Create" value="Créer" />
+                                <input type="submit" name="Create" value="Creer" />
             </form>
             <%
                 String erreur = (String) request.getAttribute("erreur");

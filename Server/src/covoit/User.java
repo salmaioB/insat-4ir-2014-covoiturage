@@ -471,8 +471,8 @@ public class User {
 //??????????
 //?????????
         String req = "INSERT INTO user "
-                + "       (MailAddress, Password, FirstName, LastName, Driver, NotifyAddress) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+                + "       (MailAddress, Password, FirstName, LastName, Driver, NotifyAddress, IdCity) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement st = Conn.prepare(req);
         st.setString(1, name);
         st.setString(2, pwdHash);
@@ -480,6 +480,7 @@ public class User {
         st.setString(4, lastName);
         st.setString(5, (driver) ? ("Y") : ("N"));
         st.setString(6, name);
+        st.setString(7, null);
         st.execute();
         st.close();
 

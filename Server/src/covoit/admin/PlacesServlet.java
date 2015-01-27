@@ -77,7 +77,7 @@ public class PlacesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        if (request.getParameter("Button") == "Creer") {
+        if (request.getParameter("Create") != null) {
             String placeName = request.getParameter("placeName");
             String placeAddress = request.getParameter("placeAddress");
 
@@ -96,7 +96,7 @@ public class PlacesServlet extends HttpServlet {
                 return;
             }
         }
-        else if (request.getParameter("Button") == "Supprimer"){
+        else if (request.getParameter("Delete") != null){
             String name = (String) request.getParameter("nomlieu");
 
             try {
