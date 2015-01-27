@@ -13,10 +13,14 @@
                 int nbD = Admin.nbrDrivers();
                 int nbP = Admin.nbrNonDrivers();
                 int nb = Admin.nbrUsers();
-                out.print("<p>Il y a "+nb+" utilisateurs de l'application.</p>");
-                out.print("<p>"+nbD+" sont conducteurs.</p>");
-                out.print("<p>"+nbP+" sont passagers.</p>");
+                out.print("<p>Il y a " + nb + " utilisateurs de l'application.</p>");
+                out.print("<p>" + nbD + " sont conducteurs.</p>");
+                out.print("<p>" + nbP + " sont passagers.</p>");
             %>
         </div> 
+        <br/>
+        <br/>
+        <br/>
+        <p><a href="content.jsp">Retour</a></p>
     </body>
 </html>

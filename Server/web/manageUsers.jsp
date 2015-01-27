@@ -1,8 +1,3 @@
-<%-- 
-    Document   : manageUsers
-    Created on : 26 janv. 2015, 18:35:53
-    Author     : Kapouter
---%>
 
 <%@page import="covoit.ShortUser"%>
 <%@page import="covoit.Admin"%>
@@ -86,5 +81,9 @@
                 }
             %>
         </div>
+        <br/>
+        <br/>
+        <br/>
+        <p><a href="content.jsp">Retour</a></p>
     </body>
 </html>

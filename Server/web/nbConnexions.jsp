@@ -1,8 +1,3 @@
-<%-- 
-    Document   : nbConnexions
-    Created on : 23 janv. 2015, 12:16:35
-    Author     : Kapouter
---%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -13,5 +8,9 @@
     </head>
     <body>
         <h1>Non implémentée</h1>
+        <br/>
+        <br/>
+        <br/>
+        <p><a href="content.jsp">Retour</a></p>
     </body>
 </html>

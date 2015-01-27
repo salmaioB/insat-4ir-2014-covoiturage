@@ -91,7 +91,7 @@ public class UsersServlet extends HttpServlet {
             if (!firstName.isEmpty() && !lastName.isEmpty()) {
                 try {
                     String hash = BCrypt.hashpw("password", BCrypt.gensalt());
-                    User.create(mailAddress, hash, firstName, lastName, driver);   
+                    User.create(mailAddress, hash, firstName, lastName, driver);
                 } catch (SQLException e) {
                     String erreur = e.getMessage();
                     request.setAttribute("erreur", erreur);
@@ -104,9 +104,9 @@ public class UsersServlet extends HttpServlet {
             }
 
         } else if (request.getParameter("Modify") != null) {
-            String firstName = (String)request.getParameter("firstName");
-            String lastName = (String)request.getParameter("lastName");
-            String password = (String)request.getParameter("password");
+            String firstName = (String) request.getParameter("firstName");
+            String lastName = (String) request.getParameter("lastName");
+            String password = (String) request.getParameter("password");
             String driverN = (String) request.getParameter("driver");
             boolean driver = false;
             if (driverN.equals("YES")) {
@@ -115,7 +115,6 @@ public class UsersServlet extends HttpServlet {
             String name = (String) request.getParameter("mailUser");
             try {
                 User.updateDriver(name, driver);
-                request.setAttribute("erreurD", driverN);
             } catch (SQLException e) {
                 String erreur = e.getMessage();
                 request.setAttribute("erreurD", erreur);
@@ -156,7 +155,7 @@ public class UsersServlet extends HttpServlet {
             request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
 
         } else if (request.getParameter("Delete") != null) {
-            String name = (String) request.getParameter("name");
+            String name = (String) request.getParameter("mailUser");
             try {
                 Admin.deleteUser(name);
             } catch (SQLException ex) {
