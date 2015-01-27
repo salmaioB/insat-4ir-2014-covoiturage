@@ -274,10 +274,31 @@ public class Admin {
     }
 
     public static void chPwdUser(String mailAddress, String Pwd) throws SQLException {
+        String q = "UPDATE user SET Password = ? WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
 
+        st.setString(1, Pwd);
+        st.setString(2, mailAddress);
+
+        st.execute();
+        st.close();
     }
 
     public static void chDriverUser(String mailAddress, boolean drives) throws SQLException {
+        String driv_aux;
+        if(drives)
+            driv_aux="Y";
+        else
+            driv_aux="N";
+       
+        String q = "UPDATE user SET Driver = ? WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
+
+        st.setString(1, driv_aux);
+        st.setString(2, mailAddress);
+
+        st.execute();
+        st.close();
     }
     ////////////////////////////////////////////////////////////////////////////
     //****************************************************************************
