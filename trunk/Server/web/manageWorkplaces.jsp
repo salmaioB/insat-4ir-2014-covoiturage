@@ -16,7 +16,7 @@
             <form action="PlacesServlet" method="post">
                                 Nom : <input type="text" name="placeName" />
                                 Adresse : <input type="text" name="placeAddress" />
-                                <input type="submit" name="Button" value="Creer" />
+                                <input type="submit" name="Create" value="Creer" />
             </form>
             <%
                 String erreur = (String) request.getAttribute("erreur");
@@ -58,7 +58,7 @@
                     %>
                 </select>                     
                 <form action="PlacesServlet" method="post">
-                    <input type="submit" name="Button" value="Supprimer" />
+                    <input type="submit" name="Delete" value="Supprimer" />
                 </form>
             </form>
         </div>

@@ -111,6 +111,9 @@ public class UsersServlet extends HttpServlet {
             }
             request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
         }
+        else {
+            response.sendRedirect("manageUsers.jsp");
+        }
     }
 
     /**
