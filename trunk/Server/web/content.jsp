@@ -18,19 +18,19 @@
         %>
         <h3>Rapports</h3>
         <ul>
-            <li><% out.print("<p><a href=\"nbConnexions.jsp\">Nombre de connexions</a></p>"); %></li>
+            <!--<li><% //out.print("<p><a href=\"nbConnexions.jsp\">Nombre de connexions</a></p>"); %></li>-->
             <li><% out.print("<p><a href=\"nbUsers.jsp\">Nombre d'utilisateurs</a></p>"); %></li>
             <li><% out.print("<p><a href=\"nbUsersHouseWorkplace.jsp\">Nombre d'utilisateurs par couples Domicile/Travail</a></p>"); %></li>
             <li><% out.print("<p><a href=\"manageWorkplaces.jsp\">Gestion lieux de travail</a></p>"); %></li>
             <li><% out.print("<p><a href=\"manageUsers.jsp\">Gestion utilisateurs</a></p>"); %></li>
         </ul>        
-        
+
         <%
-            out.print("<br />");
-            out.print("<br />");
-            out.print("<br />");
-            out.print("<p><a href=\"LogoutServlet\">Déconnexion</a></p>");
-        }
+                out.print("<br />");
+                out.print("<br />");
+                out.print("<br />");
+                out.print("<p><a href=\"LogoutServlet\">Déconnexion</a></p>");
+            }
         %>
     </body>
 </html>

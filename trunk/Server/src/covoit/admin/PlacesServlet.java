@@ -76,7 +76,7 @@ public class PlacesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         if (request.getParameter("Create") != null) {
             String placeName = request.getParameter("placeName");
             String placeAddress = request.getParameter("placeAddress");
@@ -95,8 +95,7 @@ public class PlacesServlet extends HttpServlet {
                 response.sendRedirect("manageWorkplaces.jsp");
                 return;
             }
-        }
-        else if (request.getParameter("Delete") != null){
+        } else if (request.getParameter("Delete") != null) {
             String name = (String) request.getParameter("nomlieu");
 
             try {
@@ -108,8 +107,7 @@ public class PlacesServlet extends HttpServlet {
                 request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
                 return;
             }
-        }
-        else {
+        } else {
             response.sendRedirect("manageWorkplaces.jsp");
             return;
         }

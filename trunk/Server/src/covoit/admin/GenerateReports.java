@@ -37,7 +37,7 @@ public class GenerateReports extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet GenerateReports</title>");            
+            out.println("<title>Servlet GenerateReports</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet GenerateReports at " + request.getContextPath() + "</h1>");
@@ -72,13 +72,7 @@ public class GenerateReports extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
-        
-        
-        
-        
-        
+
     }
 
     /**

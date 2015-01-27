@@ -18,12 +18,12 @@
                                 Mot de passe : <input type="password" name="password" />
                                 <input type="submit" value="Connexion" />
             </form>
-                <%
-                    String erreur = (String) request.getAttribute("erreur");
-                    if (erreur != null) {
-                        out.print(String.format("Erreur: %s", erreur));
-                    }
-                %>
+            <%
+                String erreur = (String) request.getAttribute("erreur");
+                if (erreur != null) {
+                    out.print(String.format("Erreur: %s", erreur));
+                }
+            %>
         </div>
     </body>
 </html>

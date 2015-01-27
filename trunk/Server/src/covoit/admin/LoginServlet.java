@@ -97,19 +97,18 @@ public class LoginServlet extends HttpServlet {
                 request.setAttribute("erreur", erreur);
                 request.getRequestDispatcher("FormConnexion.jsp").forward(request, response);
             }
-    }
-        else {
+        } else {
             response.sendRedirect("FormConnexion.jsp");
+        }
     }
-}
 
-/**
- * Returns a short description of the servlet.
- *
- * @return a String containing servlet description
- */
-@Override
-        public String getServletInfo() {
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

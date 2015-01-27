@@ -62,5 +62,9 @@
                 }
             %>
         </div>
+        <br/>
+        <br/>
+        <br/>
+        <p><a href="content.jsp">Retour</a></p>
     </body>
 </html>
