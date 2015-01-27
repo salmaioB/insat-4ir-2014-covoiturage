@@ -34,6 +34,7 @@ public class RouteAdapter extends ArrayAdapter<Route> {
 		route.setMapView(img, _width, 150);
 		if(route.active()) {
 			route.updateStaticMap();
+
 			img.setVisibility(View.VISIBLE);
 			img.setMinimumHeight(300);
 			weekday.setText(route.getWeekdayName() + " de " + route.getStartTime() + " à " + route.getEndTime());

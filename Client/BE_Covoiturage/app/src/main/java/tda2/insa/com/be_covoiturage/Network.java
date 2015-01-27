@@ -30,7 +30,7 @@ public class Network {
 
 	public static String getHost() {
 		return "remspi.noip.me:" + getPort();
-		//return "felix-host.ddns.net:" + getPort();
+		//return "192.168.1.25:8080";
 	}
 
 	public static int getPort() {

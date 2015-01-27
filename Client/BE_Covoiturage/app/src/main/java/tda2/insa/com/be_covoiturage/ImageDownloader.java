@@ -17,10 +17,11 @@ import java.io.InputStream;
  * Created by remi on 07/01/15.
  */
 public class ImageDownloader extends AsyncTask<Object, Void, Bitmap> {
+	Route _route;
 	ImageView _view;
 	@Override
 	protected Bitmap doInBackground(Object... param) {
-		_view = (ImageView)param[1];
+		_route = (Route)param[1];
 		return downloadBitmap((String)param[0]);
 	}
 
@@ -33,7 +34,7 @@ public class ImageDownloader extends AsyncTask<Object, Void, Bitmap> {
 	@Override
 	protected void onPostExecute(Bitmap result) {
 		if(result != null) {
-			_view.setImageBitmap(result);
+			_route.setBitmap(result);
 		}
 	}
 
