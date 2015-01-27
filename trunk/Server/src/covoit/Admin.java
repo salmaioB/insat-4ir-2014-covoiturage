@@ -79,11 +79,10 @@ public class Admin {
     //ACTIONS SUR LES WORKPLACES
     //****************************************************************************
     ////////////////////////////////////////////////////////////////////////////
-     
     /**
-     * 
+     *
      * @return la liste de toutes les workplaces
-     * @throws SQLException 
+     * @throws SQLException
      */
     public static ArrayList<Workplaces> loadPlaces() throws SQLException {
         ArrayList<Workplaces> listPlaces = new ArrayList<Workplaces>();
@@ -94,7 +93,7 @@ public class Admin {
         ResultSet u = st.executeQuery();
 
         while (u.next()) {
-            listPlaces.add(new Workplaces(u.getInt("IdPlace"),u.getString("PlaceName"), u.getString("PlaceAddress")));
+            listPlaces.add(new Workplaces(u.getInt("IdPlace"), u.getString("PlaceName"), u.getString("PlaceAddress")));
 
         }
 
@@ -135,7 +134,7 @@ public class Admin {
         PreparedStatement st = Conn.prepare(q);
 
         st.setString(1, placeName);
-        
+
         st.execute();
         st.close();
     }
@@ -145,7 +144,6 @@ public class Admin {
     //RAPPORTS
     //****************************************************************************
     ////////////////////////////////////////////////////////////////////////////
-    
     public static int nbrDrivers() throws SQLException {
         String q = "SELECT COUNT(*) _nb, Driver FROM user WHERE Driver='y';";
         PreparedStatement st = Conn.prepare(q);
@@ -164,8 +162,6 @@ public class Admin {
         return rslt;
     }
 
-    
-    
     public static int nbrNonDrivers() throws SQLException {
         String q = "SELECT COUNT(*) FROM user WHERE Driver='n';";
         PreparedStatement st = Conn.prepare(q);
@@ -213,29 +209,28 @@ public class Admin {
 
         return rslt;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     //****************************************************************************
     //ACTIONS SUR LES USERS
     //****************************************************************************
     ////////////////////////////////////////////////////////////////////////////
-    
     public static ArrayList<ShortUser> getUsers() throws SQLException {
         ArrayList<ShortUser> userList = new ArrayList<>();
         String req;
-           
+
         req = "select MailAddress, FirstName, LastName, Driver from user ORDER BY LastName, Firstname ";
-        
+
         PreparedStatement st = Conn.prepare(req);
         ResultSet rs = st.executeQuery();
 
         while (rs.next()) {
-            userList.add(new ShortUser(rs.getString("MailAddress"),rs.getString("FirstName"),rs.getString("LastName"),(rs.getString("Driver").equals("Y"))));
+            userList.add(new ShortUser(rs.getString("MailAddress"), rs.getString("FirstName"), rs.getString("LastName"), (rs.getString("Driver").equals("Y"))));
         }
         return userList;
     }
-    
-        public static void deleteUser(String mailAddress) throws SQLException {
+
+    public static void deleteUser(String mailAddress) throws SQLException {
         String q = "DELETE FROM user WHERE MailAddress = ?;";
         PreparedStatement st = Conn.prepare(q);
 
@@ -243,57 +238,57 @@ public class Admin {
 
         st.execute();
         st.close();
-        }   
-        
-        public static void chMailUser(String mailAddress, String newMail) throws SQLException {
-            String q = "UPDATE user SET MailAddress = ? WHERE MailAddress = ?;";
-            PreparedStatement st = Conn.prepare(q);
+    }
 
-            st.setString(1, newMail);
-            st.setString(2, mailAddress);
+    public static void chMailUser(String mailAddress, String newMail) throws SQLException {
+        String q = "UPDATE user SET MailAddress = ? WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
 
-            st.execute();
-            st.close();
-        }
-        
-        public static void chLastNameUser(String mailAddress, String newLName) throws SQLException {
-            String q = "UPDATE user SET LastName = ? WHERE MailAddress = ?;";
-            PreparedStatement st = Conn.prepare(q);
+        st.setString(1, newMail);
+        st.setString(2, mailAddress);
 
-            st.setString(1,newLName);
-            st.setString(2, mailAddress);
+        st.execute();
+        st.close();
+    }
 
-            st.execute();
-            st.close();
-        }
-        
-        public static void chFirstNameUser(String mailAddress, String newFName) throws SQLException {
-            String q = "UPDATE user SET FirstName = ? WHERE MailAddress = ?;";
-            PreparedStatement st = Conn.prepare(q);
+    public static void chLastNameUser(String mailAddress, String newLName) throws SQLException {
+        String q = "UPDATE user SET LastName = ? WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
 
-            st.setString(1,newFName);
-            st.setString(2, mailAddress);
+        st.setString(1, newLName);
+        st.setString(2, mailAddress);
 
-            st.execute();
-            st.close();
-        }
-        
-        public static void chPwdUser(String mailAddress, String Pwd) throws SQLException {
-            
-        }
-        
-        public static void chDriverUser(String mailAddress, boolean drives) throws SQLException {
-        }
+        st.execute();
+        st.close();
+    }
+
+    public static void chFirstNameUser(String mailAddress, String newFName) throws SQLException {
+        String q = "UPDATE user SET FirstName = ? WHERE MailAddress = ?;";
+        PreparedStatement st = Conn.prepare(q);
+
+        st.setString(1, newFName);
+        st.setString(2, mailAddress);
+
+        st.execute();
+        st.close();
+    }
+
+    public static void chPwdUser(String mailAddress, String Pwd) throws SQLException {
+
+    }
+
+    public static void chDriverUser(String mailAddress, boolean drives) throws SQLException {
+    }
     ////////////////////////////////////////////////////////////////////////////
     //****************************************************************************
     //ACTIONS SUR LES CITY
     //****************************************************************************
     ////////////////////////////////////////////////////////////////////////////
-     
+
     /**
-     * 
+     *
      * @return la liste de toutes les city
-     * @throws SQLException 
+     * @throws SQLException
      */
     public static ArrayList<City> loadCity() throws SQLException {
         ArrayList<City> listPlaces = new ArrayList<City>();
@@ -304,7 +299,7 @@ public class Admin {
         ResultSet u = st.executeQuery();
 
         while (u.next()) {
-            listPlaces.add(new City(u.getInt("IdCity"),u.getString("CityName"), u.getString("ZipCode")));
+            listPlaces.add(new City(u.getInt("IdCity"), u.getString("CityName"), u.getString("ZipCode")));
         }
 
         u.close();
@@ -313,5 +308,4 @@ public class Admin {
         return listPlaces;
     }
 
-    
 }
