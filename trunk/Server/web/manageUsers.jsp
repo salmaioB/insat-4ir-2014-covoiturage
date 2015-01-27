@@ -19,12 +19,12 @@
         <div style="text-align:center;">
             <h3>Ajouter un utilisateur</h3>
             <form action="UsersServlet" method="post">
-                                Adresse Mail : <input type="text" name="mailAddress" />
-                                Prénom : <input type="text" name="firstName" />
+                Adresse Mail : <input type="text" name="mailAddress" />
+                Prénom : <input type="text" name="firstName" />
                 Nom de famille : <input type="text" name="lastName" />
                 <select name="driver">
-                    <option>YES</option>
-                    <option>NO</option>
+                    <option value="YES">YES</option>
+                    <option value="NO">NO</option>
                 </select>
                                 <input type="submit" name="Create" value="Creer" />
             </form>
@@ -61,12 +61,20 @@
         <div style="text-align:center">
             <h3>Modifier ou supprimer un utilisateur</h3>
             <form action="UsersServlet" method="post">
-                <select name="name">
+                <select name="mailUser">
                     <%
                         for (int i = 0; i < listUsers.size(); i++) {
                             out.print(String.format("<option>%s</option>", listUsers.get(i).getName()));
                         }
                     %>
+                </select>
+                Prénom : <input type="text" name="firstName" />
+                Nom de famille : <input type="text" name="lastName" />
+                Mot de passe : <input type="text" name="password" />
+                Driver : 
+                <select name="driver">
+                    <option value="YES">YES</option>
+                    <option value="NO">NO</option>
                 </select>
                 <input type="submit" name="Modify" value="Modifier" />
                 <input type="submit" name="Delete" value="Supprimer" />
