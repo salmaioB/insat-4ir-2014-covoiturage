@@ -101,12 +101,10 @@ public class PlacesServlet extends HttpServlet {
 
             try {
                 Admin.deletePlace(name);
-                request.setAttribute("erreur", "BABULU");
                 request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
                 return;
             } catch (SQLException ex) {
-                request.setAttribute("erreur", ex.getMessage());
-                Logger.getLogger(PlacesServlet.class.getName()).log(Level.SEVERE, null, ex);
+                request.setAttribute("erreurD", ex.getMessage());
                 request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
                 return;
             }

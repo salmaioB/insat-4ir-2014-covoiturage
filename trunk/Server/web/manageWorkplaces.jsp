@@ -45,22 +45,22 @@
         </div>
         <div style="text-align:center;">
             <h3>Suppression des lieux de travail</h3>
-            <form>
+            <form action="PlacesServlet" method="post">
                 <select name="nomlieu">
                     <%
                         for (int i = 0; i < listPlaces.size(); i++) {
                             out.print(String.format("<option>%s</option>", listPlaces.get(i).getName()));
                         }
-                        String erreurD = (String) request.getAttribute("erreurD");
-                        if (erreurD != null) {
-                            out.print(String.format("Erreur: %s", erreurD));
-                        }
                     %>
                 </select>                     
-                <form action="PlacesServlet" method="post">
-                    <input type="submit" name="Delete" value="Supprimer" />
-                </form>
+                <input type="submit" name="Delete" value="Supprimer" />
             </form>
+            <%
+                String erreurD = (String) request.getAttribute("erreurD");
+                if (erreurD != null) {
+                    out.print(String.format("Erreur: %s", erreurD));
+                }
+            %>
         </div>
     </body>
 </html>
