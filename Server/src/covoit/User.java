@@ -217,7 +217,7 @@ public class User {
             st.setString(1, route.getStartHour() + ":" + route.getStartMinute() + ":00");
             st.setString(2, route.getEndHour() + ":" + route.getEndMinute() + ":00");
             st.setInt(3, route.getPlaceID());
-            st.setString(4, route.getNotifyUser() ? ("Y") : ("N"));
+            st.setBoolean(4, route.getNotifyUser());
             st.setInt(5, idUser);
             st.setString(6, route.getWeekday().toString());
             st.execute();
@@ -236,7 +236,7 @@ public class User {
         if (rs.next()) {
             int idUser = rs.getInt("IdUser");
 
-            q = "INSERT INTO covoitsopra.route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`, `Notify`) "
+            q = "INSERT INTO route (`IdUser`, `Day`, `GoHour`, `ReturnHour`, `IdPlace`, `Notify`) "
                     + "VALUES (?, ?, ?, ?, ?, ?);";
 
             st = Conn.prepare(q);
@@ -245,7 +245,7 @@ public class User {
             st.setString(3, route.getStartHour() + ":" + route.getStartMinute() + ":00");
             st.setString(4, route.getEndHour() + ":" + route.getEndMinute() + ":00");
             st.setInt(5, route.getPlaceID());
-            st.setString(6, route.getNotifyUser() ? ("Y") : ("N"));
+            st.setBoolean(6, route.getNotifyUser());
 
             st.execute();
             st.close();
@@ -263,7 +263,7 @@ public class User {
         if (rs.next()) {
             int idUser = rs.getInt("IdUser");
 
-            q = "DELETE FROM covoitsopra.route WHERE `IdUser` = ? AND `Day` = ?;";
+            q = "DELETE FROM route WHERE `IdUser` = ? AND `Day` = ?;";
             st = Conn.prepare(q);
             st.setInt(1, idUser);
             st.setString(2, day.toString());
