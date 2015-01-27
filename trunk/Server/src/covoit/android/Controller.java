@@ -219,7 +219,8 @@ public class Controller extends HttpServlet {
 				JsonObject obj = getObject(reqBody, "value");
                 User.updateFirstName(name, obj.getString("firstName"));
                 User.updateLastName(name, obj.getString("lastName"));
-                //User.updatePassword(name, obj.getString("password"));
+                //String hash = BCrypt.hashpw(obj.getString("password"), BCrypt.gensalt());
+                //User.updatePassword(name, hash);
                 User.updateDriver(name, obj.getBoolean("driver"));
                 User.updateCity(name, obj.getString("city"), obj.getString("zip"));
  
