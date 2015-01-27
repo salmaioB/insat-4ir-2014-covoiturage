@@ -79,33 +79,81 @@ public class UsersServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getParameter("Create") != null) {
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
-            String mailAddress = request.getParameter("mailAddress");
-            String driverN = request.getParameter("driver");
+            String firstName = (String) request.getParameter("firstName");
+            String lastName = (String) request.getParameter("lastName");
+            String mailAddress = (String) request.getParameter("mailAddress");
+            String driverN = (String) request.getParameter("driver");
             boolean driver = false;
-            if (driverN == "YES") {
+            if (driverN.equals("YES")) {
                 driver = true;
             }
 
             if (!firstName.isEmpty() && !lastName.isEmpty()) {
                 try {
                     String hash = BCrypt.hashpw("password", BCrypt.gensalt());
-                    User.create(mailAddress, hash, firstName, lastName, driver);
+                    User.create(mailAddress, hash, firstName, lastName, driver);   
                 } catch (SQLException e) {
                     String erreur = e.getMessage();
                     request.setAttribute("erreur", erreur);
                     request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
                     return;
                 }
+                request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
             } else {
                 response.sendRedirect("manageUsers.jsp");
             }
 
         } else if (request.getParameter("Modify") != null) {
-            String name = (String) request.getParameter("name");
-            request.setAttribute("mailUser", name);
-            request.getRequestDispatcher("modifyUser.jsp").forward(request, response);
+            String firstName = (String)request.getParameter("firstName");
+            String lastName = (String)request.getParameter("lastName");
+            String password = (String)request.getParameter("password");
+            String driverN = (String) request.getParameter("driver");
+            boolean driver = false;
+            if (driverN.equals("YES")) {
+                driver = true;
+            }
+            String name = (String) request.getParameter("mailUser");
+            try {
+                User.updateDriver(name, driver);
+                request.setAttribute("erreurD", driverN);
+            } catch (SQLException e) {
+                String erreur = e.getMessage();
+                request.setAttribute("erreurD", erreur);
+                request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+                return;
+            }
+            if (!firstName.isEmpty()) {
+                try {
+                    User.updateFirstName(name, firstName);
+                } catch (SQLException e) {
+                    String erreur = e.getMessage();
+                    request.setAttribute("erreurD", erreur);
+                    request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+                    return;
+                }
+            }
+            if (!lastName.isEmpty()) {
+                try {
+                    User.updateLastName(name, lastName);
+                } catch (SQLException e) {
+                    String erreur = e.getMessage();
+                    request.setAttribute("erreurD", erreur);
+                    request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+                    return;
+                }
+            }
+            if (!password.isEmpty()) {
+                try {
+                    String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+                    User.updatePassword(name, hash);
+                } catch (SQLException e) {
+                    String erreur = e.getMessage();
+                    request.setAttribute("erreurD", erreur);
+                    request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+                    return;
+                }
+            }
+            request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
 
         } else if (request.getParameter("Delete") != null) {
             String name = (String) request.getParameter("name");
