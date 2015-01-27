@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -170,7 +171,13 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 				RouteViewFragment.this.setActive(_active.isChecked());
 				if (_active.isChecked()) {
 					RouteViewFragment.this.getFragmentManager().executePendingTransactions();
-					RouteViewFragment.this.updateMap();
+					Handler handler=new Handler();
+					Runnable r=new Runnable() {
+						public void run() {
+							RouteViewFragment.this.updateMap();
+						}
+					};
+					handler.postDelayed(r, 200);
 				}
 			}
 		});
@@ -329,6 +336,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 				// On modifie le trajet
 				if (_active.isChecked()) {
 					RouteViewFragment.this.updateRoute("modifyRoute");
+					_route.invalidateMap();
 				}
 				// On supprime le trajet
 				else {
@@ -343,6 +351,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 				// On créé le trajet
 				if (_active.isChecked()) {
 					RouteViewFragment.this.updateRoute("addRoute");
+					_route.invalidateMap();
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 package tda2.insa.com.be_covoiturage;
 
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
@@ -23,8 +24,8 @@ public class Route implements Serializable {
 	private int _startHour, _startMinute;
 	private int _endHour, _endMinute;
 	private boolean _active = false;
-	private boolean _mapUpToDate = false;
 	private ImageView _imageView;
+	private Bitmap _bitmap;
 	private int _imageWidth, _imageHeight;
 	private boolean _notifyMe;
 
@@ -42,6 +43,7 @@ public class Route implements Serializable {
 
 		_weekday = day;
 		_workplace = Workplace.getWorkplaces().iterator().next();
+		_bitmap = null;
 	}
 
 	public JSONObject getJSON() {
@@ -161,6 +163,13 @@ public class Route implements Serializable {
 		_workplace = wp;
 	}
 
+	public void setBitmap(Bitmap b) {
+		_bitmap = b;
+		if(b != null) {
+			_imageView.setImageBitmap(b);
+		}
+	}
+
 	public static LatLng getLocationFromAddress(String strAddress) {
 
 		Geocoder coder = new Geocoder(MyApplication.getAppContext());
@@ -194,7 +203,7 @@ public class Route implements Serializable {
 	}
 
 	public void invalidateMap() {
-		_mapUpToDate = false;
+		_bitmap = null;
 	}
 
 	public String getStaticMapURL() {
@@ -216,9 +225,11 @@ public class Route implements Serializable {
 	}
 
 	public void updateStaticMap() {
-		if(!_mapUpToDate) {
-			new ImageDownloader().execute(this.getStaticMapURL(), _imageView);
-			_mapUpToDate = true;
+		if(_bitmap == null) {
+			new ImageDownloader().execute(this.getStaticMapURL(), this);
+		}
+		else {
+			_imageView.setImageBitmap(_bitmap);
 		}
 	}
 }

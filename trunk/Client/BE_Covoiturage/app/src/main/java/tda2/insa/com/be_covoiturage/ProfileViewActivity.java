@@ -65,6 +65,9 @@ public class ProfileViewActivity extends ActionBarActivity {
 				this.switchToProfile();
 			}
 		}
+		else {
+			this.moveTaskToBack(true);
+		}
 	}
 
 	public void switchToIdentity() {

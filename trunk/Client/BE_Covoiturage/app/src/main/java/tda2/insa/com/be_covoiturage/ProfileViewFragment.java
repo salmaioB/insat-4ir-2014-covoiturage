@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,18 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 			}
 		});
 
-		this.loadProfile((AuthToken) (this.getActivity().getIntent().getSerializableExtra(LoginActivity.AUTH_TOKEN)));
+		if(MyApplication.getUser() == null) {
+			this.loadProfile((AuthToken) (this.getActivity().getIntent().getSerializableExtra(LoginActivity.AUTH_TOKEN)));
+		}
+		else {
+			Handler handler=new Handler();
+			Runnable r=new Runnable() {
+				public void run() {
+					ProfileViewFragment.this.onProfileLoaded();
+				}
+			};
+			handler.postDelayed(r, 100);
+		}
 
 		return rootView;
 	}
@@ -159,6 +171,8 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 		if(_user != null) {
 			Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("logout"), _user.getAuthToken(), new JSONObject(), null, null);
 		}
+
+		MyApplication.setUser(null);
 
 		_activity.finish();
 
