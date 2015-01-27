@@ -162,8 +162,8 @@ public class Controller extends HttpServlet {
                 write(resp, 500, e.toString());
                 //peut être à cause d'autre chose, mais ce sera souvent ça.
                 status = "INVALID_NAME";
- 				return;
-           }
+                return;
+            }
 
             JsonObject pl = Json.createObjectBuilder()
                     .add("status", status)
@@ -216,14 +216,12 @@ public class Controller extends HttpServlet {
         try {
             try {
                 String name = getString(reqBody, "name");   //@mail
-				JsonObject obj = getObject(reqBody, "value");
+                JsonObject obj = getObject(reqBody, "value");
                 User.updateFirstName(name, obj.getString("firstName"));
                 User.updateLastName(name, obj.getString("lastName"));
-                //String hash = BCrypt.hashpw(obj.getString("password"), BCrypt.gensalt());
-                //User.updatePassword(name, hash);
                 User.updateDriver(name, obj.getBoolean("driver"));
                 User.updateCity(name, obj.getString("city"), obj.getString("zip"));
- 
+                
                 JsonObject pl = Json.createObjectBuilder()
                         .add("status", "OK")
                         .build();
@@ -236,8 +234,49 @@ public class Controller extends HttpServlet {
             write(resp, 400, "Malformed modifyAccountField command: " + reqBody);
         }
     }
-	
-	    /**
+
+    /**
+     * Modifie le mot de passe de l'utilisateur.
+     */
+    private static void doModifyPassword(HttpServletRequest req,
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                JsonObject obj = getObject(reqBody, "value");
+                String password = obj.getString("password");
+                String newpassword = obj.getString("newpassword");
+                
+                String hash = BCrypt.hashpw(newpassword, BCrypt.gensalt());
+                
+                User user = null;
+                try {
+                    user = User.load(name);
+                } catch (SQLException e) {
+                    write(resp, 500, e.toString());
+                    return;
+                }
+                if (user != null && BCrypt.checkpw(password, user.getPassword())) {
+                    User.updatePassword(name, hash);
+                } else {
+                    write(resp, 500, "mauvais mot de passe"); ///?
+                }
+
+                JsonObject pl = Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build();
+                write(resp, 200, pl);
+
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
+
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed modifyPassword command: " + reqBody);
+        }
+    }
+
+    /**
      * Modifie un champ du profil de l'utilisateur.
      */
     private static void doModifyNotifications(HttpServletRequest req,
@@ -245,9 +284,9 @@ public class Controller extends HttpServlet {
         try {
             try {
                 String name = getString(reqBody, "name");   //@mail
-				JsonObject obj = getObject(reqBody, "value");
+                JsonObject obj = getObject(reqBody, "value");
                 User.setNotifySettings(name, obj.getBoolean("notifyByMail"), obj.getBoolean("notifyByPush"), obj.getString("notifyAddress"));
- 
+
                 JsonObject pl = Json.createObjectBuilder()
                         .add("status", "OK")
                         .build();
@@ -373,10 +412,10 @@ public class Controller extends HttpServlet {
                         jab.add(l.get(i).getJsonObjectShortUser());
                     }
                 }
-				
-				JsonObjectBuilder job = Json.createObjectBuilder();
-				job.add("value", jab);
-				
+
+                JsonObjectBuilder job = Json.createObjectBuilder();
+                job.add("value", jab);
+
                 write(resp, 200, job.build());
             } catch (SQLException ex) {
                 write(resp, 500, ex.toString());
@@ -400,7 +439,7 @@ public class Controller extends HttpServlet {
             return;
         }
 
-       // commandes ne nécessaitant pas d'être connecté.
+        // commandes ne nécessaitant pas d'être connecté.
         if (cmd.equals("login")) {
             doLogin(req, resp, reqBody);
         } else if (cmd.equals("logout")) {
@@ -409,7 +448,7 @@ public class Controller extends HttpServlet {
             write(resp, 200, pl);
         } else if (cmd.equals("createAccount")) {
             doCreateAccount(req, resp, reqBody);
-         } else if (user.length() != 0) {  // connexion requise
+        } else if (user.length() != 0) {  // connexion requise
             if (cmd.equals("detailsAccount")) {
                 doDetailsAccount(req, resp, reqBody);
             } else if (cmd.equals("modifyAccountField")) {
