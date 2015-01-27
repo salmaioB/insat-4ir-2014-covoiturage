@@ -84,7 +84,7 @@ public class UsersServlet extends HttpServlet {
             String mailAddress = request.getParameter("mailAddress");
             String driverN = request.getParameter("driver");
             boolean driver = false;
-            if (driverN == "YES"){
+            if (driverN == "YES") {
                 driver = true;
             }
 
@@ -101,17 +101,24 @@ public class UsersServlet extends HttpServlet {
             } else {
                 response.sendRedirect("manageUsers.jsp");
             }
-            
+
+        } else if (request.getParameter("Modify") != null) {
+            String name = (String) request.getParameter("name");
+            request.setAttribute("mailUser", name);
+            request.getRequestDispatcher("modifyUser.jsp").forward(request, response);
+
         } else if (request.getParameter("Delete") != null) {
-            String name = (String) request.getParameter("mailAddress");
+            String name = (String) request.getParameter("name");
             try {
-                Admin.deletePlace(name);
+                Admin.deleteUser(name);
             } catch (SQLException ex) {
-                Logger.getLogger(PlacesServlet.class.getName()).log(Level.SEVERE, null, ex);
+                String erreur = ex.getMessage();
+                request.setAttribute("erreurD", erreur);
+                request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+                return;
             }
-            request.getRequestDispatcher("manageWorkplaces.jsp").forward(request, response);
-        }
-        else {
+            request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+        } else {
             response.sendRedirect("manageUsers.jsp");
         }
     }
