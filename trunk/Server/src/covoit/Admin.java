@@ -194,20 +194,39 @@ public class Admin {
         return rslt;
     }
 
-    public static int nbrUserstoWorkplace(String day, int place) throws SQLException {
-        String q = "select COUNT(DISTINCT IdUser) from route WHERE route.`Day` = ? AND IdPlace= ?;";
+    public static int nbrUserstoWorkplace(int city, int place) throws SQLException {
+        String q = "select COUNT(DISTINCT route.IdUser) AS nbr_ from route,user WHERE user.IdUser=route.IdUser"
+                +"AND IdCity= ? AND IdPlace= ?;";
+        
         PreparedStatement st = Conn.prepare(q);
-        st.setString(1, day);
+        st.setInt(1, city);
         st.setInt(2, place);
 
         ResultSet rs = st.executeQuery();
 
-        int rslt = rs.getInt("COUNT(*)");
+        int rslt = rs.getInt("nbr_");
 
         st.close();
         rs.close();
 
         return rslt;
+    }
+
+    public static ArrayList<ShortRoute> getUserstoWorkplace(int place, int city) throws SQLException {
+        ArrayList<ShortRoute> routeList = new ArrayList<>();
+        String req;
+
+        req = "SELECT route.IdUser, IdCity, IdPlace from route,user,Day, GoHour, ReturnHour WHERE route.IdUser = user.IdUser AND IdPlace = ? AND IdCity = ? ORDER BY Day, GoHour, ReturnHour;";
+
+        PreparedStatement st = Conn.prepare(req);
+        st.setInt(1, place);
+        st.setInt(2, city);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()) {
+           routeList.add(new ShortRoute(rs.getInt("IdUser"), rs.getInt("IdCity"), rs.getInt("IdPlace"), rs.getString("Day"), rs.getString("GoHour"), rs.getString("ReturnHour")));
+        }
+        return routeList;
     }
 
     ////////////////////////////////////////////////////////////////////////////
