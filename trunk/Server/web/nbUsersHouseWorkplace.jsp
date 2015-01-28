@@ -1,4 +1,5 @@
 
+<%@page import="covoit.ShortRoute"%>
 <%@page import="covoit.Workplaces"%>
 <%@page import="covoit.City"%>
 <%@page import="java.util.ArrayList" %>
@@ -62,6 +63,37 @@
                 }
             %>
         </div> 
+        <div style="text-align:center">
+            <h3>Liste des couples utilisateur/route</h3>
+            <table border="1">
+                <tr>
+                    <th>ID USER</th>
+                    <th>ID CITY</th>
+                    <th>ID PLACE</th>
+                    <th>DAY</th>
+                    <th>GO</th>
+                    <th>BACK</th>
+
+                </tr>
+                <%
+                    int place = (int) request.getAttribute("IdPlace");
+                    int city = (int) request.getAttribute("IdCity");
+
+                    ArrayList<ShortRoute> listUsers = covoit.Admin.getUserstoWorkplace(place, city);
+                    for (int i = 0; i < listUsers.size(); i++) {
+                        out.print("<tr>");
+                        out.print(String.format("<td>%s</td>", listUsers.get(i).getUser()));
+                        out.print(String.format("<td>%s</td>", listUsers.get(i).getCity()));
+                        out.print(String.format("<td>%s</td>", listUsers.get(i).getPlace()));
+                        out.print(String.format("<td>%s</td>", listUsers.get(i).getDay()));
+                        out.print(String.format("<td>%s</td>", listUsers.get(i).getGoHour()));
+                        out.print(String.format("<td>%s</td>", listUsers.get(i).getReturnHour()));
+
+                        out.print("</tr>");
+                    }
+                %>
+            </table>
+        </div>
         <br/>
         <br/>
         <br/>
