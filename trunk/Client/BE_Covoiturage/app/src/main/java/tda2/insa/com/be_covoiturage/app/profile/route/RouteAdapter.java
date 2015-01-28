@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile.route;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import tda2.insa.com.be_covoiturage.R;
 
 /**
  *

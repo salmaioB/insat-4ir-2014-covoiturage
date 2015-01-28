@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile;
 
 import android.app.Fragment;
 import android.app.Notification;
@@ -14,6 +14,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.MyApplication;
+import tda2.insa.com.be_covoiturage.app.PutNotification;
+import tda2.insa.com.be_covoiturage.app.User;
+import tda2.insa.com.be_covoiturage.network.MyJSONObject;
+import tda2.insa.com.be_covoiturage.network.Network;
 
 /**
  * Created by PhuThanh on 1/13/15.
@@ -50,6 +58,10 @@ public class NotificationViewFragment extends Fragment implements DataFragment {
         });
 		return rootView;
     }
+
+	public String fragmentTitle() {
+		return "Notifications";
+	}
 
     @Override
     public void onExit() {

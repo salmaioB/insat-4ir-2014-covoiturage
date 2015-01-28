@@ -1,6 +1,5 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.KeyEvent;
@@ -8,13 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONObject;
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.MyApplication;
+import tda2.insa.com.be_covoiturage.app.Place;
+import tda2.insa.com.be_covoiturage.app.User;
+import tda2.insa.com.be_covoiturage.network.MyJSONObject;
+import tda2.insa.com.be_covoiturage.network.Network;
 
 /**
  *
@@ -61,6 +64,11 @@ public class IdentityViewFragment extends Fragment implements DataFragment {
 
 		return rootView;
 	}
+
+	public String fragmentTitle() {
+		return "Identité";
+	}
+
 
 	@Override
 	public void onResume() {

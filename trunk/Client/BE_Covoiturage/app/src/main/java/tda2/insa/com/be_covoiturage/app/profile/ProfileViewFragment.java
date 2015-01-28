@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,18 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.LoginActivity;
+import tda2.insa.com.be_covoiturage.app.MyApplication;
+import tda2.insa.com.be_covoiturage.app.User;
+import tda2.insa.com.be_covoiturage.app.Workplace;
+import tda2.insa.com.be_covoiturage.app.profile.route.Route;
+import tda2.insa.com.be_covoiturage.app.profile.route.RouteAdapter;
+import tda2.insa.com.be_covoiturage.network.AuthToken;
+import tda2.insa.com.be_covoiturage.network.MyJSONObject;
+import tda2.insa.com.be_covoiturage.network.Network;
 
 public class ProfileViewFragment extends Fragment implements DataFragment {
 	private User _user;
@@ -45,7 +56,7 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 
 		_routesList = (ListView)rootView.findViewById(R.id.profile_routes);
 
-		String[] values = new String[] {"Identité", "Notifications"};
+		String[] values = new String[] {"Identité", "Notifications", "Trajet personnalisé…"};
 
 		_infos = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, values);
 		_infosList.setAdapter(_infos);
@@ -58,6 +69,9 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 				}
 				else if(position == 1) {
 					ProfileViewFragment.this.editNotifications();
+				}
+				else if(position == 2) {
+					ProfileViewFragment.this.customRoute();
 				}
 			}
 		});
@@ -76,6 +90,10 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 		}
 
 		return rootView;
+	}
+
+	public String fragmentTitle() {
+		return "Profil";
 	}
 
 	@Override
@@ -203,6 +221,10 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 
 	public void editRoute(int index) {
 		((ProfileViewActivity)this.getActivity()).switchToRoute(_user.getRoute(Route.Weekday.values()[index]));
+	}
+
+	public void customRoute() {
+		((ProfileViewActivity)this.getActivity()).switchToNotification();
 	}
 
 	@Override

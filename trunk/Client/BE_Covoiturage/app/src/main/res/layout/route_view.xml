@@ -59,7 +59,7 @@
 
     <fragment
         android:id="@+id/map_view"
-        android:name="tda2.insa.com.be_covoiturage.RouteViewFragment$MyMapFragment"
+        android:name="tda2.insa.com.be_covoiturage.app.profile.route.RouteViewFragment$MyMapFragment"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
 

@@ -3,5 +3,5 @@
              android:id="@+id/container"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="tda2.insa.com.be_covoiturage.ProfileViewActivity"
+             tools:context="tda2.insa.com.be_covoiturage.app.profile.ProfileViewActivity"
              tools:ignore="MergeRootFrame"/>

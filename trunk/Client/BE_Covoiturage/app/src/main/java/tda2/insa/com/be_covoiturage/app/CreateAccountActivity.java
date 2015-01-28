@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,10 @@ import android.widget.EditText;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
+
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.network.MyJSONObject;
+import tda2.insa.com.be_covoiturage.network.Network;
 
 
 public class CreateAccountActivity extends ProgressActivity {

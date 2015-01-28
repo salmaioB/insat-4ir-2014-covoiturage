@@ -1,14 +1,15 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app;
 
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import tda2.insa.com.be_covoiturage.R;
 
 /**
  * Created by PhuThanh on 1/25/15.

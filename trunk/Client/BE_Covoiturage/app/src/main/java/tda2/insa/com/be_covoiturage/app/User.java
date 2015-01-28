@@ -1,10 +1,12 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app;
 
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import tda2.insa.com.be_covoiturage.network.*;
+import tda2.insa.com.be_covoiturage.app.profile.route.*;
 
 /**
  *
@@ -20,7 +22,7 @@ public class User {
     private boolean _notifyByMail;
     private boolean _notifyByPush;
 
-	User(AuthToken authToken, JSONObject userInfo) {
+	public User(AuthToken authToken, JSONObject userInfo) {
 		_authToken = authToken;
 		_routes = new Route[Route.Weekday.values().length];
 

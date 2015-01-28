@@ -8,7 +8,6 @@
     <string name="error_invalid_email">Veuillez rentrer une adresse email valide</string>
     <string name="error_field_required">Ce champ est requis</string>
     <string name="title_activity_profile_view">Profil</string>
-
     <string name="action_logout">Déconnexion</string>
     <string name="remove_route">Supprimer le trajet</string>
     <string name="monday">Lundi</string>
@@ -24,6 +23,6 @@
     <string name="receive_by_mail">Recevoir des notifications par mail</string>
     <string name="email_address_hint">Adresse email</string>
     <string name="notify_by_push">Recevoir des notifications push</string>
-
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

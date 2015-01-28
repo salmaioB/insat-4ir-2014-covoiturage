@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile.route;
 
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -15,6 +15,11 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.util.List;
 
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.Workplace;
+import tda2.insa.com.be_covoiturage.network.*;
+import tda2.insa.com.be_covoiturage.app.*;
+
 /**
  *
  * Created by remi on 07/01/15.
@@ -25,7 +30,7 @@ public class Route implements Serializable {
 	private int _endHour, _endMinute;
 	private boolean _active = false;
 	private ImageView _imageView;
-	private Bitmap _bitmap;
+	private Bitmap _bitmap, _oldBitmap;
 	private int _imageWidth, _imageHeight;
 	private boolean _notifyMe;
 
@@ -164,10 +169,9 @@ public class Route implements Serializable {
 	}
 
 	public void setBitmap(Bitmap b) {
+		_oldBitmap = _bitmap;
 		_bitmap = b;
-		if(b != null) {
-			_imageView.setImageBitmap(b);
-		}
+		_imageView.setImageBitmap(b);
 	}
 
 	public static LatLng getLocationFromAddress(String strAddress) {
@@ -200,6 +204,9 @@ public class Route implements Serializable {
 		_imageView = view;
 		_imageWidth = width;
 		_imageHeight = height;
+		if(_oldBitmap != null) {
+			_imageView.setImageBitmap(_oldBitmap);
+		}
 	}
 
 	public void invalidateMap() {
@@ -226,6 +233,9 @@ public class Route implements Serializable {
 
 	public void updateStaticMap() {
 		if(_bitmap == null) {
+			if(_oldBitmap != null) {
+				_imageView.setImageBitmap(_oldBitmap);
+			}
 			new ImageDownloader().execute(this.getStaticMapURL(), this);
 		}
 		else {

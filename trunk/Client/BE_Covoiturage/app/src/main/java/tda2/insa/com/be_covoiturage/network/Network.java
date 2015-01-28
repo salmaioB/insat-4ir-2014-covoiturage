@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.network;
 
 import android.app.DownloadManager;
 import android.util.Log;
@@ -29,8 +29,8 @@ public class Network {
 	private static Network _instance;
 
 	public static String getHost() {
-		return "remspi.noip.me:" + getPort();
-		//return "192.168.1.25:8080";
+		//return "remspi.noip.me:" + getPort();
+		return "192.168.1.25:8080";
 	}
 
 	public static int getPort() {
@@ -46,7 +46,7 @@ public class Network {
 	}
 
 	private Network() {
-		_queue = Volley.newRequestQueue(MyApplication.getAppContext());
+		_queue = Volley.newRequestQueue(tda2.insa.com.be_covoiturage.app.MyApplication.getAppContext());
 		this.allowAllSSL();
 	}
 

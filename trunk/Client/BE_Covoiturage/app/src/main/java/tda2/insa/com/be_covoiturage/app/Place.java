@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app;
 
 /**
  * Created by remi on 09/01/15.
@@ -7,7 +7,7 @@ public class Place {
 	private String _name;
 	private int _zipCode;
 
-	Place() {
+	public Place() {
 		_name = "Toulouse";
 		_zipCode = 31000;
 
