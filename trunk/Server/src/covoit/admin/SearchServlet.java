@@ -85,7 +85,7 @@ public class SearchServlet extends HttpServlet {
                 String nbrRoutes = Integer.toString(nbrRoutes_);
                 request.setAttribute("nbrRoutes", nbrRoutes);
                 request.getRequestDispatcher("nbUsersHouseWorkplace.jsp").forward(request, response);
-            } catch (SQLException ex) {
+             } catch (SQLException ex) {
                String erreur = ex.getMessage();
                     request.setAttribute("erreur", erreur);
                     request.getRequestDispatcher("nbUsersHouseWorkplace.jsp").forward(request, response);
