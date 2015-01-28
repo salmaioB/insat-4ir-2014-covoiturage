@@ -49,7 +49,26 @@ public class Route {
 
     }
 
-    public boolean getNotifyUser() {
+	public static String getWeekdayName(Weekday day) {
+		switch(day) {
+			case Monday:
+				return "lundi";
+			case Tuesday:
+				return "mardi";
+			case Wednesday:
+				return "mercredi";
+			case Thursday:
+				return "jeudi";
+			case Friday:
+				return "vendredi";
+			case Saturday:
+				return "samedi";
+		}
+
+		return null;
+	}
+
+	public boolean getNotifyUser() {
         return _notifyUser;
     }
 
