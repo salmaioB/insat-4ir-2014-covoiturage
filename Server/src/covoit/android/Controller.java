@@ -455,7 +455,14 @@ public class Controller extends HttpServlet {
 				int zip = getInt(reqBody, "zipCode");
 				int place = getInt(reqBody, "place");
 	
-				Route r = u.getRoutes().get(weekday.ordinal());
+				
+				Route r = null;
+				for(Route rr : u.getRoutes()) {
+					if(rr.getWeekday() == weekday) {
+						r = rr;
+						break;
+					}
+				}
 
                 ArrayList<ShortUser> l = new ArrayList<>();
 				
@@ -498,7 +505,7 @@ public class Controller extends HttpServlet {
                 write(resp, 500, ex.toString());
             }
         } catch (InvalidParameterException e) {
-            write(resp, 400, "Malformed searchRoutes command: " + reqBody);
+            write(resp, 400, "Malformed doNotifyRoute command: " + reqBody);
         }
     }
 
