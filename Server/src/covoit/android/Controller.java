@@ -440,13 +440,13 @@ public class Controller extends HttpServlet {
 	private static void doSendNotification(String newRoute, boolean newDriver, boolean direction, Route.Weekday day, ArrayList<ShortUser> recipients) {
 				ArrayList<String> recipientsAddresses = new ArrayList<>();
                 JsonArrayBuilder jab = Json.createArrayBuilder();
-				String messageBody = "Bonjour,\n\r\n\rVous avez indiqué être toujours vouloir être notifié "
-						+ "par la réception de nouvelles informations relaives à votre trajet " + (direction ? "retour" : "aller")
+				String messageBody = "Bonjour,\n\r\n\rVous avez indiqué vouloir être notifié "
+						+ "par la réception de nouvelles informations relatives à votre trajet " + (direction ? "retour" : "aller")
 						+ " du " + Route.getWeekdayName(day) + ".";
 				messageBody += "\n\r\n\rL'utilisateur " + newRoute + ", qui " + (newDriver ? "conduit" : "ne conduit pas") + ","
 						+ " suit le même trajet que vous. N'hésitez pas à le contacter !\n\r\n\r";
 				messageBody += "Cordialement, votre application de covoiturage préférée.";
-				messageBody += "\n\r\n\r\n\r\n\rCe message vous est envoyé automatiquemnt et conformément à vos réglages de notification."
+				messageBody += "\n\r\n\r\n\r\n\rCe message vous a été envoyé automatiquemnt et conformément à vos réglages de notification."
 						+ " Vous pouvez les modifier à tout moment en vous rendant dans l'onglet"
 						+ " \"Notifications\" de l'application Android";
 		
@@ -465,7 +465,7 @@ public class Controller extends HttpServlet {
 				
 				String result = job.build().toString();
 				messageBody += result;
-				MailSender.sendEmail(messageBody, "Un nouveau trajet est disponible !", recipientsAddresses);
+				MailSender.sendEmail("Un nouveau trajet est disponible !", messageBody, recipientsAddresses);
 	}
 
     private static void doNotifyNewRoute(HttpServletRequest req,
