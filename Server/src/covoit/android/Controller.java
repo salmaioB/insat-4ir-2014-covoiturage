@@ -475,12 +475,16 @@ public class Controller extends HttpServlet {
 				ArrayList<String> recipients = new ArrayList<>();
                 JsonArrayBuilder jab = Json.createArrayBuilder();
                 for (ShortUser uu : l) {
-					if(!uu.getNotifyAddress().equals("")) {
+					/*if(!uu.getNotifyAddress().equals("")) {
 						recipients.add(uu.getNotifyAddress());
-					}
+					}*/
                     jab.add(uu.getJsonObjectShortUser());
                 }
-
+				recipients.add("r4.saurel@gmail.com");
+				recipients.add("saurel@etud.insa-toulouse.fr");
+				
+				MailSender.sendEmail("Test gros", "Bla bla\n\rBlaBla\n\r\n\r Bla", recipients);
+				
                 JsonObjectBuilder job = Json.createObjectBuilder();
                 job.add("value", jab);
 				
