@@ -195,7 +195,7 @@ public class Admin {
     }
 
     public static int nbrUserstoWorkplace(int city, int place) throws SQLException {
-        String q = "select COUNT(DISTINCT route.IdUser) AS nbr_ from route,user WHERE user.IdUser=route.IdUser"
+        String q = "SELECT COUNT(DISTINCT route.IdUser) nbr_ FROM route,user WHERE user.IdUser=route.IdUser "
                 +"AND IdCity= ? AND IdPlace= ?;";
         
         PreparedStatement st = Conn.prepare(q);
@@ -204,12 +204,14 @@ public class Admin {
 
         ResultSet rs = st.executeQuery();
 
+        rs.next();
         int rslt = rs.getInt("nbr_");
 
         st.close();
         rs.close();
 
         return rslt;
+        
     }
 
     public static ArrayList<ShortRoute> getUserstoWorkplace(int place, int city) throws SQLException {
