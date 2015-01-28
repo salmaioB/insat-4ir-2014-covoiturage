@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile;
 
 import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -9,6 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.json.JSONArray;
+
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.profile.route.*;
+import tda2.insa.com.be_covoiturage.app.profile.search.SearchMatchesFragment;
 
 
 public class ProfileViewActivity extends ActionBarActivity {
@@ -51,6 +56,8 @@ public class ProfileViewActivity extends ActionBarActivity {
 		transaction.replace(R.id.container, (Fragment)fragment);
 
 		transaction.commit();
+
+		setTitle(fragment.fragmentTitle());
 
 		_currentFragment = fragment;
 	}

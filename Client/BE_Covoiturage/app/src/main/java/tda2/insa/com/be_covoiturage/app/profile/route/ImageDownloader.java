@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile.route;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

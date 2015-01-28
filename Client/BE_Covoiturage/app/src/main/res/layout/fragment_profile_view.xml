@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              tools:context="tda2.insa.com.be_covoiturage.ProfileViewFragment">
+              tools:context="tda2.insa.com.be_covoiturage.app.profile.ProfileViewFragment">
 
     <ListView
         android:layout_width="fill_parent"

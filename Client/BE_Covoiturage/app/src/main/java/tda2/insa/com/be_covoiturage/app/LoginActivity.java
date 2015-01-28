@@ -1,4 +1,4 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,9 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+
 import org.json.*;
 
-import com.android.volley.*;
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.profile.ProfileViewActivity;
+import tda2.insa.com.be_covoiturage.network.*;
 
 
 /**

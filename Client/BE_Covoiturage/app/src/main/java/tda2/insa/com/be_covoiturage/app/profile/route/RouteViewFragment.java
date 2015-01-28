@@ -1,9 +1,11 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile.route;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -13,11 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
@@ -34,6 +37,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import tda2.insa.com.be_covoiturage.R;
+import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.MyApplication;
+import tda2.insa.com.be_covoiturage.app.User;
+import tda2.insa.com.be_covoiturage.app.Workplace;
+import tda2.insa.com.be_covoiturage.app.profile.ProfileViewActivity;
+import tda2.insa.com.be_covoiturage.network.MyJSONObject;
+import tda2.insa.com.be_covoiturage.network.Network;
 
 /**
  *
@@ -69,11 +81,15 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 		return _instance;
 	}
 
+	public String fragmentTitle() {
+		return "Trajet";
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_instance = this;
 
-		View rootView = inflater.inflate(R.layout.route_view, container, false);
+		View rootView = inflater.inflate(tda2.insa.com.be_covoiturage.R.layout.route_view, container, false);
 		_user = MyApplication.getUser();
 
 		_startTime = (Button)rootView.findViewById(R.id.start_time);
@@ -229,7 +245,68 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 		_route.setNotifyMe(_notifyMe.isChecked());
 
 		obj.put("route", _route.getJSON());
-		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest(command), _user.getAuthToken(), obj, null, null);
+		Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest(command), _user.getAuthToken(), obj, new Network.NetworkResponseListener() {
+			@Override
+			public void onResponse(JSONObject data, JSONObject headers) {
+				DialogFragment f = new DialogFragment() {
+					private CheckBox _go, _return, _drivers;
+					private DialogInterface.OnDismissListener _listener;
+
+					public void setListener(DialogInterface.OnDismissListener l) {
+						_listener = l;
+					}
+
+
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						final Dialog dialog = new Dialog(getActivity());
+
+						dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+						dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+								WindowManager.LayoutParams.FLAG_FULLSCREEN);
+						dialog.setContentView(R.layout.route_notification);
+						dialog.getWindow().setBackgroundDrawable(
+								new ColorDrawable(Color.TRANSPARENT));
+						dialog.show();
+						_go = (CheckBox) dialog.findViewById(R.id.go_id);
+						_return = (CheckBox) dialog.findViewById(R.id.return_id);
+						_drivers = (CheckBox) dialog.findViewById(R.id.drivers_id);
+						if(!_user.isDriver()) {
+							_drivers.setVisibility(View.INVISIBLE);
+						}
+						else {
+							_drivers.setVisibility(View.VISIBLE);
+						}
+						Button notify = (Button)dialog.findViewById(R.id.notify);
+						Button dismiss = (Button)dialog.findViewById(R.id.notify);
+						notify.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								MyJSONObject obj = new MyJSONObject();
+								obj.put("go", _go.isChecked());
+								obj.put("return", _return.isChecked());
+								if(_user.isDriver()) {
+									obj.put("drivers", _drivers.isChecked());
+								}
+
+								Network.getInstance().sendAuthenticatedPostRequest("notifyNewRoute", _user.getAuthToken(), obj, null, null);
+
+								dismiss();
+							}
+						});
+						dismiss.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								dismiss();
+							}
+						});
+						return dialog;
+					}
+				};
+
+				f.show(getFragmentManager(), "");
+			}
+		}, null);
 	}
 
 	@Override

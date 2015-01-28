@@ -382,7 +382,7 @@ public class User {
         st2.setString(2, u.getString("hour_"));
         st2.setString(3, u.getString("minute_"));
         st2.setString(4, u.getString("IdPlace"));
-	st2.setInt(5, u.getInt("user.IdUser"));
+		st2.setInt(5, u.getInt("user.IdUser"));
         st2.setString(6, u.getString("IdCity"));
         ResultSet u2 = st2.executeQuery();
 

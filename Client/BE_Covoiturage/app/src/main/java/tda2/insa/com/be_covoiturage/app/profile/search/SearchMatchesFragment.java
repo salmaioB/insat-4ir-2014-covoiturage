@@ -1,6 +1,5 @@
-package tda2.insa.com.be_covoiturage;
+package tda2.insa.com.be_covoiturage.app.profile.search;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -8,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,6 +17,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.MyApplication;
+import tda2.insa.com.be_covoiturage.app.profile.ProfileViewActivity;
 
 /**
  * A fragment representing a list of Items.
@@ -63,6 +65,9 @@ public class SearchMatchesFragment extends ListFragment implements DataFragment 
 				android.R.layout.simple_list_item_1, matches));
 	}
 
+	public String fragmentTitle() {
+		return "Résultats de recherche";
+	}
 
 	@Override
 	public void onDetach() {
