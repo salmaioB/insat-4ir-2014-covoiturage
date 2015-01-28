@@ -18,20 +18,16 @@ public class ShortUser {
     private int hour;
     private int minute;
     private boolean driver;
+	private String notifyAddress;
 
-    public ShortUser(String name, String firstName, String lastName, int hour, int minute, boolean driver){
+    public ShortUser(String name, String firstName, String lastName, int hour, int minute, String notifyAddress, boolean driver){
         this.name = name;
         this.firstName = firstName;
         this.lastName = lastName;
         this.hour = hour;
         this.minute = minute;
         this.driver = driver;
-    }
-    public ShortUser(String name, String firstName, String lastName,boolean driver){
-        this.name = name;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.driver = driver;
+		this.notifyAddress = notifyAddress;
     }
     
     public String getName() {
@@ -58,7 +54,15 @@ public class ShortUser {
         return driver;
     }
 
-    public void setName(String name) {
+    public String getNotifyAddress() {
+        return notifyAddress;
+    }
+
+    public void setNotifyAddress(String notifyAddress) {
+        this.notifyAddress = notifyAddress;
+    }
+
+	public void setName(String name) {
         this.name = name;
     }
 
