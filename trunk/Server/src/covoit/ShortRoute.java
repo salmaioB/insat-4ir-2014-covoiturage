@@ -17,19 +17,29 @@ public class ShortRoute {
     private int User;
     private int City;
     private int Place;
+    private String Day;
+    private String goTime;
+    private String returnTime; 
     
 
-    public ShortRoute(int usr, int city, int place){
+    public ShortRoute(int usr, int city, int place, String day, String go, String rtrn){
         this.User=usr;
         this.City= city;
         this.Place = place;
+        this.Day = day;
+        this.goTime = go;
+        this.returnTime = rtrn;
     }
     
     public JsonObject getJsonObjectShortUser() {
         JsonObjectBuilder pl = Json.createObjectBuilder();
         pl.add("IdUser", this.getUser())
                 .add("IdCity", this.getCity())
-                .add("IdPlace", this.getPlace());
+                .add("IdPlace", this.getPlace())
+                .add("Day", this.getDay())
+                .add("GoHour", this.getGoHour())
+                .add("ReturnHour", this.getReturnHour());
+
         return pl.build();
     }
     
@@ -41,5 +51,14 @@ public class ShortRoute {
     }
     public int getPlace() {
         return Place;
+    }
+    public String getDay() {
+        return Day;
+    }
+    public String getGoHour() {
+        return goTime;
+    }
+    public String getReturnHour() {
+        return returnTime;
     }
 }
