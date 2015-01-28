@@ -437,7 +437,7 @@ public class Controller extends HttpServlet {
         }
     }
 	
-	private static void doSendNotification(String newRoute, bool newDriver, boolean direction, Route.Weekday day, ArrayList<ShortUser> recipients) {
+	private static void doSendNotification(String newRoute, boolean newDriver, boolean direction, Route.Weekday day, ArrayList<ShortUser> recipients) {
 				ArrayList<String> recipientsAddresses = new ArrayList<>();
                 JsonArrayBuilder jab = Json.createArrayBuilder();
 				String messageBody = "Bonjour,\n\r\n\rVous avez indiqué être toujours vouloir être notifié "
