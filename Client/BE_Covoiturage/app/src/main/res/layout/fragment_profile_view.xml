@@ -8,7 +8,7 @@
 
     <ListView
         android:layout_width="fill_parent"
-        android:layout_height="124dp"
+        android:layout_height="181dp"
         android:id="@+id/profile_infos"
         android:choiceMode="singleChoice"/>
     <ListView

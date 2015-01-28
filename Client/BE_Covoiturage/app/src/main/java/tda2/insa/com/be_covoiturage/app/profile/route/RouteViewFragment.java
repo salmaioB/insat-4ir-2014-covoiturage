@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.android.volley.VolleyError;
@@ -250,24 +251,19 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 			public void onResponse(JSONObject data, JSONObject headers) {
 				DialogFragment f = new DialogFragment() {
 					private CheckBox _go, _return, _drivers;
-					private DialogInterface.OnDismissListener _listener;
-
-					public void setListener(DialogInterface.OnDismissListener l) {
-						_listener = l;
-					}
 
 
 					@Override
 					public Dialog onCreateDialog(Bundle savedInstanceState) {
 						final Dialog dialog = new Dialog(getActivity());
 
-						dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+						dialog.setTitle("Notification :");
 						dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 								WindowManager.LayoutParams.FLAG_FULLSCREEN);
 						dialog.setContentView(R.layout.route_notification);
-						dialog.getWindow().setBackgroundDrawable(
-								new ColorDrawable(Color.TRANSPARENT));
-						dialog.show();
+
+						TextView title = (TextView)dialog.findViewById(R.id.title);
+						title.setText("Souhaitez-vous informer les personnes intéressées par votre trajet du " + _route.getWeekdayName() + " ?");
 						_go = (CheckBox) dialog.findViewById(R.id.go_id);
 						_return = (CheckBox) dialog.findViewById(R.id.return_id);
 						_drivers = (CheckBox) dialog.findViewById(R.id.drivers_id);
@@ -278,7 +274,7 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 							_drivers.setVisibility(View.VISIBLE);
 						}
 						Button notify = (Button)dialog.findViewById(R.id.notify);
-						Button dismiss = (Button)dialog.findViewById(R.id.notify);
+						Button dismiss = (Button)dialog.findViewById(R.id.dismiss);
 						notify.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
@@ -288,6 +284,12 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 								if(_user.isDriver()) {
 									obj.put("drivers", _drivers.isChecked());
 								}
+
+								obj.put("name", _user.getEmail());
+								obj.put("weekday", _route.getWeekday().toString());
+								obj.put("address", _user.getHome().getName());
+								obj.put("zipCode", _user.getHome().getZipCode());
+								obj.put("place", _route.getWorkplace().getID());
 
 								Network.getInstance().sendAuthenticatedPostRequest("notifyNewRoute", _user.getAuthToken(), obj, null, null);
 
@@ -300,11 +302,12 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 								dismiss();
 							}
 						});
+
 						return dialog;
 					}
 				};
 
-				f.show(getFragmentManager(), "");
+				f.show(ProfileViewActivity.getActivity().getFragmentManager(), "");
 			}
 		}, null);
 	}
