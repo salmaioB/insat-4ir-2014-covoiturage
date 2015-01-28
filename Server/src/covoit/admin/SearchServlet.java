@@ -7,6 +7,9 @@ package covoit.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -77,24 +80,16 @@ public class SearchServlet extends HttpServlet {
         String idCity = request.getParameter("citySelected");
 
         if (!idPlace.equals("0") && !idCity.equals("0")) {
-            response.setContentType("text/html;charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                    // --- Commentaire pour la suite ---
-                // Lancer la requête qui récupère les infos à afficher avec les 2 Id
-                // Présenter ceci sous forme de tableau
-                // Je ne sais pas comment afficher le tableau dans la JSP d'origine
-                // Donc obligation de formater une nouvelle fenêtre comme ci-dessous
-
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet SearchServlet</title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Idplace = " + idPlace + "</h1>");
-                out.println("<h1>IdCity = " + idCity + "</h1>");
-                out.println("</body>");
-                out.println("</html>");
+            try {
+                int nbrRoutes_ = covoit.Admin.nbrUserstoWorkplace(Integer.parseInt(idCity),Integer.parseInt(idPlace));
+                String nbrRoutes = Integer.toString(nbrRoutes_);
+                request.setAttribute("nbrRoutes", nbrRoutes);
+                request.getRequestDispatcher("nbUsersHouseWorkplace.jsp").forward(request, response);
+            } catch (SQLException ex) {
+               String erreur = ex.getMessage();
+                    request.setAttribute("erreur", erreur);
+                    request.getRequestDispatcher("nbUsersHouseWorkplace.jsp").forward(request, response);
+                    return;
             }
         } else if (idPlace.equals("0")) {
             String erreur = "Veuillez sélectionner un lieu de travail";

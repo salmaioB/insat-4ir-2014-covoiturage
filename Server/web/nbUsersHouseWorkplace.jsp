@@ -56,6 +56,11 @@
                 if (erreur != null) {
                     out.print(String.format("Erreur: %s", erreur));
                 }
+                String nbrRoutes_ = (String) request.getAttribute("nbrRoutes");
+                int nbrRoutes = Integer.parseInt(nbrRoutes_);
+                if (nbrRoutes_ != null) {
+                    out.print(String.format("Il y a %d routes correspondant à votre recherche", nbrRoutes));
+                }
             %>
         </div> 
         <br/>
