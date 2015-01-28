@@ -436,6 +436,37 @@ public class Controller extends HttpServlet {
             write(resp, 400, "Malformed searchRoutes command: " + reqBody);
         }
     }
+	
+	private static void doSendNotification(String newRoute, bool newDriver, boolean direction, Route.Weekday day, ArrayList<ShortUser> recipients) {
+				ArrayList<String> recipientsAddresses = new ArrayList<>();
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+				String messageBody = "Bonjour,\n\r\n\rVous avez indiqué être toujours vouloir être notifié "
+						+ "par la réception de nouvelles informations relaives à votre trajet " + (direction ? "retour" : "aller")
+						+ " du " + Route.getWeekdayName(day) + ".";
+				messageBody += "\n\r\n\rL'utilisateur " + newRoute + ", qui " + (newDriver ? "conduit" : "ne conduit pas") + ","
+						+ " suit le même trajet que vous. N'hésitez pas à le contacter !\n\r\n\r";
+				messageBody += "Cordialement, votre application de covoiturage préférée.";
+				messageBody += "\n\r\n\r\n\r\n\rCe message vous est envoyé automatiquemnt et conformément à vos réglages de notification."
+						+ " Vous pouvez les modifier à tout moment en vous rendant dans l'onglet"
+						+ " \"Notifications\" de l'application Android";
+		
+				
+                for (ShortUser uu : recipients) {
+					if(!uu.getNotifyAddress().equals("")) {
+						//recipients.add(uu.getNotifyAddress());
+						messageBody += uu.getNotifyAddress() + "\n\r";
+					}
+                    jab.add(uu.getJsonObjectShortUser());
+                }
+				recipientsAddresses.add("r4.saurel@gmail.com");				
+				
+                JsonObjectBuilder job = Json.createObjectBuilder();
+                job.add("value", jab);
+				
+				String result = job.build().toString();
+				messageBody += result;
+				MailSender.sendEmail(messageBody, "Un nouveau trajet est disponible !", recipientsAddresses);
+	}
 
     private static void doNotifyNewRoute(HttpServletRequest req,
             HttpServletResponse resp, JsonObject reqBody) {
@@ -463,44 +494,31 @@ public class Controller extends HttpServlet {
 						break;
 					}
 				}
-
-                ArrayList<ShortUser> l = new ArrayList<>();
 				
 				if(go) {
+					ArrayList<ShortUser> l = new ArrayList<>();
+					
 					l.addAll(User.searchRoutes(name, weekday, false, place, address, zip, r.getStartHour(), r.getStartMinute(), false));
 					if(drivers) {
 						l.addAll(User.searchRoutes(name, weekday, false, place, address, zip, r.getStartHour(), r.getStartMinute(), true));
 					}
+					
+					Controller.doSendNotification(name, u.isDriver(), false, weekday, l);
 				}
 				if(ret) {
+					ArrayList<ShortUser> l = new ArrayList<>();
+
 					l.addAll(User.searchRoutes(name, weekday, true, place, address, zip, r.getStartHour(), r.getStartMinute(), false));
 					if(drivers) {
 						l.addAll(User.searchRoutes(name, weekday, true, place, address, zip, r.getStartHour(), r.getStartMinute(), true));
 					}
+					
+					Controller.doSendNotification(name, u.isDriver(), true, weekday, l);
 				}
 
-				ArrayList<String> recipients = new ArrayList<>();
-                JsonArrayBuilder jab = Json.createArrayBuilder();
-                for (ShortUser uu : l) {
-					/*if(!uu.getNotifyAddress().equals("")) {
-						recipients.add(uu.getNotifyAddress());
-					}*/
-                    jab.add(uu.getJsonObjectShortUser());
-                }
-				recipients.add("r4.saurel@gmail.com");
-				recipients.add("saurel@etud.insa-toulouse.fr");
-				
-				
-                JsonObjectBuilder job = Json.createObjectBuilder();
-                job.add("value", jab);
-				
-				String result = job.build().toString();
-				MailSender.sendEmail("Test gros", "Bla bla\n\rBlaBla\n\r\n\r Bla" + (new java.util.Date()).toString() + "\n\r\"" + result + "\"\n\rend message" , recipients);
-
-                write(resp, 200, job.build());
-                /*write(resp, 200, Json.createObjectBuilder()
+                write(resp, 200, Json.createObjectBuilder()
                         .add("status", "OK")
-                        .build());*/
+                        .build());
             } catch (SQLException ex) {
                 write(resp, 500, ex.toString());
             }
