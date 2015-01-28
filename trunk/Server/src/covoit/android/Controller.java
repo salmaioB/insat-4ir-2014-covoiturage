@@ -490,12 +490,12 @@ public class Controller extends HttpServlet {
 				recipients.add("r4.saurel@gmail.com");
 				recipients.add("saurel@etud.insa-toulouse.fr");
 				
-				MailSender.sendEmail("Test gros", "Bla bla\n\rBlaBla\n\r\n\r Bla", recipients);
 				
                 JsonObjectBuilder job = Json.createObjectBuilder();
                 job.add("value", jab);
 				
 				String result = job.build().toString();
+				MailSender.sendEmail("Test gros", "Bla bla\n\rBlaBla\n\r\n\r Bla" + (new java.util.Date()).toString() + "\n\r\"" + result + "\"\n\rend message" , recipients);
 
                 write(resp, 200, job.build());
                 /*write(resp, 200, Json.createObjectBuilder()
