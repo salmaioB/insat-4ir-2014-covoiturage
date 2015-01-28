@@ -58,6 +58,14 @@
                 }
             %>
         </div>
+        <div>
+            <%
+                int city = Integer.parseInt(request.getParameter("citySelected"));
+                int place = Integer.parseInt(request.getParameter("placeSelected"));
+                int nbRoutes = Admin.nbrUserstoWorkplace(city, place);
+                out.print("<p>Il y a " + nbRoutes + " routes qui correspondent.</p>");
+            %>
+        </div> 
         <br/>
         <br/>
         <br/>
