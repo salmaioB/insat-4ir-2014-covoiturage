@@ -84,6 +84,9 @@ public class SearchServlet extends HttpServlet {
                 int nbrRoutes_ = covoit.Admin.nbrUserstoWorkplace(Integer.parseInt(idCity),Integer.parseInt(idPlace));
                 String nbrRoutes = Integer.toString(nbrRoutes_);
                 request.setAttribute("nbrRoutes", nbrRoutes);
+                request.setAttribute("IdPlace", (int) 1);//Integer.parseInt(idPlace));
+                request.setAttribute("IdCity", (int) 5);//Integer.parseInt(idCity));
+
                 request.getRequestDispatcher("nbUsersHouseWorkplace.jsp").forward(request, response);
              } catch (SQLException ex) {
                String erreur = ex.getMessage();
