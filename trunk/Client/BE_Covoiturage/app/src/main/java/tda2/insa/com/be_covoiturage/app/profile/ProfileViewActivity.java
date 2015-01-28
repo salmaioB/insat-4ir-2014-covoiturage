@@ -24,6 +24,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	SearchMatchesFragment _searchMatchesFragment;
 	DataFragment _currentFragment;
 	private static Route _lastRoute;
+	private static ProfileViewActivity _activity;
 
 	public static void setRoute(Route r) {
 		_lastRoute = r;
@@ -36,6 +37,7 @@ public class ProfileViewActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		_activity = this;
 		setContentView(R.layout.profile_view);
 		if (savedInstanceState == null) {
 			_profileViewFragment = new ProfileViewFragment();
@@ -45,6 +47,10 @@ public class ProfileViewActivity extends ActionBarActivity {
 			_searchMatchesFragment = new SearchMatchesFragment();
 			this.switchToProfile();
 		}
+	}
+
+	public static ProfileViewActivity getActivity() {
+		return _activity;
 	}
 
 	private void switchToFragment(DataFragment fragment) {
