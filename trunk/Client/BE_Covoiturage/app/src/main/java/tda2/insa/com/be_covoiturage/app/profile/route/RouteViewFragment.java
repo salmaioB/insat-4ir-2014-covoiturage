@@ -285,13 +285,23 @@ public class RouteViewFragment extends Fragment implements  OnMapReadyCallback, 
 									obj.put("drivers", _drivers.isChecked());
 								}
 
-								obj.put("name", _user.getEmail());
+								obj.put("name", _user.getAuthToken().getEmail());
 								obj.put("weekday", _route.getWeekday().toString());
 								obj.put("address", _user.getHome().getName());
 								obj.put("zipCode", _user.getHome().getZipCode());
 								obj.put("place", _route.getWorkplace().getID());
 
-								Network.getInstance().sendAuthenticatedPostRequest("notifyNewRoute", _user.getAuthToken(), obj, null, null);
+								Network.getInstance().sendAuthenticatedPostRequest(Network.pathToRequest("notifyNewRoute"), _user.getAuthToken(), obj, new Network.NetworkResponseListener() {
+									@Override
+									public void onResponse(JSONObject data, JSONObject headers) {
+										Log.e("success", data.toString());
+									}
+								}, new Network.NetworkErrorListener() {
+									@Override
+									public void onError(String reason, VolleyError error) {
+										Log.e("error", reason);
+									}
+								});
 
 								dismiss();
 							}
