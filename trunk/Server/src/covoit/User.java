@@ -387,13 +387,13 @@ public class User {
         ResultSet u2 = st2.executeQuery();
 
         while (u2.next()) {
-            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"),(u2.getString("Driver").equals("Y"))));
+            userList.add(new ShortUser(u2.getString("MailAddress"),u2.getString("FirstName"),u2.getString("LastName"),u2.getInt("hour_"),u2.getInt("minute_"), "", (u2.getString("Driver").equals("Y"))));
         }
         return userList;
     }
     
     //RECHERCHE AVANCEE
-    public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction, String placeName, String cityName, int zipCode, int d_hour, int d_minute, boolean driver) throws SQLException {
+    public static ArrayList<ShortUser> searchRoutes(String mailAddr, Route.Weekday day, boolean direction, int idPlace, String cityName, int zipCode, int d_hour, int d_minute, boolean driver) throws SQLException {
         ArrayList<ShortUser> userList = new ArrayList<>();
         String req;
         String driv_aux;
@@ -417,22 +417,22 @@ public class User {
             
         
             if (direction) 
-                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
+                req = "select MailAddress,FirstName,LastName,NotifyAddress, NotifyByMail,DATE_FORMAT(ReturnHour, '%H') hour_,DATE_FORMAT(ReturnHour, '%i') minute_,Driver from user,route "
                         + "where user.IdUser = route.IdUser AND route.Day = ? "
                         + "AND DATE_FORMAT(ReturnHour, '%H') = ?"
                         + "AND DATE_FORMAT(ReturnHour, '%i') = ?"
-                        + "AND IdPlace IN (SELECT IdPlace FROM place WHERE PlaceName= ?)"
+                        + "AND IdPlace IN (SELECT IdPlace FROM place WHERE IdPlace = ?)"
                         + "AND user.IdUser <> ? "
                         + "AND Driver= ? "
                         + "AND IdCity IN (SELECT IdCity FROM city WHERE CityName = ? AND ZipCode = ?)"
                         ;
                         
              else
-                req = "select MailAddress,FirstName,LastName,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
+                req = "select MailAddress,FirstName,LastName,NotifyAddress, NotifyByMail,DATE_FORMAT(GoHour, '%H') hour_,DATE_FORMAT(GoHour, '%i') minute_,Driver from user,route "
                         + "where user.IdUser = route.IdUser AND route.Day = ? "
                         + "AND DATE_FORMAT(GoHour, '%H') = ?"
                         + "AND DATE_FORMAT(GoHour, '%i') = ?"
-                        + "AND IdPlace IN (SELECT IdPlace FROM place WHERE PlaceName= ?)"
+                        + "AND IdPlace IN (SELECT IdPlace FROM place WHERE IdPlace = ?)"
                         + "AND user.IdUser <> ? "
                         + "AND Driver = ? "
                         + "AND IdCity IN (SELECT IdCity FROM city WHERE CityName = ? AND ZipCode = ?)"
@@ -443,7 +443,7 @@ public class User {
         st2.setString(1, day.toString());
         st2.setInt(2, d_hour);
         st2.setInt(3, d_minute);
-        st2.setString(4, placeName);
+        st2.setInt(4, idPlace);
         st2.setInt(5, rs1.getInt("user.IdUser"));
         st2.setString(6, driv_aux);
         st2.setString(7, cityName);
@@ -452,7 +452,9 @@ public class User {
         ResultSet rs2 = st2.executeQuery();
 
         while (rs2.next()) {
-            userList.add(new ShortUser(rs2.getString("MailAddress"),rs2.getString("FirstName"),rs2.getString("LastName"),rs2.getInt("hour_"),rs2.getInt("minute_"),(rs2.getString("Driver").equals("Y"))));
+			boolean wantsEmail = (rs2.getString("Driver").equals("Y"));
+			String email = wantsEmail ? rs2.getString("NotifyAddress") : "";
+            userList.add(new ShortUser(rs2.getString("MailAddress"),rs2.getString("FirstName"),rs2.getString("LastName"),rs2.getInt("hour_"),rs2.getInt("minute_"),email,(rs2.getString("Driver").equals("Y"))));
         }
         return userList;
     }

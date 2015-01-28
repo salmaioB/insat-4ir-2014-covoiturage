@@ -79,6 +79,18 @@ public class Controller extends HttpServlet {
 
     /**
      * Renvoie l'attribut du nom donné, si il existe et que c'est bien un
+     * entier
+     */
+    private static int getInt(JsonObject o, String name) {
+        try {
+            return o.getInt(name);
+        } catch (Throwable e) {
+            throw new InvalidParameterException("Not present");
+        }
+    }
+
+	/**
+     * Renvoie l'attribut du nom donné, si il existe et que c'est bien un
      * booléen
      */
     private static boolean getBool(JsonObject o, String name) {
@@ -425,6 +437,66 @@ public class Controller extends HttpServlet {
         }
     }
 
+    private static void doNotifyNewRoute(HttpServletRequest req,
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+                Route.Weekday weekday = Route.Weekday.valueOf(getString(reqBody, "weekday")); // trajet à rechercher
+				User u = User.load(name);
+				
+                boolean go = getBool(reqBody, "go");
+                boolean ret = getBool(reqBody, "return");
+                boolean drivers = true;
+				if(u.isDriver()) {
+					drivers = getBool(reqBody, "drivers");
+				}
+				String address = getString(reqBody, "address");
+				int zip = getInt(reqBody, "zipCode");
+				int place = getInt(reqBody, "place");
+	
+				Route r = u.getRoutes().get(weekday.ordinal());
+
+                ArrayList<ShortUser> l = new ArrayList<>();
+				
+				if(go) {
+					l.addAll(User.searchRoutes(name, weekday, false, place, address, zip, r.getStartHour(), r.getStartMinute(), false));
+					if(drivers) {
+						l.addAll(User.searchRoutes(name, weekday, false, place, address, zip, r.getStartHour(), r.getStartMinute(), true));
+					}
+				}
+				if(ret) {
+					l.addAll(User.searchRoutes(name, weekday, true, place, address, zip, r.getStartHour(), r.getStartMinute(), false));
+					if(drivers) {
+						l.addAll(User.searchRoutes(name, weekday, true, place, address, zip, r.getStartHour(), r.getStartMinute(), true));
+					}
+				}
+
+				ArrayList<String> recipients = new ArrayList<>();
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+                for (ShortUser uu : l) {
+					if(!uu.getNotifyAddress().equals("")) {
+						recipients.add(uu.getNotifyAddress());
+					}
+                    jab.add(uu.getJsonObjectShortUser());
+                }
+
+                JsonObjectBuilder job = Json.createObjectBuilder();
+                job.add("value", jab);
+				
+				String result = job.build().toString();
+
+                write(resp, 200, job.build());
+                /*write(resp, 200, Json.createObjectBuilder()
+                        .add("status", "OK")
+                        .build());*/
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed searchRoutes command: " + reqBody);
+        }
+    }
 
     /* DISPATCH *******************************************************************/
     @Override
@@ -465,6 +537,8 @@ public class Controller extends HttpServlet {
                 doListWorkplaces(req, resp, reqBody);
             } else if (cmd.equals("searchRoutes")) {
                 doSearchRoutes(req, resp, reqBody);
+			} else if (cmd.equals("notifyNewRoute")) {
+				doNotifyNewRoute(req, resp, reqBody);
             } else {
                 write(resp, 400, "Commande non supportée: " + cmd);
             }

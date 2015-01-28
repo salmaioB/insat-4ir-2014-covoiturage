@@ -244,7 +244,7 @@ public class Admin {
         ResultSet rs = st.executeQuery();
 
         while (rs.next()) {
-            userList.add(new ShortUser(rs.getString("MailAddress"), rs.getString("FirstName"), rs.getString("LastName"), (rs.getString("Driver").equals("Y"))));
+            userList.add(new ShortUser(rs.getString("MailAddress"), rs.getString("FirstName"), rs.getString("LastName"), 8, 0, "", (rs.getString("Driver").equals("Y"))));
         }
         return userList;
     }
