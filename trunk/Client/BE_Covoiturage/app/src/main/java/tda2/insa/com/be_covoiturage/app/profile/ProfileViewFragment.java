@@ -56,7 +56,7 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 
 		_routesList = (ListView)rootView.findViewById(R.id.profile_routes);
 
-		String[] values = new String[] {"Identité", "Notifications", "Trajet personnalisé…"};
+		String[] values = new String[] {"Identité", "Notifications", "Trajet personnalisé"};
 
 		_infos = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, values);
 		_infosList.setAdapter(_infos);
