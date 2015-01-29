@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"http://localhost:8080/MyFirstWebProject/LoginServlet"})
+@WebServlet(name="LoginServlet", urlPatterns={"http://localhost:8080/MyFirstWebProject/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
     /**
