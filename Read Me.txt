@@ -1,0 +1,13 @@
+Lien du dossier
+
+https://drive.google.com/#folders/0B04RnGjjAItMODNuNEpYZFMtRkU
+
+Il contient
+- Le SRS
+- Le SDD
+- Un manuel d'utilisateur en français
+- Un dossier Images contenant les images utilisées dans le SDD
+
+Le manuel d'utilisateur contient les explications pour simuler notre application sur Android et les sous-dossiers contenant nos classes
+
+Bonne lecture
