@@ -92,7 +92,7 @@ public class ProfileViewActivity extends ActionBarActivity {
     public void switchToNotification() { this.switchToFragment(_notificationViewFragment);}
 
     public void switchToRoute(Route r) {
-	    if(r == null) {
+	    if(r != null) {
 		    Bundle args = new Bundle();
 		    args.putString(RouteViewFragment.WEEK_DAY, r.getWeekday().toString());
 		    _routeViewFragment.setArguments(args);

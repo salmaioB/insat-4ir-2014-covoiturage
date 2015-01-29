@@ -33,8 +33,8 @@ public class CustomRouteFragment extends RouteViewFragment implements DataFragme
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
-		_active.setVisibility(View.INVISIBLE);
-		_notifyMe.setVisibility(View.INVISIBLE);
+		_active.setVisibility(View.GONE);
+		_notifyMe.setVisibility(View.GONE);
 		_driver.setVisibility(View.VISIBLE);
 		_city.setVisibility(View.VISIBLE);
 		_zipCode.setVisibility(View.VISIBLE);
