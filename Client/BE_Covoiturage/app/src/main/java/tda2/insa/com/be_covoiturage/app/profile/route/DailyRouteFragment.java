@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import tda2.insa.com.be_covoiturage.R;
 import tda2.insa.com.be_covoiturage.app.DataFragment;
+import tda2.insa.com.be_covoiturage.app.MyApplication;
 import tda2.insa.com.be_covoiturage.app.Workplace;
 import tda2.insa.com.be_covoiturage.app.profile.ProfileViewActivity;
 import tda2.insa.com.be_covoiturage.network.MyJSONObject;
@@ -38,16 +39,16 @@ public class DailyRouteFragment extends RouteViewFragment implements DataFragmen
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_route = _user.getRoute(Route.Weekday.valueOf(this.getArguments().getString(WEEK_DAY)));
+		_route = MyApplication.getUser().getRoute(Route.Weekday.valueOf(this.getArguments().getString(WEEK_DAY)));
 
 		View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
 		_active.setVisibility(View.VISIBLE);
 		_notifyMe.setVisibility(View.VISIBLE);
-		_driver.setVisibility(View.INVISIBLE);
-		_city.setVisibility(View.INVISIBLE);
-		_zipCode.setVisibility(View.INVISIBLE);
-		_weekday.setVisibility(View.INVISIBLE);
+		_driver.setVisibility(View.GONE);
+		_city.setVisibility(View.GONE);
+		_zipCode.setVisibility(View.GONE);
+		_weekday.setVisibility(View.GONE);
 
 		_active.setText("Je recherche un trajet pour " + _route.getWeekdayName());
 		if(!_route.active()) {
