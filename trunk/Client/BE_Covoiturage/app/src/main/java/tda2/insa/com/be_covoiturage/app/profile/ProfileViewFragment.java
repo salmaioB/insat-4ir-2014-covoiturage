@@ -224,7 +224,7 @@ public class ProfileViewFragment extends Fragment implements DataFragment {
 	}
 
 	public void customRoute() {
-		((ProfileViewActivity)this.getActivity()).switchToNotification();
+		((ProfileViewActivity)this.getActivity()).switchToRoute(null);
 	}
 
 	@Override

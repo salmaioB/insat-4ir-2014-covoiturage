@@ -18,7 +18,8 @@ import tda2.insa.com.be_covoiturage.app.profile.search.SearchMatchesFragment;
 
 public class ProfileViewActivity extends ActionBarActivity {
 	ProfileViewFragment _profileViewFragment;
-	RouteViewFragment _routeViewFragment;
+	DailyRouteFragment _routeViewFragment;
+	CustomRouteFragment _customRouteFragment;
 	IdentityViewFragment _identityViewFragment;
     NotificationViewFragment _notificationViewFragment;
 	SearchMatchesFragment _searchMatchesFragment;
@@ -41,7 +42,8 @@ public class ProfileViewActivity extends ActionBarActivity {
 		setContentView(R.layout.profile_view);
 		if (savedInstanceState == null) {
 			_profileViewFragment = new ProfileViewFragment();
-			_routeViewFragment = new RouteViewFragment();
+			_routeViewFragment = new DailyRouteFragment();
+			_customRouteFragment = new CustomRouteFragment();
 			_identityViewFragment = new IdentityViewFragment();
 			_notificationViewFragment = new NotificationViewFragment();
 			_searchMatchesFragment = new SearchMatchesFragment();
@@ -90,10 +92,16 @@ public class ProfileViewActivity extends ActionBarActivity {
     public void switchToNotification() { this.switchToFragment(_notificationViewFragment);}
 
     public void switchToRoute(Route r) {
-		Bundle args = new Bundle();
-		args.putString(RouteViewFragment.WEEK_DAY, r.getWeekday().toString());
-		_routeViewFragment.setArguments(args);
-		this.switchToFragment(_routeViewFragment);
+	    if(r == null) {
+		    Bundle args = new Bundle();
+		    args.putString(RouteViewFragment.WEEK_DAY, r.getWeekday().toString());
+		    _routeViewFragment.setArguments(args);
+		    this.switchToFragment(_routeViewFragment);
+	    }
+	    else {
+		    this.switchToFragment(_customRouteFragment);
+	    }
+	    _lastRoute = r;
 	}
 
 	public void switchToProfile() {

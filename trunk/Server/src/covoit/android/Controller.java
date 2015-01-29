@@ -436,7 +436,45 @@ public class Controller extends HttpServlet {
             write(resp, 400, "Malformed searchRoutes command: " + reqBody);
         }
     }
-	
+
+	    private static void doSearchCustomRoutes(HttpServletRequest req,
+            HttpServletResponse resp, JsonObject reqBody) {
+        try {
+            try {
+                String name = getString(reqBody, "name");   //@mail
+				User u = User.load(name);
+                String weekday = getString(reqBody, "weekday"); // trajet à rechercher
+                Boolean direction = getBool(reqBody, "direction"); // go or return
+				int idPlace = getInt(reqBody, "place");
+				String cityName = getString(reqBody, "city");
+				int zipCode = getInt(reqBody, "zip");
+				int hour = getInt(reqBody, "hour");
+				int minute = getInt(reqBody, "minute");
+				boolean driver = getBool(reqBody, "driver");
+				
+				ArrayList<ShortUser> l = new ArrayList<>();
+				if(u.isDriver()) {
+					l.addAll(User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction, idPlace, cityName, zipCode, hour, minute, false));
+				}
+                l.addAll(User.searchRoutes(name, Route.Weekday.valueOf(weekday), direction, idPlace, cityName, zipCode, hour, minute, true));
+
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+                for (int i = 0; i < l.size(); i++) {
+                    jab.add(l.get(i).getJsonObjectShortUser());
+                }
+
+                JsonObjectBuilder job = Json.createObjectBuilder();
+                job.add("value", jab);
+
+                write(resp, 200, job.build());
+            } catch (SQLException ex) {
+                write(resp, 500, ex.toString());
+            }
+        } catch (InvalidParameterException e) {
+            write(resp, 400, "Malformed searchRoutes command: " + reqBody);
+        }
+    }
+
 	private static void doSendNotification(String newRoute, boolean newDriver, boolean direction, Route.Weekday day, ArrayList<ShortUser> recipients) {
 				ArrayList<String> recipientsAddresses = new ArrayList<>();
 				String messageBody = "Bonjour,\n\rVous avez indiqué vouloir être notifié "
@@ -494,7 +532,9 @@ public class Controller extends HttpServlet {
 						l.addAll(User.searchRoutes(name, weekday, false, place, address, zip, r.getStartHour(), r.getStartMinute(), true));
 					}
 					
-					Controller.doSendNotification(name, u.isDriver(), false, weekday, l);
+					if(l.size() > 0) {
+						Controller.doSendNotification(name, u.isDriver(), false, weekday, l);
+					}
 				}
 				if(ret) {
 					ArrayList<ShortUser> l = new ArrayList<>();
@@ -504,7 +544,9 @@ public class Controller extends HttpServlet {
 						l.addAll(User.searchRoutes(name, weekday, true, place, address, zip, r.getStartHour(), r.getStartMinute(), true));
 					}
 					
-					Controller.doSendNotification(name, u.isDriver(), true, weekday, l);
+					if(l.size() > 0) {
+						Controller.doSendNotification(name, u.isDriver(), true, weekday, l);
+					}
 				}
 
                 write(resp, 200, Json.createObjectBuilder()
@@ -557,6 +599,8 @@ public class Controller extends HttpServlet {
                 doListWorkplaces(req, resp, reqBody);
             } else if (cmd.equals("searchRoutes")) {
                 doSearchRoutes(req, resp, reqBody);
+            } else if (cmd.equals("searchCustomRoutes")) {
+                doSearchCustomRoutes(req, resp, reqBody);
 			} else if (cmd.equals("notifyNewRoute")) {
 				doNotifyNewRoute(req, resp, reqBody);
             } else {

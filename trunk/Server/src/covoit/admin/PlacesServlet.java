@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Kapouter
  */
-@WebServlet(name = "PlacesServlet", urlPatterns = {"/PlacesServlet"})
+@WebServlet(name="PlacesServlet", urlPatterns={"/PlacesServlet"})
 public class PlacesServlet extends HttpServlet {
 
     /**

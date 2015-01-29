@@ -18,6 +18,35 @@
         android:id="@+id/notify_me"
         android:checked="false"/>
 
+    <CheckBox
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Je suis conducteur"
+        android:id="@+id/driver"
+        android:checked="false"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress"
+        android:ems="10"
+        android:id="@+id/city"
+        android:hint="Adresse"/>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/zip_code"
+        android:hint="Code postal"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/weekday"
+        android:spinnerMode="dropdown"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
