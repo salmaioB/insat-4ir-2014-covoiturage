@@ -63,7 +63,7 @@
                 }
             %>
         </div> 
-        <div style="text-align:center">
+        <div style="text-align:center;">
             <h3>Liste des couples utilisateur/route</h3>
             <table border="1">
                 <tr>
@@ -76,10 +76,13 @@
 
                 </tr>
                 <%
-                    int place = (int) request.getAttribute("IdPlace");
-                    int city = (int) request.getAttribute("IdCity");
-
-                    ArrayList<ShortRoute> listUsers = covoit.Admin.getUserstoWorkplace(place, city);
+                    Integer place_ = (Integer) request.getAttribute("IdPlace");
+                    Integer city_ = (Integer) request.getAttribute("IdCity");
+                 if ((place_ != null) && (city_ != null)) {      
+                     
+                    int place =place_.intValue();
+                    int city=city_.intValue();
+                    ArrayList<ShortRoute> listUsers = covoit.Admin.getUserstoWorkplace(place,city);
                     for (int i = 0; i < listUsers.size(); i++) {
                         out.print("<tr>");
                         out.print(String.format("<td>%s</td>", listUsers.get(i).getUser()));
@@ -88,9 +91,9 @@
                         out.print(String.format("<td>%s</td>", listUsers.get(i).getDay()));
                         out.print(String.format("<td>%s</td>", listUsers.get(i).getGoHour()));
                         out.print(String.format("<td>%s</td>", listUsers.get(i).getReturnHour()));
-
                         out.print("</tr>");
                     }
+                 }
                 %>
             </table>
         </div>

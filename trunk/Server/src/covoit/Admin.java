@@ -218,7 +218,7 @@ public class Admin {
         ArrayList<ShortRoute> routeList = new ArrayList<>();
         String req;
 
-        req = "SELECT route.IdUser, IdCity, IdPlace from route,user,Day, GoHour, ReturnHour WHERE route.IdUser = user.IdUser AND IdPlace = ? AND IdCity = ? ORDER BY Day, GoHour, ReturnHour;";
+        req = "SELECT MailAddress, CityName, IdPlace,Day, GoHour, ReturnHour from route,user,city WHERE route.IdUser = user.IdUser AND city.IdCity=user.IdCity AND IdPlace = ? AND user.IdCity = ? ORDER BY Day, GoHour, ReturnHour;";
 
         PreparedStatement st = Conn.prepare(req);
         st.setInt(1, place);
@@ -226,7 +226,7 @@ public class Admin {
         ResultSet rs = st.executeQuery();
 
         while (rs.next()) {
-           routeList.add(new ShortRoute(rs.getInt("IdUser"), rs.getInt("IdCity"), rs.getInt("IdPlace"), rs.getString("Day"), rs.getString("GoHour"), rs.getString("ReturnHour")));
+           routeList.add(new ShortRoute(rs.getString("MailAddress"), rs.getString("CityName"), rs.getInt("IdPlace"), rs.getString("Day"), rs.getString("GoHour"), rs.getString("ReturnHour")));
         }
         return routeList;
     }

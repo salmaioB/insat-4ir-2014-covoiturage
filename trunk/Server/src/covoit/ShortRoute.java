@@ -14,15 +14,15 @@ import javax.json.JsonObjectBuilder;
  * @author yorrickbarnay
  */
 public class ShortRoute {
-    private int User;
-    private int City;
+    private String User;
+    private String City;
     private int Place;
     private String Day;
     private String goTime;
     private String returnTime; 
     
 
-    public ShortRoute(int usr, int city, int place, String day, String go, String rtrn){
+    public ShortRoute(String usr, String city, int place, String day, String go, String rtrn){
         this.User=usr;
         this.City= city;
         this.Place = place;
@@ -43,10 +43,10 @@ public class ShortRoute {
         return pl.build();
     }
     
-    public int getUser() {
+    public String getUser() {
         return User;
     }
-    public int getCity() {
+    public String getCity() {
         return City;
     }
     public int getPlace() {
