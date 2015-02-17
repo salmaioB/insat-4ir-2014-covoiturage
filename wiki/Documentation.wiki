@@ -1,0 +1,7 @@
+Ci - joint le lien du dossier contenant la documentation du projet:
+ - Document SRS
+ - Document SDD
+ - Manuel d'utilisation
+ - Images
+
+https://drive.google.com/folderview?id=0B04RnGjjAItMODNuNEpYZFMtRkU&usp=sharing
